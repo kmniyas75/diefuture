@@ -1,0 +1,1155 @@
+/* ============================================================
+   DIEFUTURE APARTMENTS — DESIGN SYSTEM
+   Exact replica of the Swiss/Nordic design system from efinance.ee:
+   Brand palette:
+   royal #142A7D · electric #084BE0 · ink #14151A · light #9CC0FF · paper #F6F7FB
+   ============================================================ */
+
+:root {
+  --paper: #F6F7FB;
+  --paper-2: #ECEEF5;
+  --white: #FFFFFF;
+  --ink: #14151A;
+  --ink-2: #4C4E57;
+  --ink-3: #8A8C96;
+  --rule: #DBDEEA;
+  --rule-2: #C7CCDD;
+  --royal: #142A7D;
+  --royal-2: #1B3596;
+  --electric: #084BE0;
+  --electric-2: #2E6BFF;
+  --blue-light: #9CC0FF;
+  --f-sans: 'Geist', system-ui, -apple-system, sans-serif;
+  --f-mono: 'Geist Mono', 'SF Mono', Consolas, monospace;
+  --f-display: 'Archivo', 'Geist', sans-serif;
+  --max: 1296px;
+  --pad: clamp(24px, 4vw, 56px);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--pad);
+}
+
+section {
+  position: relative;
+}
+
+/* ── NAV (Exact eFinance Nav) ── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(246, 247, 251, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--rule);
+  transition: background .3s, border-color .3s;
+}
+
+.nav-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 18px var(--pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-flex {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid #1E293B;
+}
+
+.logo-text {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.nav-mid {
+  display: flex;
+  gap: 32px;
+}
+
+.nav-mid a {
+  font-size: 14.5px;
+  color: var(--ink-2);
+  font-weight: 500;
+  transition: color .2s;
+}
+
+.nav-mid a:hover,
+.nav-mid a.on {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-cta {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--electric);
+  padding: 11px 20px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: transform .18s, background .2s;
+  display: inline-block;
+}
+
+.nav-cta:hover {
+  background: var(--royal);
+  transform: translateY(-1px);
+}
+
+/* ── TOPBAND (Exact Monospace Bar) ── */
+.topband {
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.topband span {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.topband b {
+  color: var(--electric);
+  font-weight: 600;
+}
+
+/* ── PAGE HERO (Exact replica of efinance screenshot) ── */
+.page-hero {
+  padding: clamp(36px, 5vw, 64px) 0 clamp(40px, 5vw, 60px);
+  background: var(--paper);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: clamp(40px, 5vw, 72px);
+  align-items: start;
+  margin-top: clamp(40px, 5vw, 64px);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--electric);
+  font-weight: 600;
+  margin-bottom: 26px;
+}
+
+.eyebrow .sq {
+  width: 8px;
+  height: 8px;
+  background: var(--electric);
+}
+
+h1.hero-h {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(48px, 6vw, 84px);
+  line-height: .92;
+  letter-spacing: -.04em;
+  color: var(--ink);
+}
+
+h1.hero-h .e {
+  color: var(--electric);
+}
+
+.hero-sub {
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 480px;
+  margin: 30px 0 30px;
+}
+
+.hero-packages-quick {
+  border-top: 1px dashed var(--rule);
+  padding-top: 20px;
+  margin-top: 24px;
+}
+
+.quick-pkg-tag {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: .08em;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.quick-pkg-list {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.q-pkg {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  transition: color .2s;
+}
+
+.q-pkg b {
+  color: var(--ink);
+}
+
+.q-pkg.highlight {
+  color: var(--electric);
+  font-weight: 600;
+}
+
+.q-pkg.highlight b {
+  color: var(--electric);
+}
+
+.dot-sep {
+  color: var(--rule-2);
+}
+
+/* ── RIGHT COLUMN: CI-LIST (Exact Metadata Table) ── */
+.ci-list {
+  border-top: 2px solid var(--ink);
+}
+
+.ci-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: baseline;
+}
+
+.ci-k {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.ci-v {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.ci-link {
+  color: var(--electric);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color .18s;
+}
+
+.ci-link:hover {
+  color: var(--royal);
+}
+
+/* ── MARQUEE (Exact replica of screenshot bottom strip) ── */
+.marquee {
+  overflow: hidden;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 13px 0;
+  display: flex;
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+
+.marquee-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 26px;
+  flex-shrink: 0;
+  padding-right: 26px;
+  white-space: nowrap;
+  animation: marquee 42s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-track > span {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -.005em;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.marquee-track > span.mono {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--electric);
+}
+
+.marquee-track > span.sep {
+  color: var(--rule-2);
+  font-weight: 300;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ── SECTIONS ── */
+.sec {
+  padding: clamp(64px, 8vw, 100px) 0;
+}
+
+.sec-white {
+  background: var(--white);
+}
+
+.sec-paper2 {
+  background: var(--paper-2);
+}
+
+.sec-royal {
+  background: radial-gradient(125% 130% at 75% 0%, #21429E 0%, #142A7D 48%, #0E1E5C 100%);
+  color: #fff;
+}
+
+.sec-head {
+  max-width: 760px;
+  margin-bottom: clamp(40px, 5vw, 64px);
+}
+
+.sec-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--electric);
+  font-weight: 600;
+  margin-bottom: 22px;
+}
+
+.sec-eyebrow::before {
+  content: '';
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+}
+
+h2.sec-h {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(34px, 4vw, 56px);
+  line-height: .98;
+  letter-spacing: -.035em;
+  color: var(--ink);
+}
+
+h2.sec-h .dim {
+  color: var(--ink-3);
+}
+
+.sec-lead {
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin-top: 22px;
+  max-width: 580px;
+}
+
+/* ── PACKAGES GRID (3 Tiers with eFinance styling) ── */
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.pkg-card {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+  padding: 34px 30px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform .2s, border-color .2s, box-shadow .2s;
+}
+
+.pkg-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--rule-2);
+  box-shadow: 0 20px 40px -20px rgba(20, 42, 125, .15);
+}
+
+.pkg-card.featured {
+  border: 2px solid var(--electric);
+  box-shadow: 0 24px 50px -20px rgba(8, 75, 224, .3);
+}
+
+.pkg-badge {
+  position: absolute;
+  top: -13px;
+  left: 30px;
+  background: var(--electric);
+  color: #fff;
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  padding: 5px 14px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.pkg-cat {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 12px;
+}
+
+.text-electric {
+  color: var(--electric) !important;
+}
+
+.pkg-name {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.pkg-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.pkg-price .currency {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.pkg-price .amt {
+  font-family: var(--f-display);
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  line-height: 1;
+}
+
+.pkg-price .per {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-left: 6px;
+}
+
+.pkg-desc {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+  min-height: 48px;
+  margin-bottom: 22px;
+}
+
+.pkg-rule {
+  height: 1px;
+  background: var(--rule);
+  margin-bottom: 22px;
+}
+
+.pkg-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
+  flex-grow: 1;
+}
+
+.pkg-items li {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.45;
+  position: relative;
+  padding-left: 20px;
+}
+
+.pkg-items li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--electric);
+  font-weight: 700;
+}
+
+.pkg-items li.bold-item {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.pkg-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ── BUTTONS (Exact eFinance styles) ── */
+.btn-electric {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--electric);
+  padding: 14px 22px;
+  border-radius: 8px;
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  transition: transform .18s, box-shadow .2s;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-electric:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px -14px rgba(8, 75, 224, .6);
+}
+
+.btn-line {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  padding: 13px 20px;
+  border: 1.5px solid var(--ink);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  transition: background .2s, color .2s;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-line:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+.btn-white {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--royal);
+  background: #fff;
+  padding: 14px 24px;
+  border-radius: 8px;
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  transition: transform .18s;
+}
+
+.btn-white:hover {
+  transform: translateY(-2px);
+}
+
+/* ── PORTALS CHIPS GRID ── */
+.portals-tag-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.portal-chip {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color .2s;
+}
+
+.portal-chip:hover {
+  border-color: var(--electric);
+}
+
+.portal-chip strong {
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.portal-chip span {
+  font-size: 12px;
+  color: var(--ink-3);
+  font-family: var(--f-mono);
+}
+
+/* ── FORM CARD (Exact replica of efinance contact form) ── */
+.form-card {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 30px 70px -40px rgba(20, 42, 125, .3);
+}
+
+.promise {
+  margin-top: 30px;
+  padding: 24px;
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+}
+
+.promise .pk {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--electric);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.promise p {
+  font-size: 15px;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+.fgroup {
+  margin-bottom: 26px;
+}
+
+.fgroup-h {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 16px;
+}
+
+.fgroup-h .num {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--ink);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.field {
+  margin-bottom: 12px;
+}
+
+.field label {
+  display: block;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  font-family: var(--f-sans);
+  font-size: 14.5px;
+  color: var(--ink);
+  padding: 12px 14px;
+  border: 1px solid var(--rule-2);
+  border-radius: 9px;
+  background: var(--paper);
+  outline: none;
+  transition: border-color .2s, background .2s;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--electric);
+  background: #fff;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.6;
+}
+
+.opt {
+  font-size: 11px;
+  color: var(--ink-3);
+  font-weight: 400;
+  margin-left: 5px;
+}
+
+.frow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chips input {
+  display: none;
+}
+
+.chips label {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 9px 15px;
+  border: 1px solid var(--rule-2);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all .18s;
+  color: var(--ink-2);
+  margin: 0;
+  background: var(--paper);
+}
+
+.chips input:checked + label {
+  background: var(--electric);
+  color: #fff;
+  border-color: var(--electric);
+}
+
+.form-submit {
+  width: 100%;
+  margin-top: 8px;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  font-family: var(--f-sans);
+}
+
+.form-note {
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.5;
+  margin-top: 14px;
+  text-align: center;
+}
+
+/* ── FAQ (Exact details element from efinance.ee) ── */
+.faq {
+  border-top: 1px solid var(--rule);
+}
+
+.faq details {
+  border-bottom: 1px solid var(--rule);
+}
+
+.faq summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 24px 0;
+  display: flex;
+  gap: 20px;
+  align-items: baseline;
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq .q-ix {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--electric);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.faq .q-t {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(18px, 1.9vw, 22px);
+  letter-spacing: -.02em;
+  flex: 1;
+}
+
+.faq .q-x {
+  font-size: 20px;
+  color: var(--ink-3);
+  transition: transform .25s;
+}
+
+.faq details[open] .q-x {
+  transform: rotate(45deg);
+}
+
+.faq .q-a {
+  font-size: 15px;
+  color: var(--ink-2);
+  line-height: 1.65;
+  max-width: 760px;
+  padding: 0 0 26px 56px;
+}
+
+/* ── MOBILE NAV TOGGLE & DRAWER ── */
+.nav-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  flex-direction: column;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-mobile-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: var(--ink);
+  border-radius: 2px;
+  transition: transform .25s ease, opacity .25s ease;
+}
+
+.nav-mobile-toggle.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.nav-mobile-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-mobile-toggle.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.mobile-drawer {
+  display: none;
+  position: fixed;
+  top: 69px;
+  left: 0;
+  right: 0;
+  background: rgba(246, 247, 251, 0.98);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--rule);
+  padding: 20px 24px 28px;
+  box-shadow: 0 20px 40px -10px rgba(20, 21, 26, 0.15);
+  z-index: 49;
+  animation: slideDown .22s ease-out;
+}
+
+.mobile-drawer.open {
+  display: block;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mobile-drawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mobile-drawer-links .m-link {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(219, 222, 234, 0.5);
+}
+
+.mobile-drawer-links .m-link.on {
+  color: var(--electric);
+}
+
+.mobile-drawer-links .m-cta {
+  margin-top: 10px;
+  padding: 14px;
+  font-size: 15px;
+  text-align: center;
+  justify-content: center;
+}
+
+/* ── RESPONSIVE MEDIA QUERIES ── */
+@media (max-width: 980px) {
+  .nav-mid {
+    display: none;
+  }
+
+  .nav-mobile-toggle {
+    display: flex;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    margin-top: 36px;
+  }
+
+  .packages-grid {
+    grid-template-columns: 1fr;
+    max-width: 580px;
+    margin: 0 auto;
+  }
+
+  .frow {
+    grid-template-columns: 1fr;
+  }
+
+  .ci-list {
+    margin-top: 10px;
+  }
+
+  .ci-row {
+    grid-template-columns: 130px 1fr;
+  }
+
+  .faq .q-a {
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --pad: 20px;
+  }
+
+  .nav-inner {
+    padding: 14px 20px;
+  }
+
+  .nav-cta {
+    display: none;
+  }
+
+  .topband {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 0;
+  }
+
+  .topband span {
+    font-size: 11px;
+  }
+
+  .page-hero {
+    padding: 24px 0 40px;
+  }
+
+  h1.hero-h {
+    font-size: clamp(40px, 11vw, 56px);
+    line-height: 1.0;
+    letter-spacing: -.03em;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    line-height: 1.55;
+    margin: 20px 0;
+  }
+
+  .quick-pkg-list {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .dot-sep {
+    display: none;
+  }
+
+  /* Table on mobile */
+  .ci-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 14px 0;
+  }
+
+  .ci-k {
+    font-size: 10.5px;
+    color: var(--ink-3);
+  }
+
+  .ci-v {
+    font-size: 15.5px;
+  }
+
+  /* Packages */
+  .pkg-card {
+    padding: 26px 20px;
+    border-radius: 14px;
+  }
+
+  .pkg-price .amt {
+    font-size: 40px;
+  }
+
+  .pkg-desc {
+    min-height: auto;
+  }
+
+  /* Form inputs: 16px font-size prevents iOS zoom */
+  .form-card {
+    padding: 22px 16px;
+    border-radius: 14px;
+    box-shadow: 0 16px 36px -16px rgba(20, 42, 125, .2);
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    font-size: 16px;
+    padding: 13px 14px;
+    border-radius: 8px;
+  }
+
+  .chips label {
+    font-size: 13px;
+    padding: 10px 14px;
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-electric.form-submit {
+    min-height: 52px;
+    font-size: 16px;
+  }
+
+  /* Portals on mobile */
+  .portals-tag-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* FAQ on mobile */
+  .faq summary {
+    padding: 18px 0;
+    gap: 14px;
+  }
+
+  .faq .q-t {
+    font-size: 17px;
+  }
+
+  .faq .q-a {
+    font-size: 14.5px;
+    padding-bottom: 20px;
+  }
+
+  /* Section padding */
+  .sec {
+    padding: 48px 0;
+  }
+
+  h2.sec-h {
+    font-size: clamp(28px, 7vw, 36px);
+  }
+
+  .sec-lead {
+    font-size: 15.5px;
+    margin-top: 14px;
+  }
+}
+
