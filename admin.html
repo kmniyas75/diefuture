@@ -591,21 +591,44 @@
       checkAuth();
     });
 
+    // Dynamic API Base URL resolver
+    function getApiBase() {
+      const stored = localStorage.getItem('df_api_endpoint');
+      if (stored) return stored.replace(/\/$/, '');
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:3001';
+      }
+      return '';
+    }
+
+    function setApiBase(url) {
+      if (!url) {
+        localStorage.removeItem('df_api_endpoint');
+      } else {
+        localStorage.setItem('df_api_endpoint', url.trim().replace(/\/$/, ''));
+      }
+      fetchLeads();
+    }
+
     // Fetch Leads from Backend
     async function fetchLeads() {
+      const apiBase = getApiBase();
+      const endpoint = (apiBase ? apiBase : '') + '/api/leads';
+      
       try {
-        const response = await fetch('/api/leads');
+        const response = await fetch(endpoint);
         if (response.ok) {
           const data = await response.json();
           allLeads = data.leads || [];
           renderDashboard();
+          hideApiWarning();
+        } else if (response.status === 405) {
+          showGhPagesNotice();
         } else {
-          // If running static or error, show alert
-          console.warn('Could not fetch from /api/leads, trying fallback port 3001');
           tryFallbackApi();
         }
       } catch (err) {
-        console.warn('Fetch error:', err);
+        console.warn('Fetch error at', endpoint, err);
         tryFallbackApi();
       }
     }
@@ -617,10 +640,23 @@
           const data = await res.json();
           allLeads = data.leads || [];
           renderDashboard();
+          hideApiWarning();
+          return;
         }
       } catch (e) {
-        console.error('Fallback API also unreachable:', e);
+        // Fallback failed
       }
+      showGhPagesNotice();
+    }
+
+    function showGhPagesNotice() {
+      const banner = document.getElementById('ghNoticeBanner');
+      if (banner) banner.style.display = 'block';
+    }
+
+    function hideApiWarning() {
+      const banner = document.getElementById('ghNoticeBanner');
+      if (banner) banner.style.display = 'none';
     }
 
     // Render KPIs & Table
@@ -759,12 +795,17 @@
         sel.addEventListener('change', async (e) => {
           const leadId = e.target.dataset.id;
           const newStatus = e.target.value;
+          const apiBase = getApiBase();
           try {
-            await fetch(`/api/leads/${leadId}`, {
+            const res = await fetch(`${apiBase}/api/leads/${leadId}`, {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ id: leadId, leadStatus: newStatus })
             });
+            if (res.status === 405) {
+              alert('Notice: GitHub Pages cannot process database updates directly. To manage leads online, deploy to Vercel (free) or run the backend server.');
+              return;
+            }
             // Update local state
             const target = allLeads.find(l => l._id === leadId);
             if (target) target.leadStatus = newStatus;
@@ -780,8 +821,13 @@
         btn.addEventListener('click', async (e) => {
           const leadId = btn.dataset.id;
           if (confirm('Are you sure you want to delete this lead document from MongoDB?')) {
+            const apiBase = getApiBase();
             try {
-              await fetch(`/api/leads/${leadId}?id=${leadId}`, { method: 'DELETE' });
+              const res = await fetch(`${apiBase}/api/leads/${leadId}?id=${leadId}`, { method: 'DELETE' });
+              if (res.status === 405) {
+                alert('Notice: GitHub Pages is static and blocks DELETE requests (405). To perform database operations online, deploy to Vercel (free) or connect your backend server.');
+                return;
+              }
               allLeads = allLeads.filter(l => l._id !== leadId);
               renderDashboard();
             } catch (err) {
