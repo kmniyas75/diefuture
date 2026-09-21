@@ -89,10 +89,12 @@ app.get('/api/leads', async (req, res) => {
   }
 });
 
-// Update lead status
-app.patch('/api/leads/:id', async (req, res) => {
+// Update lead status (supports /api/leads/:id or /api/leads)
+const handlePatchLead = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id || req.body.id || req.query.id;
+    if (!id) return res.status(400).json({ error: 'Lead id is required.' });
+
     const { leadStatus, adminNotes } = req.body;
     const collection = await getCollection();
     
@@ -114,12 +116,16 @@ app.patch('/api/leads/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Failed to update lead', details: error.message });
   }
-});
+};
+app.patch('/api/leads/:id', handlePatchLead);
+app.patch('/api/leads', handlePatchLead);
 
-// Delete lead
-app.delete('/api/leads/:id', async (req, res) => {
+// Delete lead (supports /api/leads/:id or /api/leads?id=...)
+const handleDeleteLead = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id || req.query.id;
+    if (!id) return res.status(400).json({ error: 'Lead id is required.' });
+
     const collection = await getCollection();
     const result = await collection.deleteOne({ _id: new ObjectId(id) });
     if (result.deletedCount === 0) {
@@ -129,7 +135,9 @@ app.delete('/api/leads/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete lead', details: error.message });
   }
-});
+};
+app.delete('/api/leads/:id', handleDeleteLead);
+app.delete('/api/leads', handleDeleteLead);
 
 app.listen(PORT, () => {
   console.log(`DieFuture API server running on http://localhost:${PORT}`);
