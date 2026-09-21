@@ -797,13 +797,13 @@
           const newStatus = e.target.value;
           const apiBase = getApiBase();
           try {
-            const res = await fetch(`${apiBase}/api/leads/${leadId}`, {
+            const res = await fetch(`${apiBase}/api/leads`, {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ id: leadId, leadStatus: newStatus })
             });
             if (res.status === 405) {
-              alert('Notice: GitHub Pages cannot process database updates directly. To manage leads online, deploy to Vercel (free) or run the backend server.');
+              alert('Notice: GitHub Pages cannot process database updates directly. To manage leads online, open on Vercel or run the backend server.');
               return;
             }
             // Update local state
@@ -823,9 +823,9 @@
           if (confirm('Are you sure you want to delete this lead document from MongoDB?')) {
             const apiBase = getApiBase();
             try {
-              const res = await fetch(`${apiBase}/api/leads/${leadId}?id=${leadId}`, { method: 'DELETE' });
+              const res = await fetch(`${apiBase}/api/leads?id=${leadId}`, { method: 'DELETE' });
               if (res.status === 405) {
-                alert('Notice: GitHub Pages is static and blocks DELETE requests (405). To perform database operations online, deploy to Vercel (free) or connect your backend server.');
+                alert('Notice: GitHub Pages is static and blocks DELETE requests (405). To perform database operations online, open on Vercel or connect your backend server.');
                 return;
               }
               allLeads = allLeads.filter(l => l._id !== leadId);
