@@ -69,9 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const cfOk = document.getElementById('cf-ok');
   const okRef = document.getElementById('okRef');
   const okWaBtn = document.getElementById('okWaBtn');
+  const submitBtn = document.getElementById('submitBtn');
 
   if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const name = document.getElementById('userName').value.trim();
@@ -80,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const city = document.getElementById('userCity').value;
       const moveIn = document.getElementById('userMoveIn').value;
       const budget = document.getElementById('userBudget').value;
+      const status = document.getElementById('userStatus')?.value || 'International Student';
+      const german = document.querySelector('select[name="german"]')?.value || 'Intermediate (B1–B2)';
       const roomType = document.querySelector('input[name="room_type"]:checked')?.value || 'WG Room';
       const pkg = document.querySelector('input[name="pkg"]:checked')?.value || 'guaranteed';
       const notes = document.getElementById('userNotes')?.value.trim() || '';
@@ -90,7 +93,47 @@ document.addEventListener('DOMContentLoaded', () => {
         vip: '€299 24*7 Response VIP'
       };
 
-      const refCode = 'DF-' + Math.floor(1000 + Math.random() * 9000);
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Saving to database...';
+      }
+
+      let refCode = 'DF-' + Math.floor(1000 + Math.random() * 9000);
+
+      try {
+        const response = await fetch('/api/submit-brief', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            email,
+            phone,
+            city,
+            moveIn,
+            budget,
+            status,
+            german,
+            roomType,
+            pkg,
+            notes
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.reference) {
+            refCode = data.reference;
+          }
+        }
+      } catch (err) {
+        console.warn('API submission failed, falling back to direct WhatsApp dispatch:', err);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Send brief <span>→</span>';
+        }
+      }
+
       okRef.textContent = refCode;
 
       // WhatsApp direct link
