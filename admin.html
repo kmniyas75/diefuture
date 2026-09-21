@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DieFuture Apartments — Admin Lead Portal</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Fonts: Geist, Geist Mono, Archivo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Archivo:wght@600;700;800;900&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="./style.css" />
+  <style>
+    /* Admin Portal Specific Styles */
+    .admin-body {
+      background: #F6F7FB;
+      min-height: 100vh;
+      color: #14151A;
+    }
+
+    .admin-header {
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--rule);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .admin-nav {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 16px var(--pad);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .admin-tag {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: var(--paper-2);
+      color: var(--ink-2);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .admin-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .db-status-pill {
+      font-family: var(--f-mono);
+      font-size: 11.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ECFDF5;
+      color: #065F46;
+      border: 1px solid #A7F3D0;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .db-dot {
+      width: 7px;
+      height: 7px;
+      background: #10B981;
+      border-radius: 50%;
+      animation: dbpulse 2s infinite;
+    }
+
+    @keyframes dbpulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Auth Gate Screen */
+    .auth-gate {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 80px 20px;
+    }
+
+    .auth-card {
+      background: #FFFFFF;
+      border: 1px solid var(--rule);
+      border-radius: 18px;
+      padding: 40px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 30px 70px -40px rgba(20, 42, 125, .25);
+      text-align: center;
+    }
+
+    .auth-icon {
+      font-size: 36px;
+      margin-bottom: 16px;
+    }
+
+    .auth-title {
+      font-family: var(--f-display);
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      margin-bottom: 8px;
+    }
+
+    .auth-sub {
+      font-size: 14px;
+      color: var(--ink-2);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Dashboard Shell */
+    .admin-main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 32px var(--pad) 64px;
+    }
+
+    /* KPI Metrics Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .kpi-card {
+      background: #FFFFFF;
+      border: 1px solid var(--rule);
+      border-radius: 14px;
+      padding: 22px 24px;
+      box-shadow: 0 4px 12px -4px rgba(20, 21, 26, 0.05);
+    }
+
+    .kpi-label {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 8px;
+    }
+
+    .kpi-num {
+      font-family: var(--f-display);
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -.03em;
+      color: var(--ink);
+    }
+
+    .kpi-num.electric {
+      color: var(--electric);
+    }
+
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--ink-3);
+      margin-top: 6px;
+    }
+
+    /* Control Bar */
+    .controls-bar {
+      background: #FFFFFF;
+      border: 1px solid var(--rule);
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .controls-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .search-input {
+      font-family: var(--f-sans);
+      font-size: 14px;
+      padding: 9px 14px;
+      border: 1px solid var(--rule-2);
+      border-radius: 8px;
+      min-width: 240px;
+      background: var(--paper);
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--electric);
+      background: #FFFFFF;
+    }
+
+    .filter-select {
+      font-family: var(--f-sans);
+      font-size: 13.5px;
+      padding: 9px 12px;
+      border: 1px solid var(--rule-2);
+      border-radius: 8px;
+      background: var(--paper);
+      outline: none;
+      color: var(--ink-2);
+    }
+
+    .controls-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Leads Table Container */
+    .leads-table-wrap {
+      background: #FFFFFF;
+      border: 1px solid var(--rule);
+      border-radius: 16px;
+      overflow-x: auto;
+      box-shadow: 0 8px 24px -10px rgba(20, 21, 26, 0.06);
+    }
+
+    .leads-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13.5px;
+    }
+
+    .leads-table th {
+      background: #FAFBFD;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--rule);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .leads-table td {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: middle;
+    }
+
+    .leads-table tr:hover td {
+      background: #F9FAFC;
+    }
+
+    .ref-badge {
+      font-family: var(--f-mono);
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--electric);
+      background: #EEF2FF;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .applicant-info strong {
+      display: block;
+      font-size: 14px;
+      color: var(--ink);
+    }
+
+    .applicant-info span {
+      font-size: 12px;
+      color: var(--ink-3);
+    }
+
+    .wa-btn-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #25D366;
+      color: #FFFFFF;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      margin-top: 4px;
+    }
+
+    .wa-btn-sm:hover {
+      background: #1EBE5D;
+    }
+
+    .pkg-pill {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      display: inline-block;
+    }
+
+    .pkg-pill.starter {
+      background: #F1F5F9;
+      color: #475569;
+    }
+
+    .pkg-pill.guaranteed {
+      background: #ECFDF5;
+      color: #065F46;
+      border: 1px solid #A7F3D0;
+    }
+
+    .pkg-pill.vip {
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FCD34D;
+    }
+
+    .status-select {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--rule-2);
+      background: #FFFFFF;
+      cursor: pointer;
+    }
+
+    .btn-action-del {
+      background: none;
+      border: none;
+      color: #EF4444;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .btn-action-del:hover {
+      background: #FEE2E2;
+    }
+
+    .empty-state {
+      padding: 64px 20px;
+      text-align: center;
+      color: var(--ink-3);
+    }
+
+    .empty-state h3 {
+      font-size: 18px;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    @media (max-width: 980px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .controls-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .controls-left {
+        flex-direction: column;
+      }
+      .search-input {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- ADMIN TOPBAR -->
+  <header class="admin-header">
+    <div class="admin-nav">
+      <div class="admin-brand">
+        <a href="index.html" style="display:flex; align-items:center; gap:10px;">
+          <img src="./assets/diefuture-logo.jpg" alt="Logo" style="width:28px; height:28px; border-radius:6px;" />
+          <span style="font-family:var(--f-display); font-weight:800; font-size:18px;">DieFuture</span>
+        </a>
+        <span class="admin-tag">ADMIN PORTAL</span>
+      </div>
+
+      <div class="admin-actions">
+        <div class="db-status-pill">
+          <span class="db-dot"></span>
+          <span>MongoDB Atlas: Connected</span>
+        </div>
+        <a href="index.html" class="btn-line" style="padding:7px 14px; font-size:13px;">View Website ↗</a>
+        <button id="logoutBtn" class="btn-line" style="padding:7px 14px; font-size:13px; display:none;">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- AUTHENTICATION GATE (Passcode protected) -->
+  <section class="auth-gate" id="authGateSection">
+    <div class="auth-card">
+      <div class="auth-icon">🔒</div>
+      <h2 class="auth-title">Admin Access Required</h2>
+      <p class="auth-sub">Enter the master administrative passcode to view and manage customer accommodation briefs stored in MongoDB.</p>
+      
+      <form class="auth-form" id="passcodeForm">
+        <input type="password" id="passcodeInput" placeholder="Enter Admin Passcode" required class="field" style="font-size:16px; text-align:center; padding:12px; border:1px solid var(--rule-2); border-radius:8px;" />
+        <button type="submit" class="btn-electric" style="justify-content:center; padding:12px;">Unlock Portal →</button>
+        <div id="authErr" style="color:#DC2626; font-size:12.5px; display:none;">Invalid passcode. (Default: diefuture2026)</div>
+        <div style="font-size:11.5px; color:var(--ink-3); margin-top:8px;">Default passcode: <code>diefuture2026</code></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- MAIN ADMIN DASHBOARD (Visible once unlocked) -->
+  <main class="admin-main" id="dashboardMain" style="display:none;">
+    
+    <!-- KPI STAT CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">TOTAL LEADS IN MONGODB</div>
+        <div class="kpi-num electric" id="kpiTotal">0</div>
+        <div class="kpi-sub">Lifetime brief submissions</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">NEW / ACTION REQUIRED</div>
+        <div class="kpi-num" id="kpiNew" style="color:#D97706;">0</div>
+        <div class="kpi-sub">Awaiting landlord outreach</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">GUARANTEED HUNTER (€199)</div>
+        <div class="kpi-num" id="kpiGuaranteed" style="color:#059669;">0</div>
+        <div class="kpi-sub">100% Refund guarantee tier</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">TOP TARGET CITY</div>
+        <div class="kpi-num" id="kpiTopCity" style="font-size:24px; padding-top:4px;">—</div>
+        <div class="kpi-sub">Highest search volume</div>
+      </div>
+    </div>
+
+    <!-- CONTROLS: SEARCH, FILTER, EXPORT -->
+    <div class="controls-bar">
+      <div class="controls-left">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by name, ref, email, city..." />
+        
+        <select id="filterStatus" class="filter-select">
+          <option value="all">All Statuses</option>
+          <option value="new">Status: New</option>
+          <option value="contacted">Status: Contacted</option>
+          <option value="viewing_scheduled">Status: Viewing Scheduled</option>
+          <option value="room_secured">Status: Room Secured</option>
+          <option value="refunded">Status: Refunded</option>
+        </select>
+
+        <select id="filterPkg" class="filter-select">
+          <option value="all">All Packages</option>
+          <option value="starter">€99 Starter</option>
+          <option value="guaranteed">€199 Guaranteed</option>
+          <option value="vip">€299 VIP Concierge</option>
+        </select>
+
+        <select id="filterCity" class="filter-select">
+          <option value="all">All German Cities</option>
+          <option value="Berlin">Berlin</option>
+          <option value="Munich">Munich</option>
+          <option value="Frankfurt">Frankfurt</option>
+          <option value="Hamburg">Hamburg</option>
+          <option value="Cologne">Cologne</option>
+          <option value="Aachen">Aachen</option>
+        </select>
+      </div>
+
+      <div class="controls-right">
+        <button id="refreshBtn" class="btn-line" style="padding:9px 16px; font-size:13px;">↻ Refresh</button>
+        <button id="exportCsvBtn" class="btn-electric" style="padding:9px 16px; font-size:13px;">Export CSV ↓</button>
+      </div>
+    </div>
+
+    <!-- LEADS TABLE -->
+    <div class="leads-table-wrap">
+      <table class="leads-table" id="leadsTable">
+        <thead>
+          <tr>
+            <th>REF CODE</th>
+            <th>APPLICANT</th>
+            <th>DESTINATION & DATES</th>
+            <th>BUDGET & TYPE</th>
+            <th>PACKAGE</th>
+            <th>LEAD STATUS</th>
+            <th>SUBMITTED</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="leadsTbody">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <div style="font-size:36px; margin-bottom:12px;">📂</div>
+        <h3>No Leads Found</h3>
+        <p>No accommodation briefs matching your current filter criteria.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const MASTER_PASSCODE = 'diefuture2026';
+    let allLeads = [];
+
+    // Elements
+    const authGateSection = document.getElementById('authGateSection');
+    const dashboardMain = document.getElementById('dashboardMain');
+    const passcodeForm = document.getElementById('passcodeForm');
+    const passcodeInput = document.getElementById('passcodeInput');
+    const authErr = document.getElementById('authErr');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const leadsTbody = document.getElementById('leadsTbody');
+    const emptyState = document.getElementById('emptyState');
+    const searchInput = document.getElementById('searchInput');
+    const filterStatus = document.getElementById('filterStatus');
+    const filterPkg = document.getElementById('filterPkg');
+    const filterCity = document.getElementById('filterCity');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+
+    // KPI Elements
+    const kpiTotal = document.getElementById('kpiTotal');
+    const kpiNew = document.getElementById('kpiNew');
+    const kpiGuaranteed = document.getElementById('kpiGuaranteed');
+    const kpiTopCity = document.getElementById('kpiTopCity');
+
+    // Check Auth State on Load
+    function checkAuth() {
+      if (sessionStorage.getItem('df_admin_auth') === 'true') {
+        authGateSection.style.display = 'none';
+        dashboardMain.style.display = 'block';
+        logoutBtn.style.display = 'inline-block';
+        fetchLeads();
+      } else {
+        authGateSection.style.display = 'flex';
+        dashboardMain.style.display = 'none';
+        logoutBtn.style.display = 'none';
+      }
+    }
+
+    passcodeForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (passcodeInput.value.trim() === MASTER_PASSCODE) {
+        sessionStorage.setItem('df_admin_auth', 'true');
+        authErr.style.display = 'none';
+        checkAuth();
+      } else {
+        authErr.style.display = 'block';
+      }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('df_admin_auth');
+      checkAuth();
+    });
+
+    // Fetch Leads from Backend
+    async function fetchLeads() {
+      try {
+        const response = await fetch('/api/leads');
+        if (response.ok) {
+          const data = await response.json();
+          allLeads = data.leads || [];
+          renderDashboard();
+        } else {
+          // If running static or error, show alert
+          console.warn('Could not fetch from /api/leads, trying fallback port 3001');
+          tryFallbackApi();
+        }
+      } catch (err) {
+        console.warn('Fetch error:', err);
+        tryFallbackApi();
+      }
+    }
+
+    async function tryFallbackApi() {
+      try {
+        const res = await fetch('http://localhost:3001/api/leads');
+        if (res.ok) {
+          const data = await res.json();
+          allLeads = data.leads || [];
+          renderDashboard();
+        }
+      } catch (e) {
+        console.error('Fallback API also unreachable:', e);
+      }
+    }
+
+    // Render KPIs & Table
+    function renderDashboard() {
+      // Calculate KPIs
+      kpiTotal.textContent = allLeads.length;
+      
+      const newCount = allLeads.filter(l => (l.leadStatus || 'new') === 'new').length;
+      kpiNew.textContent = newCount;
+
+      const guaranteedCount = allLeads.filter(l => l.package === 'guaranteed' || (l.package && l.package.includes('199'))).length;
+      kpiGuaranteed.textContent = guaranteedCount;
+
+      // Calculate Top City
+      const cityCounts = {};
+      allLeads.forEach(l => {
+        if (l.city && l.city !== 'Not specified') {
+          cityCounts[l.city] = (cityCounts[l.city] || 0) + 1;
+        }
+      });
+      let topCity = '—';
+      let maxCity = 0;
+      for (const [c, cnt] of Object.entries(cityCounts)) {
+        if (cnt > maxCity) { maxCity = cnt; topCity = c; }
+      }
+      kpiTopCity.textContent = topCity;
+
+      renderTable();
+    }
+
+    function renderTable() {
+      const q = searchInput.value.toLowerCase().trim();
+      const st = filterStatus.value;
+      const pkg = filterPkg.value;
+      const city = filterCity.value;
+
+      const filtered = allLeads.filter(l => {
+        // Query match
+        const matchesQ = !q || (
+          (l.name && l.name.toLowerCase().includes(q)) ||
+          (l.email && l.email.toLowerCase().includes(q)) ||
+          (l.phone && l.phone.toLowerCase().includes(q)) ||
+          (l.reference && l.reference.toLowerCase().includes(q)) ||
+          (l.city && l.city.toLowerCase().includes(q))
+        );
+
+        // Status match
+        const statusVal = l.leadStatus || 'new';
+        const matchesStatus = st === 'all' || statusVal === st;
+
+        // Package match
+        const pkgVal = l.package || 'guaranteed';
+        const matchesPkg = pkg === 'all' || pkgVal.includes(pkg);
+
+        // City match
+        const matchesCity = city === 'all' || (l.city && l.city.toLowerCase().includes(city.toLowerCase()));
+
+        return matchesQ && matchesStatus && matchesPkg && matchesCity;
+      });
+
+      leadsTbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      filtered.forEach(lead => {
+        const tr = document.createElement('tr');
+
+        // Date format
+        const dateStr = lead.createdAt ? new Date(lead.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—';
+
+        // Package Pill Class
+        let pkgClass = 'guaranteed';
+        let pkgLabel = '€199 Guaranteed';
+        if (lead.package === 'starter' || (lead.package && lead.package.includes('99'))) {
+          pkgClass = 'starter';
+          pkgLabel = '€99 Starter';
+        } else if (lead.package === 'vip' || (lead.package && lead.package.includes('299'))) {
+          pkgClass = 'vip';
+          pkgLabel = '€299 VIP 24/7';
+        }
+
+        // WhatsApp prefilled message
+        const waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Apartments regarding your accommodation brief (${lead.reference}) for ${lead.city}. We have found verified room matches!`);
+        const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
+
+        tr.innerHTML = `
+          <td>
+            <span class="ref-badge">${lead.reference || 'DF-????'}</span>
+          </td>
+          <td>
+            <div class="applicant-info">
+              <strong>${lead.name || 'Anonymous'}</strong>
+              <span>${lead.email || '—'}</span>
+              <span>${lead.phone || '—'}</span>
+              ${cleanPhone ? `<a href="https://wa.me/${cleanPhone}?text=${waMsg}" target="_blank" class="wa-btn-sm">💬 WhatsApp Client</a>` : ''}
+            </div>
+          </td>
+          <td>
+            <strong>${lead.city || 'Germany'}</strong><br>
+            <span style="font-size:12px; color:var(--ink-3);">Move-in: ${lead.moveInDate || 'Flexible'}</span>
+          </td>
+          <td>
+            <strong>${lead.budget || '€600–800'}</strong><br>
+            <span style="font-size:12px; color:var(--ink-3);">${lead.roomType || 'WG Room'}</span>
+          </td>
+          <td>
+            <span class="pkg-pill ${pkgClass}">${pkgLabel}</span>
+          </td>
+          <td>
+            <select class="status-select" data-id="${lead._id}">
+              <option value="new" ${(lead.leadStatus || 'new') === 'new' ? 'selected' : ''}>🟡 New</option>
+              <option value="contacted" ${lead.leadStatus === 'contacted' ? 'selected' : ''}>🔵 Contacted</option>
+              <option value="viewing_scheduled" ${lead.leadStatus === 'viewing_scheduled' ? 'selected' : ''}>🟣 Viewing Booked</option>
+              <option value="room_secured" ${lead.leadStatus === 'room_secured' ? 'selected' : ''}>🟢 Room Secured</option>
+              <option value="refunded" ${lead.leadStatus === 'refunded' ? 'selected' : ''}>⚪ Refunded</option>
+            </select>
+          </td>
+          <td style="font-size:12px; color:var(--ink-3); white-space:nowrap;">
+            ${dateStr}
+          </td>
+          <td>
+            <button class="btn-action-del" data-id="${lead._id}" title="Delete lead">🗑️ Delete</button>
+          </td>
+        `;
+
+        leadsTbody.appendChild(tr);
+      });
+
+      // Attach Status Change Listeners
+      document.querySelectorAll('.status-select').forEach(sel => {
+        sel.addEventListener('change', async (e) => {
+          const leadId = e.target.dataset.id;
+          const newStatus = e.target.value;
+          try {
+            await fetch(`/api/leads/${leadId}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: leadId, leadStatus: newStatus })
+            });
+            // Update local state
+            const target = allLeads.find(l => l._id === leadId);
+            if (target) target.leadStatus = newStatus;
+            renderDashboard();
+          } catch (err) {
+            console.error('Update status error:', err);
+          }
+        });
+      });
+
+      // Attach Delete Listeners
+      document.querySelectorAll('.btn-action-del').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const leadId = btn.dataset.id;
+          if (confirm('Are you sure you want to delete this lead document from MongoDB?')) {
+            try {
+              await fetch(`/api/leads/${leadId}?id=${leadId}`, { method: 'DELETE' });
+              allLeads = allLeads.filter(l => l._id !== leadId);
+              renderDashboard();
+            } catch (err) {
+              console.error('Delete error:', err);
+            }
+          }
+        });
+      });
+    }
+
+    // Filter Listeners
+    searchInput.addEventListener('input', renderTable);
+    filterStatus.addEventListener('change', renderTable);
+    filterPkg.addEventListener('change', renderTable);
+    filterCity.addEventListener('change', renderTable);
+    refreshBtn.addEventListener('click', fetchLeads);
+
+    // Export to CSV
+    exportCsvBtn.addEventListener('click', () => {
+      if (allLeads.length === 0) {
+        alert('No leads available to export.');
+        return;
+      }
+
+      const headers = ['Reference', 'Name', 'Email', 'Phone', 'City', 'MoveInDate', 'Budget', 'RoomType', 'Package', 'Status', 'CreatedAt', 'Notes'];
+      const rows = allLeads.map(l => [
+        l.reference || '',
+        `"${(l.name || '').replace(/"/g, '""')}"`,
+        `"${(l.email || '').replace(/"/g, '""')}"`,
+        `"${(l.phone || '').replace(/"/g, '""')}"`,
+        `"${(l.city || '').replace(/"/g, '""')}"`,
+        l.moveInDate || '',
+        `"${l.budget || ''}"`,
+        `"${l.roomType || ''}"`,
+        `"${l.package || ''}"`,
+        l.leadStatus || 'new',
+        l.createdAt || '',
+        `"${(l.notes || '').replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `diefuture_leads_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // Initialize
+    checkAuth();
+  </script>
+</body>
+</html>

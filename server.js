@@ -76,14 +76,58 @@ app.post('/api/submit-brief', async (req, res) => {
   }
 });
 
-// View all leads endpoint (protected with simple key or read-only)
+import { ObjectId } from 'mongodb';
+
+// View all leads endpoint
 app.get('/api/leads', async (req, res) => {
   try {
     const collection = await getCollection();
-    const leads = await collection.find({}).sort({ createdAt: -1 }).limit(50).toArray();
+    const leads = await collection.find({}).sort({ createdAt: -1 }).limit(200).toArray();
     res.json({ count: leads.length, leads });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch leads', details: error.message });
+  }
+});
+
+// Update lead status
+app.patch('/api/leads/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { leadStatus, adminNotes } = req.body;
+    const collection = await getCollection();
+    
+    const updateFields = {};
+    if (leadStatus) updateFields.leadStatus = leadStatus;
+    if (adminNotes !== undefined) updateFields.adminNotes = adminNotes;
+    updateFields.updatedAt = new Date();
+
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updateFields }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: 'Lead not found' });
+    }
+
+    res.json({ success: true, message: 'Lead updated successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update lead', details: error.message });
+  }
+});
+
+// Delete lead
+app.delete('/api/leads/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const collection = await getCollection();
+    const result = await collection.deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Lead not found' });
+    }
+    res.json({ success: true, message: 'Lead deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete lead', details: error.message });
   }
 });
 
