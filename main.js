@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const text = encodeURIComponent(
         `Hello DieFuture Team,\n\nI just submitted my room search brief:\n- Reference: ${refCode}\n- Name: ${name}\n- City: ${city}, Germany\n- Target Move-in: ${moveIn}\n- Type: ${roomType}\n- Budget: ${budget}\n- Package: ${pkgTitles[pkg] || pkg}\n${notes ? '- Notes: ' + notes : ''}\n\nPlease confirm receipt and let me know next steps!`
       );
-      okWaBtn.href = `https://wa.me/4915123456789?text=${text}`;
+      okWaBtn.href = `https://wa.me/919567941647?text=${text}`;
 
       cfOk.hidden = false;
       cfOk.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
