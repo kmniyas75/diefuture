@@ -988,29 +988,11 @@
   <!-- CLIENT-SIDE CONTROLLER & RAZORPAY INTEGRATION SCRIPT -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Current Room State
-      let currentRoom = {
-        roomId: '1004',
-        title: 'Stylish and high-quality furnished WG room in Munich Thalkirchen (Room 4)',
-        city: 'München',
-        address: 'Gabriele-Münter-Straße 11, 81477 München-Thalkirchen, Bavaria, Germany',
-        rentWarmEUR: 775,
-        depositEUR: 1500,
-        feeINR: 12999,
-        roomSizeM2: 16,
-        roomType: 'WG Room (Single Private)',
-        imageUrl: 'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg',
-        images: [
-          'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg',
-          'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80',
-          'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
-          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80'
-        ],
-        transit: '6 min walk to U3 Thalkirchen (12 min to TUM / LMU / Hbf)'
-      };
+      // Current Room State (populated from database)
+      let currentRoom = null;
 
       const urlParams = new URLSearchParams(window.location.search);
-      const roomIdParam = urlParams.get('id') || '1004';
+      const roomIdParam = urlParams.get('id');
 
       // Elements
       const leadIdBadge = document.getElementById('leadIdBadge');
@@ -1131,8 +1113,30 @@
         }
       });
 
+      function showRoomNotFound(title, msg) {
+        const heroWrap = document.querySelector('.room-hero-section .wrap');
+        if (heroWrap) {
+          heroWrap.innerHTML = `
+            <div style="background:var(--paper-2); border:1px dashed var(--rule-2); border-radius:14px; padding:60px 24px; text-align:center; max-width:640px; margin:40px auto;">
+              <div style="font-size:42px; margin-bottom:14px;">🔒</div>
+              <h2 style="font-size:22px; font-weight:800; color:var(--ink); margin:0 0 10px;">${title}</h2>
+              <p style="font-size:14.5px; color:var(--ink-2); line-height:1.6; margin:0 0 24px;">${msg}</p>
+              <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+                <a href="index.html#brief" class="btn-electric" style="padding:11px 22px; font-size:13px; text-decoration:none;">Submit Room Brief →</a>
+                <a href="https://wa.me/919567941647" target="_blank" rel="noopener" class="btn-line" style="padding:11px 22px; font-size:13px; text-decoration:none;">Chat on WhatsApp →</a>
+              </div>
+            </div>
+          `;
+        }
+      }
+
       // Fetch dynamic room data
       async function loadRoomDetails() {
+        if (!roomIdParam) {
+          showRoomNotFound('Private Room Allocation Link Required', 'Please open a valid private room allocation link shared by your DieFuture advisor, or submit an accommodation brief.');
+          return;
+        }
+
         const apiBase = getApiBase();
         const endpoint = (apiBase ? apiBase : '') + `/api/rooms/${encodeURIComponent(roomIdParam)}`;
         
@@ -1141,7 +1145,7 @@
           if (res.ok) {
             const data = await res.json();
             if (data.room) {
-              currentRoom = { ...currentRoom, ...data.room };
+              currentRoom = data.room;
               applyRoomData();
               return;
             }
@@ -1155,14 +1159,14 @@
           if (res.ok) {
             const data = await res.json();
             if (data.room) {
-              currentRoom = { ...currentRoom, ...data.room };
+              currentRoom = data.room;
               applyRoomData();
               return;
             }
           }
         } catch (e) {}
 
-        applyRoomData();
+        showRoomNotFound('Room Lead Not Found or Allocation Expired', `The requested room lead DF-ROOM-${roomIdParam} is not available in the database. Please submit a room search brief.`);
       }
 
       function applyRoomData() {

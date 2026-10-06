@@ -44,113 +44,6 @@ async function getRoomsCollection() {
   return cachedClient.db(DB_NAME).collection(ROOMS_COLLECTION);
 }
 
-// Initial seed rooms data if database has 0 rooms
-const DEFAULT_ROOMS = [
-  {
-    roomId: '1004',
-    title: 'Stylish and high-quality furnished WG room in Munich Thalkirchen (Room 4)',
-    city: 'München',
-    address: 'Gabriele-Münter-Straße 11, 81477 München-Thalkirchen, Bavaria',
-    rentWarmEUR: 775,
-    depositEUR: 1500,
-    feeINR: 12999,
-    roomSizeM2: 16,
-    roomType: 'WG Room (Single Private)',
-    imageUrl: 'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg',
-    images: [
-      'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg',
-      'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80'
-    ],
-    stayforallUrl: 'https://stayforall.com/rooms/1004',
-    anmeldung: true,
-    transit: '6 min walk to U3 Thalkirchen (12 min to TUM / LMU / Hbf)',
-    status: 'available',
-    featured: true,
-    description: 'Fully furnished private bedroom with double bed, study desk, ergonomic chair, sunny garden-view balcony, modern kitchen with washing machine, and 250 Mbps fiber WiFi.',
-    createdAt: new Date()
-  },
-  {
-    roomId: '1008',
-    title: 'Bright Studio Apartment in Berlin Prenzlauer Berg',
-    city: 'Berlin',
-    address: 'Kollwitzstraße 42, 10405 Berlin-Prenzlauer Berg',
-    rentWarmEUR: 820,
-    depositEUR: 1640,
-    feeINR: 14999,
-    roomSizeM2: 24,
-    roomType: 'Private Studio Apartment',
-    imageUrl: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80',
-    images: [
-      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80'
-    ],
-    stayforallUrl: '',
-    anmeldung: true,
-    transit: '4 min walk to U2 Senefelderplatz (8 min to Alexanderplatz)',
-    status: 'available',
-    featured: true,
-    description: 'Self-contained 1-room apartment with private kitchenette, modern walk-in shower, high ceilings, large windows, and official city registration assistance.',
-    createdAt: new Date()
-  },
-  {
-    roomId: '1012',
-    title: 'Modern Furnished WG Room in Frankfurt Bockenheim',
-    city: 'Frankfurt',
-    address: 'Leipziger Straße 78, 60487 Frankfurt am Main',
-    rentWarmEUR: 695,
-    depositEUR: 1400,
-    feeINR: 11999,
-    roomSizeM2: 15,
-    roomType: 'WG Room (Single Private)',
-    imageUrl: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
-    images: [
-      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80'
-    ],
-    stayforallUrl: '',
-    anmeldung: true,
-    transit: '3 min walk to U6/U7 Leipziger Straße (10 min to Goethe Uni)',
-    status: 'available',
-    featured: true,
-    description: 'Charming WG flat in the heart of student-friendly Bockenheim. Modern furnishings, quiet courtyard view, dishwasher, washer-dryer, and easy tram access.',
-    createdAt: new Date()
-  }
-];
-
-async function ensureSeedRooms() {
-  try {
-    const col = await getRoomsCollection();
-    const count = await col.countDocuments();
-    if (count === 0) {
-      await col.insertMany(DEFAULT_ROOMS);
-      console.log(`[MongoDB] Initialized default rooms collection with ${DEFAULT_ROOMS.length} verified rooms.`);
-    } else {
-      // Sync default rooms images and ensure no landlordContact exists in any document
-      for (const seed of DEFAULT_ROOMS) {
-        await col.updateOne(
-          { roomId: seed.roomId },
-          { 
-            $set: { 
-              images: seed.images, 
-              imageUrl: seed.images[0] 
-            },
-            $unset: { landlordContact: "" }
-          }
-        );
-      }
-      // Remove any lingering landlordContact field across all room documents
-      await col.updateMany({}, { $unset: { landlordContact: "" } });
-      console.log('[MongoDB] Rooms synchronized with multiple images and landlordContact purged.');
-    }
-  } catch (err) {
-    console.warn('[MongoDB] Room seed notice:', err.message);
-  }
-}
-
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -398,12 +291,6 @@ app.get('/api/rooms', async (req, res) => {
     const col = await getRoomsCollection();
     let rooms = await col.find(filter).sort({ createdAt: -1 }).toArray();
 
-    // If empty, seed default rooms
-    if (rooms.length === 0) {
-      await ensureSeedRooms();
-      rooms = await col.find(filter).sort({ createdAt: -1 }).toArray();
-    }
-
     rooms = rooms.map(r => {
       const copy = { ...r };
       delete copy.landlordContact;
@@ -427,12 +314,7 @@ app.get('/api/rooms/:id', async (req, res) => {
       query = { $or: [{ roomId: id }, { _id: new ObjectId(id) }] };
     }
 
-    let room = await col.findOne(query);
-
-    // Fallback search in default rooms
-    if (!room) {
-      room = DEFAULT_ROOMS.find(r => r.roomId === id);
-    }
+    const room = await col.findOne(query);
 
     if (!room) {
       return res.status(404).json({ error: 'Room not found' });
@@ -677,7 +559,6 @@ app.post('/api/rooms/fetch-stayforall', async (req, res) => {
   }
 });
 
-app.listen(PORT, async () => {
+app.listen(PORT, () => {
   console.log(`DieFuture API server running on http://localhost:${PORT}`);
-  await ensureSeedRooms();
 });

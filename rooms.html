@@ -442,61 +442,8 @@
           }
         } catch (e) {}
 
-        // Fallback static rooms if backend is offline
-        allRooms = [
-          {
-            roomId: '1004',
-            title: 'Stylish and high-quality furnished WG room in Munich Thalkirchen (Room 4)',
-            city: 'München',
-            address: 'Gabriele-Münter-Straße 11, 81477 München',
-            rentWarmEUR: 775,
-            depositEUR: 1500,
-            feeINR: 12999,
-            imageUrl: 'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg',
-            images: [
-              'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg',
-              'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80',
-              'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
-              'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80'
-            ],
-            status: 'available',
-            anmeldung: true
-          },
-          {
-            roomId: '1008',
-            title: 'Bright Studio Apartment in Berlin Prenzlauer Berg',
-            city: 'Berlin',
-            address: 'Kollwitzstraße 42, 10405 Berlin',
-            rentWarmEUR: 820,
-            depositEUR: 1640,
-            feeINR: 14999,
-            imageUrl: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80',
-            images: [
-              'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80',
-              'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
-              'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80'
-            ],
-            status: 'available',
-            anmeldung: true
-          },
-          {
-            roomId: '1012',
-            title: 'Modern Furnished WG Room in Frankfurt Bockenheim',
-            city: 'Frankfurt',
-            address: 'Leipziger Straße 78, 60487 Frankfurt',
-            rentWarmEUR: 695,
-            depositEUR: 1400,
-            feeINR: 11999,
-            imageUrl: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
-            images: [
-              'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
-              'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80',
-              'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80'
-            ],
-            status: 'available',
-            anmeldung: true
-          }
-        ];
+        // No fallback mock rooms — show empty state if nothing added in admin
+        allRooms = [];
         renderRooms();
       }
 
@@ -509,7 +456,16 @@
         roomCountLabel.textContent = filtered.length;
 
         if (filtered.length === 0) {
-          roomsContainer.innerHTML = '<div class="empty-rooms-state"><h3>No rooms found</h3><p>There are currently no rooms matching this city filter. Check back soon or submit a search brief.</p></div>';
+          roomsContainer.innerHTML = `
+            <div class="empty-rooms-state" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; background: var(--paper-2); border: 1px dashed var(--rule-2); border-radius: 12px; margin: 20px 0;">
+              <div style="font-size: 38px; margin-bottom: 12px;">🏠</div>
+              <h3 style="font-size: 18px; font-weight: 700; color: var(--ink); margin: 0 0 8px;">No Verified Rooms Available Right Now</h3>
+              <p style="font-size: 14px; color: var(--ink-2); max-width: 480px; margin: 0 auto 20px; line-height: 1.5;">
+                There are currently no active room allocations published. Submit your accommodation brief and our relocation team will find matching rooms for your move-in date.
+              </p>
+              <a href="index.html#brief" class="btn-electric" style="display: inline-block; padding: 11px 24px; font-size: 13px; text-decoration: none;">Submit Accommodation Brief →</a>
+            </div>
+          `;
           return;
         }
 
