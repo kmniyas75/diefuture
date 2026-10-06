@@ -137,6 +137,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
       okRef.textContent = refCode;
 
+      // Price mapping
+      const pkgPrices = {
+        starter: 8999,
+        guaranteed: 17999,
+        vip: 26999,
+        lead: 12999
+      };
+      const chosenPrice = pkgPrices[pkg] || 17999;
+      const okPkgPrice = document.getElementById('okPkgPrice');
+      if (okPkgPrice) {
+        okPkgPrice.textContent = '₹' + chosenPrice.toLocaleString('en-IN');
+      }
+
+      // Razorpay Checkout Handler
+      const payBriefPackageBtn = document.getElementById('payBriefPackageBtn');
+      if (payBriefPackageBtn) {
+        payBriefPackageBtn.onclick = () => {
+          const razorpayKey = "rzp_live_Sv6jDRCvxBn5qA";
+          if (typeof Razorpay === 'undefined') {
+            alert('Razorpay gateway is initializing, please try again or message our desk on WhatsApp.');
+            return;
+          }
+          const options = {
+            key: razorpayKey,
+            amount: chosenPrice * 100,
+            currency: 'INR',
+            name: 'Stayforall Plus Services Pvt Ltd',
+            description: `${pkgTitles[pkg] || 'Accommodation Package'} · Ref ${refCode}`,
+            image: './assets/diefuture-logo.jpg',
+            prefill: {
+              name: name,
+              email: email,
+              contact: phone
+            },
+            notes: {
+              reference: refCode,
+              city: city,
+              package: pkg
+            },
+            theme: {
+              color: '#0055FF'
+            },
+            handler: function(response) {
+              alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}. Your accommodation search has been activated.`);
+              const successText = encodeURIComponent(
+                `Hello DieFuture Relocation Desk,\n\nI have successfully paid and activated my package!\n- Reference: ${refCode}\n- Razorpay Payment ID: ${response.razorpay_payment_id}\n- Package: ${pkgTitles[pkg] || pkg}\n- Amount: ₹${chosenPrice.toLocaleString('en-IN')}\n\nPlease confirm activation!`
+              );
+              window.open(`https://wa.me/919567941647?text=${successText}`, '_blank');
+            }
+          };
+          const rzp = new Razorpay(options);
+          rzp.open();
+        };
+      }
+
       // WhatsApp direct link
       const text = encodeURIComponent(
         `Hello DieFuture Team,\n\nI just submitted my room search brief:\n- Reference: ${refCode}\n- Name: ${name}\n- City: ${city}, Germany\n- Target Move-in: ${moveIn}\n- Type: ${roomType}\n- Budget: ${budget}\n- Package: ${pkgTitles[pkg] || pkg}\n${notes ? '- Notes: ' + notes : ''}\n\nPlease confirm receipt and let me know next steps!`

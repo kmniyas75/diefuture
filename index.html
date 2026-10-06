@@ -12,6 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Archivo:wght@600;700;800;900&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="./style.css" />
+  <!-- Razorpay Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 
@@ -390,13 +392,21 @@
           
           <p class="form-note">Your information is used only to prepare applications across 10+ portals. Backed by our 100% refund policy. Instant 24/7 confirmation via WhatsApp (+91 95679 41647).</p>
 
-          <div id="cf-ok" hidden style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 20px;margin-top:16px;font-size:14px;color:#166534;font-weight:500;">
-            ✓ Brief submitted successfully! Reference code: <strong id="okRef">DF-2026-981</strong>.<br>
-            Our team will connect with you on WhatsApp within minutes.
-            <div style="margin-top:10px;">
-              <a href="#" id="okWaBtn" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;color:#166534;font-weight:700;text-decoration:underline;">
-                Open WhatsApp direct chat →
+          <div id="cf-ok" hidden style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:20px 24px;margin-top:20px;font-size:14px;color:#166534;font-weight:500;">
+            <div style="font-size:16px; font-weight:700; color:#14532d; margin-bottom:6px;">✓ Brief Submitted Successfully!</div>
+            <div>Reference Tracking Code: <strong id="okRef" style="font-family:var(--f-mono); font-size:15px; background:#dcfce7; padding:2px 8px; border-radius:4px;">DF-2026-981</strong></div>
+            <p style="margin:8px 0 14px; color:#166534; line-height:1.5;">Our German housing team has received your brief. You can activate your selected package immediately via Razorpay, or connect with our concierge desk on WhatsApp.</p>
+            
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button type="button" id="payBriefPackageBtn" class="btn-electric" style="width:100%; justify-content:center; padding:13px 20px; font-size:14px; font-weight:700; background:var(--electric); color:#fff; border:none; border-radius:8px; cursor:pointer;">
+                Pay <span id="okPkgPrice">₹17,999</span> & Activate Package via Razorpay →
+              </button>
+              <a href="#" id="okWaBtn" target="_blank" rel="noopener" class="btn-line" style="display:flex; justify-content:center; align-items:center; gap:8px; padding:11px 20px; font-size:13px; font-weight:600; text-decoration:none; border:1px solid #86efac; border-radius:8px; background:#ffffff; color:#166534;">
+                💬 Open WhatsApp Direct Chat (+91 95679 41647) →
               </a>
+            </div>
+            <div style="margin-top:12px; font-size:11.5px; color:#15803d; text-align:center;">
+              🔒 256-bit Encrypted Checkout via Razorpay · 100% Money-Back Guarantee
             </div>
           </div>
 
@@ -524,13 +534,13 @@
         </div>
 
         <div class="footer-col">
-          <h4>Legal & Contact</h4>
+          <h4>Legal & Compliance</h4>
           <ul class="footer-links">
             <li><a href="terms.html">Terms & Conditions</a></li>
             <li><a href="refund.html">Refund & 100% Policy</a></li>
             <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="shipping-policy.html">Shipping & Delivery Policy</a></li>
             <li><a href="contact.html">Contact & Grievance</a></li>
-            <li><a href="admin.html">Admin Portal</a></li>
           </ul>
         </div>
       </div>

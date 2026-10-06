@@ -14,6 +14,7 @@ export default defineConfig({
         contact: resolve(__dirname, 'contact.html'),
         room: resolve(__dirname, 'room.html'),
         rooms: resolve(__dirname, 'rooms.html'),
+        shipping: resolve(__dirname, 'shipping-policy.html'),
       },
     },
   },
