@@ -86,6 +86,51 @@ export default async function handler(req, res) {
 
     const result = await db.collection(LEADS_COLLECTION).insertOne(reservationDoc);
 
+    // Send instant alert email to DieFuture via Resend
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (resendApiKey) {
+      try {
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${resendApiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            from: 'DieFuture Apartments <onboarding@resend.dev>',
+            to: ['diefutureapartments@gmail.com'],
+            subject: `💰 Room Lead Reserved: ${bookingRef} — ${seekerName} (₹${amount || 12999})`,
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width:600px; padding:24px; border:1px solid #10b981; border-radius:12px; background:#ffffff;">
+                <div style="border-bottom:2px solid #10b981; padding-bottom:12px; margin-bottom:16px;">
+                  <h2 style="color:#059669; margin:0; font-size:20px;">🎉 Room Lead Reservation Paid</h2>
+                  <p style="color:#64748B; margin:4px 0 0; font-size:13px;">Razorpay Payment ID: <strong>${paymentId || 'N/A'}</strong></p>
+                </div>
+
+                <table style="width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;">
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B; width:35%;">Booking Reference:</td><td style="font-weight:bold; font-family:monospace; font-size:16px; color:#059669;">${bookingRef}</td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Room ID:</td><td style="font-weight:bold;">${roomId || '1004'}</td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Property Title:</td><td style="font-weight:600;">${roomTitle}</td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Amount Collected:</td><td style="font-weight:bold; font-size:16px; color:#0055FF;">₹${amount ? Number(amount).toLocaleString('en-IN') : '12,999'}</td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Seeker Name:</td><td style="font-weight:bold; color:#1e293b;">${seekerName}</td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Email Address:</td><td><a href="mailto:${seekerEmail}" style="color:#0055FF;">${seekerEmail}</a></td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Phone / WhatsApp:</td><td><strong><a href="https://wa.me/${seekerPhone.replace(/[^0-9]/g, '')}" style="color:#16a34a;">${seekerPhone}</a></strong></td></tr>
+                  <tr><td style="padding:8px 0; color:#64748B;">Target Move-in:</td><td>${targetMoveIn || 'Immediate / Flexible'}</td></tr>
+                </table>
+
+                <div style="margin-top:24px; padding-top:16px; border-top:1px solid #e2e8f0; display:flex; gap:10px;">
+                  <a href="https://wa.me/${seekerPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hi ' + seekerName + ', this is DieFuture Concierge Desk confirming your reservation ' + bookingRef + ' for ' + roomTitle + '.')}" style="background:#25D366; color:#ffffff; padding:12px 20px; text-decoration:none; border-radius:6px; font-weight:bold; font-size:13px; display:inline-block;">💬 Chat on WhatsApp →</a>
+                  <a href="https://www.diefuture.com/admin.html" style="background:#0055FF; color:#ffffff; padding:12px 20px; text-decoration:none; border-radius:6px; font-weight:bold; font-size:13px; display:inline-block; margin-left:8px;">Open Admin Dashboard →</a>
+                </div>
+              </div>
+            `
+          })
+        });
+      } catch (mailErr) {
+        console.warn('Resend reservation email error:', mailErr.message);
+      }
+    }
+
     return res.status(201).json({
       success: true,
       reference: bookingRef,

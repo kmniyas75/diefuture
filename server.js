@@ -189,6 +189,44 @@ app.post('/api/submit-brief', async (req, res) => {
 
     console.log(`[MongoDB] New lead saved: ${refCode} (${name} - ${city}) [ID: ${result.insertedId}]`);
 
+    // Send instant alert email via Resend
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (resendApiKey) {
+      try {
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${resendApiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            from: 'DieFuture Apartments <onboarding@resend.dev>',
+            to: ['diefutureapartments@gmail.com'],
+            subject: `🔔 New Accommodation Brief: ${refCode} — ${name} (${city})`,
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width:600px; padding:24px; border:1px solid #e2e8f0; border-radius:12px; background:#ffffff;">
+                <div style="border-bottom:2px solid #0055FF; padding-bottom:12px; margin-bottom:16px;">
+                  <h2 style="color:#0055FF; margin:0; font-size:20px;">🏠 New Accommodation Brief Submitted</h2>
+                  <p style="color:#64748B; margin:4px 0 0; font-size:13px;">Received via <strong>diefuture.com</strong></p>
+                </div>
+                <table style="width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;">
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B; width:35%;">Tracking Ref:</td><td style="font-weight:bold; font-family:monospace; font-size:16px; color:#0055FF;">${refCode}</td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Student Name:</td><td style="font-weight:bold;">${name}</td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Email Address:</td><td><a href="mailto:${email}">${email}</a></td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Phone:</td><td><strong><a href="https://wa.me/${phone.replace(/[^0-9]/g, '')}">${phone}</a></strong></td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Target City:</td><td style="font-weight:600;">${city}</td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Package:</td><td style="font-weight:bold; color:#0055FF;">${pkg}</td></tr>
+                  <tr><td style="padding:8px 0; color:#64748B;">Notes:</td><td>${notes || 'None'}</td></tr>
+                </table>
+              </div>
+            `
+          })
+        });
+      } catch (e) {
+        console.warn('Resend mail error:', e.message);
+      }
+    }
+
     return res.status(201).json({
       success: true,
       reference: refCode,
