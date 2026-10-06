@@ -13,6 +13,7 @@ export default defineConfig({
         privacy: resolve(__dirname, 'privacy.html'),
         contact: resolve(__dirname, 'contact.html'),
         room: resolve(__dirname, 'room.html'),
+        rooms: resolve(__dirname, 'rooms.html'),
       },
     },
   },

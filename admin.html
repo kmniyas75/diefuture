@@ -388,6 +388,131 @@
       margin-bottom: 6px;
     }
 
+    /* Admin Tabs */
+    .admin-tab-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 12px;
+    }
+    .admin-tab-btn {
+      font-family: var(--f-sans);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--ink-2);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .admin-tab-btn:hover {
+      background: var(--paper-2);
+      color: var(--ink);
+    }
+    .admin-tab-btn.active {
+      background: var(--royal);
+      color: #FFFFFF;
+    }
+
+    /* Importer Card */
+    .importer-card {
+      background: #FFFFFF;
+      border: 1px solid var(--rule);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 12px -4px rgba(20, 21, 26, 0.05);
+    }
+    .importer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .importer-title {
+      font-family: var(--f-display);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+    .importer-sub {
+      font-size: 13.5px;
+      color: var(--ink-2);
+      max-width: 740px;
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+    .url-fetch-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .url-fetch-input {
+      flex: 1;
+      min-width: 320px;
+      padding: 12px 16px;
+      border: 2px solid var(--rule-2);
+      border-radius: 8px;
+      font-size: 14px;
+      background: var(--paper);
+    }
+    .url-fetch-input:focus {
+      border-color: var(--electric);
+      background: #FFFFFF;
+      outline: none;
+    }
+    .room-form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 900px) {
+      .room-form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .room-input-group label {
+      display: block;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--ink-2);
+      margin-bottom: 6px;
+    }
+    .room-input-group input,
+    .room-input-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--rule-2);
+      border-radius: 6px;
+      font-size: 13.5px;
+      background: var(--paper);
+    }
+    .room-input-group input:focus,
+    .room-input-group select:focus {
+      border-color: var(--electric);
+      background: #FFFFFF;
+      outline: none;
+    }
+    .input-highlight {
+      border: 2px solid var(--electric) !important;
+      background: #EFF6FF !important;
+      font-weight: 700 !important;
+      color: var(--royal) !important;
+    }
+
     @media (max-width: 980px) {
       .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -448,95 +573,274 @@
   <!-- MAIN ADMIN DASHBOARD (Visible once unlocked) -->
   <main class="admin-main" id="dashboardMain" style="display:none;">
     
-    <!-- KPI STAT CARDS -->
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">TOTAL LEADS IN MONGODB</div>
-        <div class="kpi-num electric" id="kpiTotal">0</div>
-        <div class="kpi-sub">Lifetime brief submissions</div>
+    <!-- ADMIN TABS -->
+    <div class="admin-tab-bar">
+      <button class="admin-tab-btn active" id="tabBtnLeads" type="button">
+        📋 Customer Briefs & Inquiries
+      </button>
+      <button class="admin-tab-btn" id="tabBtnRooms" type="button">
+        🏠 Verified Rooms & StayforAll Importer
+      </button>
+    </div>
+
+    <!-- PANEL 1: CLIENT LEADS -->
+    <div id="panelLeads">
+      <!-- KPI STAT CARDS -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">TOTAL LEADS IN MONGODB</div>
+          <div class="kpi-num electric" id="kpiTotal">0</div>
+          <div class="kpi-sub">Lifetime brief submissions</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">NEW / ACTION REQUIRED</div>
+          <div class="kpi-num" id="kpiNew" style="color:#D97706;">0</div>
+          <div class="kpi-sub">Awaiting landlord outreach</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">GUARANTEED HUNTER (₹17,999)</div>
+          <div class="kpi-num" id="kpiGuaranteed" style="color:#059669;">0</div>
+          <div class="kpi-sub">100% Refund guarantee tier</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">TOP TARGET CITY</div>
+          <div class="kpi-num" id="kpiTopCity" style="font-size:24px; padding-top:4px;">—</div>
+          <div class="kpi-sub">Highest search volume</div>
+        </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">NEW / ACTION REQUIRED</div>
-        <div class="kpi-num" id="kpiNew" style="color:#D97706;">0</div>
-        <div class="kpi-sub">Awaiting landlord outreach</div>
+
+      <!-- CONTROLS: SEARCH, FILTER, EXPORT -->
+      <div class="controls-bar">
+        <div class="controls-left">
+          <input type="text" id="searchInput" class="search-input" placeholder="Search by name, ref, email, city..." />
+          
+          <select id="filterStatus" class="filter-select">
+            <option value="all">All Statuses</option>
+            <option value="new">Status: New</option>
+            <option value="contacted">Status: Contacted</option>
+            <option value="viewing_scheduled">Status: Viewing Scheduled</option>
+            <option value="room_secured">Status: Room Secured</option>
+            <option value="refunded">Status: Refunded</option>
+          </select>
+
+          <select id="filterPkg" class="filter-select">
+            <option value="all">All Packages & Models</option>
+            <option value="starter">₹8,999 Starter</option>
+            <option value="guaranteed">₹17,999 Guaranteed</option>
+            <option value="vip">₹26,999 VIP Concierge</option>
+            <option value="lead">Verified Lead (Variable Fee)</option>
+          </select>
+
+          <select id="filterCity" class="filter-select">
+            <option value="all">All German Cities</option>
+            <option value="Berlin">Berlin</option>
+            <option value="Munich">Munich</option>
+            <option value="Frankfurt">Frankfurt</option>
+            <option value="Hamburg">Hamburg</option>
+            <option value="Cologne">Cologne</option>
+            <option value="Aachen">Aachen</option>
+          </select>
+        </div>
+
+        <div class="controls-right">
+          <button id="refreshBtn" class="btn-line" style="padding:9px 16px; font-size:13px;">↻ Refresh</button>
+          <button id="exportCsvBtn" class="btn-electric" style="padding:9px 16px; font-size:13px;">Export CSV ↓</button>
+        </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">GUARANTEED HUNTER (₹17,999)</div>
-        <div class="kpi-num" id="kpiGuaranteed" style="color:#059669;">0</div>
-        <div class="kpi-sub">100% Refund guarantee tier</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">TOP TARGET CITY</div>
-        <div class="kpi-num" id="kpiTopCity" style="font-size:24px; padding-top:4px;">—</div>
-        <div class="kpi-sub">Highest search volume</div>
+
+      <!-- LEADS TABLE -->
+      <div class="leads-table-wrap">
+        <table class="leads-table" id="leadsTable">
+          <thead>
+            <tr>
+              <th>REF CODE</th>
+              <th>APPLICANT</th>
+              <th>DESTINATION & DATES</th>
+              <th>BUDGET & TYPE</th>
+              <th>PACKAGE</th>
+              <th>LEAD STATUS</th>
+              <th>SUBMITTED</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody id="leadsTbody">
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display:none;">
+          <div style="font-size:36px; margin-bottom:12px;">📂</div>
+          <h3>No Leads Found</h3>
+          <p>No accommodation briefs matching your current filter criteria.</p>
+        </div>
       </div>
     </div>
 
-    <!-- CONTROLS: SEARCH, FILTER, EXPORT -->
-    <div class="controls-bar">
-      <div class="controls-left">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search by name, ref, email, city..." />
-        
-        <select id="filterStatus" class="filter-select">
-          <option value="all">All Statuses</option>
-          <option value="new">Status: New</option>
-          <option value="contacted">Status: Contacted</option>
-          <option value="viewing_scheduled">Status: Viewing Scheduled</option>
-          <option value="room_secured">Status: Room Secured</option>
-          <option value="refunded">Status: Refunded</option>
-        </select>
+    <!-- PANEL 2: VERIFIED ROOMS & STAYFORALL IMPORTER -->
+    <div id="panelRooms" style="display:none;">
+      
+      <!-- 1-Click StayforAll Importer Card -->
+      <div class="importer-card">
+        <div class="importer-header">
+          <div>
+            <div class="importer-title">⚡ 1-Click StayforAll Room Importer</div>
+            <p class="importer-sub">
+              Paste any StayforAll room URL or ID (e.g. <code>https://stayforall.com/rooms/1004</code> or <code>1004</code>). 
+              Our system will automatically extract the photos, city, address, and warm rent, allowing you to configure our DieFuture lead handover fee and landlord contact.
+            </p>
+          </div>
+          <div>
+            <span style="font-family:var(--f-mono); font-size:11.5px; background:#ECFDF5; color:#065F46; padding:5px 12px; border-radius:999px; font-weight:600;">
+              ✓ Auto-Scraping Active
+            </span>
+          </div>
+        </div>
 
-        <select id="filterPkg" class="filter-select">
-          <option value="all">All Packages & Models</option>
-          <option value="starter">₹8,999 Starter</option>
-          <option value="guaranteed">₹17,999 Guaranteed</option>
-          <option value="vip">₹26,999 VIP Concierge</option>
-          <option value="lead">Verified Lead (Variable Fee)</option>
-        </select>
+        <!-- Quick Fetch Bar -->
+        <div class="url-fetch-bar">
+          <input type="text" id="stayforallUrlInput" class="url-fetch-input" placeholder="Paste StayforAll URL or Room ID (e.g. https://stayforall.com/rooms/1004 or 1004)" />
+          <button type="button" class="btn-electric" id="btnFetchStayforall" style="padding:12px 20px; font-weight:700; white-space:nowrap;">
+            ⚡ Auto-Fetch Room Data
+          </button>
+        </div>
 
-        <select id="filterCity" class="filter-select">
-          <option value="all">All German Cities</option>
-          <option value="Berlin">Berlin</option>
-          <option value="Munich">Munich</option>
-          <option value="Frankfurt">Frankfurt</option>
-          <option value="Hamburg">Hamburg</option>
-          <option value="Cologne">Cologne</option>
-          <option value="Aachen">Aachen</option>
-        </select>
+        <div id="fetchNotice" style="font-size:12.5px; margin-bottom:16px; display:none; padding:10px 14px; border-radius:6px;"></div>
+
+        <!-- Room Details & Edit Form -->
+        <form id="roomUpsertForm">
+          <div class="room-form-grid">
+            <div class="room-input-group">
+              <label>Room ID *</label>
+              <input type="text" id="roomFieldId" required placeholder="e.g. 1004" />
+            </div>
+
+            <div class="room-input-group" style="grid-column: span 2;">
+              <label>Room Title / Name *</label>
+              <input type="text" id="roomFieldTitle" required placeholder="e.g. Stylish and high-quality furnished WG room in Munich Thalkirchen" />
+            </div>
+
+            <div class="room-input-group">
+              <label>City *</label>
+              <input type="text" id="roomFieldCity" required placeholder="e.g. München" />
+            </div>
+
+            <div class="room-input-group" style="grid-column: span 2;">
+              <label>Full Address in Germany</label>
+              <input type="text" id="roomFieldAddress" placeholder="e.g. Gabriele-Münter-Straße 11, 81477 München" />
+            </div>
+
+            <div class="room-input-group">
+              <label>Monthly Warm Rent (€) *</label>
+              <input type="number" id="roomFieldRent" required placeholder="775" />
+            </div>
+
+            <div class="room-input-group">
+              <label>Rental Deposit (€)</label>
+              <input type="number" id="roomFieldDeposit" placeholder="1500" />
+            </div>
+
+            <div class="room-input-group">
+              <label style="color:var(--electric);">DieFuture Service Fee (₹) *</label>
+              <input type="number" id="roomFieldFee" class="input-highlight" required placeholder="12999" value="12999" />
+            </div>
+
+            <div class="room-input-group">
+              <label>Room Type</label>
+              <select id="roomFieldType">
+                <option value="WG Room (Single Private)">WG Room (Single Private)</option>
+                <option value="Private Studio Apartment">Private Studio Apartment</option>
+                <option value="1-Bedroom Apartment">1-Bedroom Apartment</option>
+                <option value="Shared Double Room">Shared Double Room</option>
+              </select>
+            </div>
+
+            <div class="room-input-group">
+              <label>Room Size (m²)</label>
+              <input type="number" id="roomFieldSize" placeholder="16" value="16" />
+            </div>
+
+            <div class="room-input-group">
+              <label>Public Transit Notes</label>
+              <input type="text" id="roomFieldTransit" placeholder="e.g. 6 min to U3 (12 min to TUM / LMU / Hbf)" />
+            </div>
+
+            <div class="room-input-group" style="grid-column: span 3;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <label style="margin-bottom:0;">Property Photos / Multiple Image URLs</label>
+                <span style="font-size:11.5px; font-family:var(--f-mono); color:var(--electric); font-weight:600;" id="imgCountIndicator">0 photos</span>
+              </div>
+              <textarea id="roomFieldImages" rows="3" placeholder="Enter image URLs (one per line, or separated by commas)&#10;https://stayforall-public.s3.../photo1.jpg&#10;https://stayforall-public.s3.../photo2.jpg" style="font-family:var(--f-mono); font-size:12px; line-height:1.45; resize:vertical; width:100%; padding:10px 12px; border:1px solid var(--rule-2); border-radius:6px; background:var(--paper);"></textarea>
+              
+              <!-- Quick Add Single Image URL -->
+              <div style="display:flex; gap:8px; margin-top:8px;">
+                <input type="url" id="quickAddImgInput" placeholder="Or paste single image URL here to add..." style="flex:1; font-size:12px; padding:7px 12px; border:1px solid var(--rule-2); border-radius:6px;" />
+                <button type="button" id="btnAddImgBtn" class="btn-line" style="padding:6px 14px; font-size:12px; white-space:nowrap;">+ Add Photo</button>
+              </div>
+
+              <!-- Thumbnails Preview Strip -->
+              <div id="adminImgPreviewStrip" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; min-height:48px; padding:8px; background:var(--paper-2); border-radius:8px; border:1px dashed var(--rule-2); align-items:center;">
+                <span style="font-size:12px; color:var(--ink-3); font-family:var(--f-mono);" id="emptyThumbsNote">No photos added yet. Enter or paste URLs above.</span>
+              </div>
+            </div>
+
+            <div class="room-input-group">
+              <label>Room Vacancy Status</label>
+              <select id="roomFieldStatus">
+                <option value="available">Available (Active on Website)</option>
+                <option value="reserved">Reserved (Viewing in Progress)</option>
+                <option value="filled">Filled / Sold Out</option>
+              </select>
+            </div>
+
+            <div class="room-input-group" style="display:flex; align-items:center; gap:8px; padding-top:24px;">
+              <input type="checkbox" id="roomFieldAnmeldung" checked style="width:18px; height:18px;" />
+              <label for="roomFieldAnmeldung" style="margin-bottom:0; cursor:pointer;">Anmeldung 100% Guaranteed</label>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:12px;">
+            <button type="button" class="btn-line" id="btnResetRoomForm">Clear Form</button>
+            <button type="submit" class="btn-electric" id="btnSubmitRoom" style="padding:12px 24px;">
+              Save & Publish Room Lead →
+            </button>
+          </div>
+        </form>
       </div>
 
-      <div class="controls-right">
-        <button id="refreshBtn" class="btn-line" style="padding:9px 16px; font-size:13px;">↻ Refresh</button>
-        <button id="exportCsvBtn" class="btn-electric" style="padding:9px 16px; font-size:13px;">Export CSV ↓</button>
-      </div>
-    </div>
+      <!-- Current Rooms Table -->
+      <div class="leads-table-wrap">
+        <div style="padding:16px 20px; border-bottom:1px solid var(--rule); display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <h3 style="font-size:16px; font-weight:700; color:var(--ink);">Active Verified Rooms in Database</h3>
+            <div style="font-size:12px; color:var(--ink-3);">Private lead payment links for seekers (unindexed & hidden from public site). Copy link to share with seekers.</div>
+          </div>
+          <button type="button" id="refreshRoomsBtn" class="btn-line" style="padding:7px 14px; font-size:12px;">↻ Refresh Rooms</button>
+        </div>
 
-    <!-- LEADS TABLE -->
-    <div class="leads-table-wrap">
-      <table class="leads-table" id="leadsTable">
-        <thead>
-          <tr>
-            <th>REF CODE</th>
-            <th>APPLICANT</th>
-            <th>DESTINATION & DATES</th>
-            <th>BUDGET & TYPE</th>
-            <th>PACKAGE</th>
-            <th>LEAD STATUS</th>
-            <th>SUBMITTED</th>
-            <th>ACTIONS</th>
-          </tr>
-        </thead>
-        <tbody id="leadsTbody">
-          <!-- Populated by JavaScript -->
-        </tbody>
-      </table>
+        <table class="leads-table">
+          <thead>
+            <tr>
+              <th>ROOM ID & PHOTOS</th>
+              <th>TITLE & CITY</th>
+              <th>WARM RENT</th>
+              <th>DIEFUTURE FEE</th>
+              <th>STATUS</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody id="roomsTbody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
 
-      <!-- Empty State -->
-      <div class="empty-state" id="emptyState" style="display:none;">
-        <div style="font-size:36px; margin-bottom:12px;">📂</div>
-        <h3>No Leads Found</h3>
-        <p>No accommodation briefs matching your current filter criteria.</p>
+        <div class="empty-state" id="emptyRoomsState" style="display:none;">
+          <div style="font-size:36px; margin-bottom:12px;">🏠</div>
+          <h3>No Verified Rooms in Database</h3>
+          <p>Use the 1-Click StayforAll Importer above to publish your first room lead.</p>
+        </div>
       </div>
+
     </div>
 
   </main>
@@ -887,6 +1191,414 @@
       link.click();
       document.body.removeChild(link);
     });
+
+    // ─────────────────────────────────────────────────────────────
+    // ROOMS MANAGER & STAYFORALL IMPORTER CONTROLLER
+    // ─────────────────────────────────────────────────────────────
+
+    const tabBtnLeads = document.getElementById('tabBtnLeads');
+    const tabBtnRooms = document.getElementById('tabBtnRooms');
+    const panelLeads = document.getElementById('panelLeads');
+    const panelRooms = document.getElementById('panelRooms');
+
+    const stayforallUrlInput = document.getElementById('stayforallUrlInput');
+    const btnFetchStayforall = document.getElementById('btnFetchStayforall');
+    const fetchNotice = document.getElementById('fetchNotice');
+
+    const roomUpsertForm = document.getElementById('roomUpsertForm');
+    const roomFieldId = document.getElementById('roomFieldId');
+    const roomFieldTitle = document.getElementById('roomFieldTitle');
+    const roomFieldCity = document.getElementById('roomFieldCity');
+    const roomFieldAddress = document.getElementById('roomFieldAddress');
+    const roomFieldRent = document.getElementById('roomFieldRent');
+    const roomFieldDeposit = document.getElementById('roomFieldDeposit');
+    const roomFieldFee = document.getElementById('roomFieldFee');
+    const roomFieldType = document.getElementById('roomFieldType');
+    const roomFieldSize = document.getElementById('roomFieldSize');
+    const roomFieldTransit = document.getElementById('roomFieldTransit');
+    const roomFieldImages = document.getElementById('roomFieldImages');
+    const quickAddImgInput = document.getElementById('quickAddImgInput');
+    const btnAddImgBtn = document.getElementById('btnAddImgBtn');
+    const adminImgPreviewStrip = document.getElementById('adminImgPreviewStrip');
+    const imgCountIndicator = document.getElementById('imgCountIndicator');
+    const roomFieldStatus = document.getElementById('roomFieldStatus');
+    const roomFieldAnmeldung = document.getElementById('roomFieldAnmeldung');
+    const btnResetRoomForm = document.getElementById('btnResetRoomForm');
+    const btnSubmitRoom = document.getElementById('btnSubmitRoom');
+
+    const roomsTbody = document.getElementById('roomsTbody');
+    const emptyRoomsState = document.getElementById('emptyRoomsState');
+    const refreshRoomsBtn = document.getElementById('refreshRoomsBtn');
+
+    let allAdminRooms = [];
+    let adminImages = [];
+
+    // Tab Switcher
+    function switchAdminTab(tab) {
+      if (tab === 'rooms') {
+        tabBtnRooms.classList.add('active');
+        tabBtnLeads.classList.remove('active');
+        panelRooms.style.display = 'block';
+        panelLeads.style.display = 'none';
+        fetchAdminRooms();
+      } else {
+        tabBtnLeads.classList.add('active');
+        tabBtnRooms.classList.remove('active');
+        panelLeads.style.display = 'block';
+        panelRooms.style.display = 'none';
+        fetchLeads();
+      }
+    }
+
+    tabBtnLeads.addEventListener('click', () => switchAdminTab('leads'));
+    tabBtnRooms.addEventListener('click', () => switchAdminTab('rooms'));
+
+    // --- Multiple Photos Manager Logic ---
+    function renderAdminImgPreviews() {
+      adminImgPreviewStrip.innerHTML = '';
+      if (adminImages.length === 0) {
+        adminImgPreviewStrip.innerHTML = '<span style="font-size:12px; color:var(--ink-3); font-family:var(--f-mono);">No photos added yet. Enter or paste URLs above.</span>';
+        imgCountIndicator.textContent = '0 photos';
+        return;
+      }
+      imgCountIndicator.textContent = `${adminImages.length} photo${adminImages.length > 1 ? 's' : ''} loaded`;
+
+      adminImages.forEach((url, idx) => {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'position:relative; width:68px; height:52px; border-radius:6px; overflow:hidden; background:#0F172A; border:1px solid var(--rule-2); flex-shrink:0;';
+        wrap.innerHTML = `
+          <img src="${escapeHtml(url)}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='./assets/diefuture-logo.jpg'" />
+          <button type="button" data-idx="${idx}" class="btn-del-img" style="position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; background:rgba(0,0,0,0.8); color:#fff; border:none; font-size:11px; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Remove photo">×</button>
+          <span style="position:absolute; bottom:2px; left:2px; background:rgba(0,0,0,0.65); color:#fff; font-size:9.5px; font-family:var(--f-mono); padding:1px 3px; border-radius:2px;">#${idx + 1}</span>
+        `;
+        adminImgPreviewStrip.appendChild(wrap);
+      });
+
+      adminImgPreviewStrip.querySelectorAll('.btn-del-img').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const i = Number(btn.dataset.idx);
+          adminImages.splice(i, 1);
+          roomFieldImages.value = adminImages.join('\n');
+          renderAdminImgPreviews();
+        });
+      });
+    }
+
+    function setAdminImages(list) {
+      adminImages = [...new Set(list.filter(Boolean))];
+      roomFieldImages.value = adminImages.join('\n');
+      renderAdminImgPreviews();
+    }
+
+    // Textarea sync
+    roomFieldImages.addEventListener('input', () => {
+      const urls = roomFieldImages.value.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+      adminImages = [...new Set(urls)];
+      renderAdminImgPreviews();
+    });
+
+    // Quick Add button
+    btnAddImgBtn.addEventListener('click', () => {
+      const url = quickAddImgInput.value.trim();
+      if (!url) return;
+      if (!adminImages.includes(url)) {
+        adminImages.push(url);
+        roomFieldImages.value = adminImages.join('\n');
+        renderAdminImgPreviews();
+      }
+      quickAddImgInput.value = '';
+    });
+    quickAddImgInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        btnAddImgBtn.click();
+      }
+    });
+
+    // 1-Click StayforAll Auto-Fetcher
+    btnFetchStayforall.addEventListener('click', async () => {
+      const inputVal = stayforallUrlInput.value.trim();
+      if (!inputVal) {
+        showNotice('Please enter a StayforAll room URL or ID (e.g. 1004).', 'error');
+        return;
+      }
+
+      btnFetchStayforall.disabled = true;
+      btnFetchStayforall.textContent = '⏳ Scraping StayforAll...';
+      showNotice('Fetching and parsing property schema from StayforAll...', 'info');
+
+      const apiBase = getApiBase();
+      try {
+        const res = await fetch(`${apiBase}/api/rooms/fetch-stayforall`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: inputVal })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const r = data.room;
+
+          // Populate form fields
+          if (r.roomId) roomFieldId.value = r.roomId;
+          if (r.title) roomFieldTitle.value = r.title;
+          if (r.city) roomFieldCity.value = r.city;
+          if (r.address) roomFieldAddress.value = r.address;
+          if (r.rentWarmEUR) roomFieldRent.value = r.rentWarmEUR;
+          if (r.depositEUR) roomFieldDeposit.value = r.depositEUR;
+          if (r.feeINR) roomFieldFee.value = r.feeINR;
+          if (r.roomSizeM2) roomFieldSize.value = r.roomSizeM2;
+          if (r.roomType) roomFieldType.value = r.roomType;
+          if (r.transit) roomFieldTransit.value = r.transit;
+
+          // Photos
+          const imgs = (r.images && r.images.length > 0) ? r.images : (r.imageUrl ? [r.imageUrl] : []);
+          setAdminImages(imgs);
+
+          showNotice(`✓ Successfully imported StayforAll room "${r.title || r.roomId}" with ${imgs.length} photo(s)! Configure your DieFuture fee and hit publish.`, 'success');
+        } else {
+          const err = await res.json();
+          showNotice(`Failed to fetch room: ${err.error || 'Server error'}`, 'error');
+        }
+      } catch (err) {
+        showNotice(`Connection error: ${err.message}. Ensure the API server is active.`, 'error');
+      } finally {
+        btnFetchStayforall.disabled = false;
+        btnFetchStayforall.textContent = '⚡ Auto-Fetch Room Data';
+      }
+    });
+
+    function showNotice(msg, type) {
+      fetchNotice.textContent = msg;
+      fetchNotice.style.display = 'block';
+      if (type === 'success') {
+        fetchNotice.style.background = '#ECFDF5';
+        fetchNotice.style.color = '#065F46';
+        fetchNotice.style.border = '1px solid #A7F3D0';
+      } else if (type === 'error') {
+        fetchNotice.style.background = '#FEF2F2';
+        fetchNotice.style.color = '#991B1B';
+        fetchNotice.style.border = '1px solid #FECACA';
+      } else {
+        fetchNotice.style.background = '#EFF6FF';
+        fetchNotice.style.color = '#1E40AF';
+        fetchNotice.style.border = '1px solid #BFDBFE';
+      }
+    }
+
+    // Reset Form
+    btnResetRoomForm.addEventListener('click', () => {
+      roomUpsertForm.reset();
+      setAdminImages([]);
+      fetchNotice.style.display = 'none';
+      roomFieldFee.value = '12999';
+    });
+
+    // Save / Publish Room
+    roomUpsertForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (adminImages.length === 0) {
+        showNotice('Please provide at least 1 property photo URL.', 'error');
+        return;
+      }
+
+      btnSubmitRoom.disabled = true;
+      btnSubmitRoom.textContent = 'Saving to Database...';
+
+      const payload = {
+        roomId: roomFieldId.value.trim(),
+        title: roomFieldTitle.value.trim(),
+        city: roomFieldCity.value.trim(),
+        address: roomFieldAddress.value.trim(),
+        rentWarmEUR: Number(roomFieldRent.value),
+        depositEUR: Number(roomFieldDeposit.value) || (Number(roomFieldRent.value) * 2),
+        feeINR: Number(roomFieldFee.value) || 12999,
+        roomType: roomFieldType.value,
+        roomSizeM2: Number(roomFieldSize.value) || 16,
+        transit: roomFieldTransit.value.trim(),
+        images: adminImages,
+        imageUrl: adminImages[0] || '',
+        stayforallUrl: stayforallUrlInput.value.trim(),
+        status: roomFieldStatus.value,
+        anmeldung: roomFieldAnmeldung.checked
+      };
+
+      const apiBase = getApiBase();
+      try {
+        const res = await fetch(`${apiBase}/api/rooms`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          showNotice(`✓ Room "${payload.title}" (${adminImages.length} photos) saved successfully to MongoDB!`, 'success');
+          fetchAdminRooms();
+        } else {
+          const err = await res.json();
+          showNotice(`Failed to save room: ${err.error || 'Server error'}`, 'error');
+        }
+      } catch (err) {
+        showNotice(`Connection error: ${err.message}`, 'error');
+      } finally {
+        btnSubmitRoom.disabled = false;
+        btnSubmitRoom.textContent = 'Save & Publish Room Lead →';
+      }
+    });
+
+    // Fetch Rooms for Admin Table
+    async function fetchAdminRooms() {
+      roomsTbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px;">Loading rooms...</td></tr>';
+      
+      const apiBase = getApiBase();
+      try {
+        const res = await fetch(`${apiBase}/api/rooms`);
+        if (res.ok) {
+          const data = await res.json();
+          allAdminRooms = data.rooms || [];
+          renderAdminRoomsTable();
+          return;
+        }
+      } catch (err) {
+        console.warn('Rooms fetch error:', err);
+      }
+
+      try {
+        const res = await fetch('http://localhost:3001/api/rooms');
+        if (res.ok) {
+          const data = await res.json();
+          allAdminRooms = data.rooms || [];
+          renderAdminRoomsTable();
+        }
+      } catch (e) {}
+    }
+
+    refreshRoomsBtn.addEventListener('click', fetchAdminRooms);
+
+    function renderAdminRoomsTable() {
+      roomsTbody.innerHTML = '';
+
+      if (allAdminRooms.length === 0) {
+        emptyRoomsState.style.display = 'block';
+        return;
+      }
+      emptyRoomsState.style.display = 'none';
+
+      allAdminRooms.forEach(room => {
+        const tr = document.createElement('tr');
+        const img = (room.images && room.images[0]) || room.imageUrl || 'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg';
+        const photoCount = (room.images && room.images.length > 0) ? room.images.length : (room.imageUrl ? 1 : 0);
+        const isAvail = (room.status || 'available') === 'available';
+
+        tr.innerHTML = `
+          <td>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="position:relative; width:54px; height:42px; border-radius:6px; overflow:hidden; background:#0F172A; flex-shrink:0;">
+                <img src="${img}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='./assets/diefuture-logo.jpg'" />
+                ${photoCount > 1 ? `<span style="position:absolute; bottom:2px; right:2px; background:rgba(0,0,0,0.8); color:#fff; font-size:9.5px; font-weight:700; padding:1px 4px; border-radius:3px; font-family:var(--f-mono);">📷 ${photoCount}</span>` : ''}
+              </div>
+              <div>
+                <strong style="font-family:var(--f-mono); font-size:12px; color:var(--royal);">DF-ROOM-${room.roomId}</strong>
+                <div style="font-size:11px; color:var(--ink-3);">${photoCount} photo${photoCount > 1 ? 's' : ''}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <strong>${escapeHtml(room.title)}</strong><br>
+            <span style="font-size:12px; color:var(--ink-2);">${escapeHtml(room.address || room.city)}</span>
+          </td>
+          <td>
+            <strong style="color:var(--royal); font-size:15px;">€${room.rentWarmEUR || 775}</strong> /mo<br>
+            <span style="font-size:11.5px; color:var(--ink-3);">Deposit: €${room.depositEUR || 1500}</span>
+          </td>
+          <td>
+            <strong style="color:var(--electric); font-size:15px;">₹${(room.feeINR || 12999).toLocaleString('en-IN')}</strong><br>
+            <span style="font-size:11px; color:var(--ink-3);">One-time lead fee</span>
+          </td>
+          <td>
+            <select class="room-status-select" data-id="${room.roomId || room._id}" style="padding:5px 8px; font-size:12px; border-radius:6px; font-weight:600;">
+              <option value="available" ${isAvail ? 'selected' : ''}>🟢 Available</option>
+              <option value="reserved" ${room.status === 'reserved' ? 'selected' : ''}>🟡 Reserved</option>
+              <option value="filled" ${room.status === 'filled' ? 'selected' : ''}>🔴 Sold Out</option>
+            </select>
+          </td>
+          <td>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+              <button type="button" class="btn-electric btn-copy-link" data-id="${room.roomId || room._id}" style="padding:4px 9px; font-size:11.5px; border-radius:4px; cursor:pointer;" title="Copy private payment link to share with student">📋 Copy Link</button>
+              <a href="room.html?id=${encodeURIComponent(room.roomId || room._id)}" target="_blank" class="btn-line" style="padding:4px 8px; font-size:11.5px;" title="Preview payment page">↗ View</a>
+              <button type="button" class="btn-action-del btn-del-room" data-id="${room.roomId || room._id}" title="Delete room">🗑️</button>
+            </div>
+          </td>
+        `;
+
+        roomsTbody.appendChild(tr);
+      });
+
+      // Attach Copy Payment Link handlers
+      document.querySelectorAll('.btn-copy-link').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const roomId = btn.dataset.id;
+          const url = `${window.location.origin}/room.html?id=${encodeURIComponent(roomId)}`;
+          navigator.clipboard.writeText(url).then(() => {
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Copied!';
+            btn.style.background = '#10B981';
+            setTimeout(() => {
+              btn.textContent = originalText;
+              btn.style.background = '';
+            }, 2000);
+          }).catch(() => {
+            prompt('Direct payment link for student:', url);
+          });
+        });
+      });
+
+      // Attach Room Status change handlers
+      document.querySelectorAll('.room-status-select').forEach(sel => {
+        sel.addEventListener('change', async (e) => {
+          const roomId = e.target.dataset.id;
+          const newStatus = e.target.value;
+          const apiBase = getApiBase();
+          try {
+            await fetch(`${apiBase}/api/rooms/${roomId}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: newStatus })
+            });
+            const t = allAdminRooms.find(r => (r.roomId === roomId || r._id === roomId));
+            if (t) t.status = newStatus;
+          } catch (err) {
+            console.error('Room status update error:', err);
+          }
+        });
+      });
+
+      // Attach Room Delete handlers
+      document.querySelectorAll('.btn-del-room').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const roomId = btn.dataset.id;
+          if (confirm(`Are you sure you want to delete room DF-ROOM-${roomId}?`)) {
+            const apiBase = getApiBase();
+            try {
+              await fetch(`${apiBase}/api/rooms/${roomId}`, { method: 'DELETE' });
+              allAdminRooms = allAdminRooms.filter(r => r.roomId !== roomId && r._id !== roomId);
+              renderAdminRoomsTable();
+            } catch (err) {
+              console.error('Delete room error:', err);
+            }
+          }
+        });
+      });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[m]);
+    }
 
     // Initialize
     checkAuth();

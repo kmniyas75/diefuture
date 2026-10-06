@@ -2,8 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -14,6 +19,9 @@ const COLLECTION_NAME = process.env.COLLECTION_NAME || 'leads';
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static frontend files (Vite production build)
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // MongoDB Client
 let cachedClient = null;
@@ -49,20 +57,18 @@ const DEFAULT_ROOMS = [
     roomSizeM2: 16,
     roomType: 'WG Room (Single Private)',
     imageUrl: 'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg',
+    images: [
+      'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg',
+      'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80'
+    ],
     stayforallUrl: 'https://stayforall.com/rooms/1004',
     anmeldung: true,
     transit: '6 min walk to U3 Thalkirchen (12 min to TUM / LMU / Hbf)',
     status: 'available',
     featured: true,
     description: 'Fully furnished private bedroom with double bed, study desk, ergonomic chair, sunny garden-view balcony, modern kitchen with washing machine, and 250 Mbps fiber WiFi.',
-    landlordContact: {
-      name: 'Herr M. Weber',
-      role: 'Verified Property Manager / Landlord',
-      phone: '+49 176 8921 4055',
-      whatsapp: '+4917689214055',
-      email: 'vermietung.muenchen@stayforall.com',
-      viewingSlot: 'Daily 10:00–18:00 CET (In-Person or Live Video Tour)'
-    },
     createdAt: new Date()
   },
   {
@@ -76,20 +82,17 @@ const DEFAULT_ROOMS = [
     roomSizeM2: 24,
     roomType: 'Private Studio Apartment',
     imageUrl: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80'
+    ],
     stayforallUrl: '',
     anmeldung: true,
     transit: '4 min walk to U2 Senefelderplatz (8 min to Alexanderplatz)',
     status: 'available',
     featured: true,
     description: 'Self-contained 1-room apartment with private kitchenette, modern walk-in shower, high ceilings, large windows, and official city registration assistance.',
-    landlordContact: {
-      name: 'Frau K. Schneider',
-      role: 'Private Landlord Representative',
-      phone: '+49 172 4589 1120',
-      whatsapp: '+4917245891120',
-      email: 'schneider.wohnen.berlin@gmail.com',
-      viewingSlot: 'Mon–Fri 14:00–19:00 CET (Virtual or In-Person)'
-    },
     createdAt: new Date()
   },
   {
@@ -103,20 +106,17 @@ const DEFAULT_ROOMS = [
     roomSizeM2: 15,
     roomType: 'WG Room (Single Private)',
     imageUrl: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80'
+    ],
     stayforallUrl: '',
     anmeldung: true,
     transit: '3 min walk to U6/U7 Leipziger Straße (10 min to Goethe Uni)',
     status: 'available',
     featured: true,
     description: 'Charming WG flat in the heart of student-friendly Bockenheim. Modern furnishings, quiet courtyard view, dishwasher, washer-dryer, and easy tram access.',
-    landlordContact: {
-      name: 'Herr T. Fischer',
-      role: 'Verified Property Landlord',
-      phone: '+49 151 7890 2341',
-      whatsapp: '+4915178902341',
-      email: 'fischer.immo.ffm@gmail.com',
-      viewingSlot: 'Daily 11:00–17:00 CET'
-    },
     createdAt: new Date()
   }
 ];
@@ -128,6 +128,23 @@ async function ensureSeedRooms() {
     if (count === 0) {
       await col.insertMany(DEFAULT_ROOMS);
       console.log(`[MongoDB] Initialized default rooms collection with ${DEFAULT_ROOMS.length} verified rooms.`);
+    } else {
+      // Sync default rooms images and ensure no landlordContact exists in any document
+      for (const seed of DEFAULT_ROOMS) {
+        await col.updateOne(
+          { roomId: seed.roomId },
+          { 
+            $set: { 
+              images: seed.images, 
+              imageUrl: seed.images[0] 
+            },
+            $unset: { landlordContact: "" }
+          }
+        );
+      }
+      // Remove any lingering landlordContact field across all room documents
+      await col.updateMany({}, { $unset: { landlordContact: "" } });
+      console.log('[MongoDB] Rooms synchronized with multiple images and landlordContact purged.');
     }
   } catch (err) {
     console.warn('[MongoDB] Room seed notice:', err.message);
@@ -204,6 +221,22 @@ app.post('/api/reserve-room', async (req, res) => {
     }
 
     const bookingRef = 'DF-ROOM-' + (roomId || '1004') + '-' + Math.floor(100 + Math.random() * 900);
+    let resolvedCity = 'München';
+    let resolvedBudget = '€775 / month (Warmmiete)';
+
+    // Look up room in rooms collection if available
+    try {
+      const roomsCol = await getRoomsCollection();
+      const matchedRoom = await roomsCol.findOne({ roomId: String(roomId) });
+      if (matchedRoom) {
+        resolvedCity = matchedRoom.city || resolvedCity;
+        resolvedBudget = `€${matchedRoom.rentWarmEUR || 775} / month (Warmmiete)`;
+        // Mark room as reserved in database
+        await roomsCol.updateOne({ roomId: String(roomId) }, { $set: { status: 'reserved', reservedAt: new Date(), reservedBy: seekerEmail } });
+      }
+    } catch (roomErr) {
+      console.warn('[MongoDB] Room lookup warning in /api/reserve-room:', roomErr.message);
+    }
 
     const reservationDoc = {
       reference: bookingRef,
@@ -212,15 +245,15 @@ app.post('/api/reserve-room', async (req, res) => {
       name: seekerName,
       email: seekerEmail,
       phone: seekerPhone,
-      city: 'München',
+      city: resolvedCity,
       moveInDate: targetMoveIn || 'Immediate / Flexible',
-      budget: '€775 / month (Warmmiete)',
+      budget: resolvedBudget,
       roomType: 'WG Room (Single Private)',
-      package: 'Direct Verified Room Lead (₹12,999)',
+      package: `Direct Verified Room Lead (${amount ? '₹' + amount : 'Variable Fee'})`,
       leadStatus: 'paid_confirmed',
       paymentId: paymentId || 'manual_or_simulated',
       amountPaidINR: amount || 12999,
-      notes: notes || 'Verified room lead reservation & landlord handover fee paid via Razorpay.',
+      notes: notes || 'Verified room lead reservation & handover fee paid via Razorpay.',
       createdAt: new Date()
     };
 
@@ -233,14 +266,12 @@ app.post('/api/reserve-room', async (req, res) => {
       success: true,
       reference: bookingRef,
       id: result.insertedId,
-      landlordContact: {
-        name: 'Herr M. Weber',
-        role: 'Verified Property Manager / Landlord Representative',
-        phone: '+49 176 8921 4055',
-        whatsapp: '+4917689214055',
-        email: 'vermietung.muenchen@stayforall.com',
-        address: 'Gabriele-Münter-Straße 11, 81477 München',
-        viewingSlot: 'Daily 10:00–18:00 CET (In-Person or Video Call)',
+      concierge: {
+        role: 'DieFuture Relocation Desk',
+        whatsapp: '+919567941647',
+        phone: '+91 95679 41647',
+        email: 'diefutureapartments@gmail.com',
+        viewingSlot: 'Viewing & contract review coordinated directly by DieFuture team within 24 hours',
         anmeldungReady: true
       },
       message: 'Room lead handover unlocked and registered successfully!'
@@ -335,6 +366,12 @@ app.get('/api/rooms', async (req, res) => {
       rooms = await col.find(filter).sort({ createdAt: -1 }).toArray();
     }
 
+    rooms = rooms.map(r => {
+      const copy = { ...r };
+      delete copy.landlordContact;
+      return copy;
+    });
+
     res.json({ count: rooms.length, rooms });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch rooms', details: error.message });
@@ -363,7 +400,10 @@ app.get('/api/rooms/:id', async (req, res) => {
       return res.status(404).json({ error: 'Room not found' });
     }
 
-    res.json({ success: true, room });
+    const sanitizedRoom = { ...room };
+    delete sanitizedRoom.landlordContact;
+
+    res.json({ success: true, room: sanitizedRoom });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch room', details: error.message });
   }
@@ -382,10 +422,10 @@ app.post('/api/rooms', async (req, res) => {
       roomSizeM2,
       roomType,
       imageUrl,
+      images,
       stayforallUrl,
       transit,
       description,
-      landlordContact,
       status,
       featured
     } = req.body;
@@ -404,6 +444,19 @@ app.post('/api/rooms', async (req, res) => {
       }
     }
 
+    let imageList = [];
+    if (Array.isArray(images)) {
+      imageList = images.map(s => String(s).trim()).filter(Boolean);
+    } else if (typeof images === 'string') {
+      imageList = images.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+    }
+    if (imageUrl && !imageList.includes(imageUrl.trim())) {
+      imageList.unshift(imageUrl.trim());
+    }
+    if (imageList.length === 0) {
+      imageList = ['https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg'];
+    }
+
     const newRoom = {
       roomId,
       title,
@@ -414,21 +467,14 @@ app.post('/api/rooms', async (req, res) => {
       feeINR: Number(feeINR) || 12999,
       roomSizeM2: Number(roomSizeM2) || 16,
       roomType: roomType || 'WG Room (Single Private)',
-      imageUrl: imageUrl || 'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg',
+      imageUrl: imageList[0],
+      images: imageList,
       stayforallUrl: stayforallUrl || '',
       anmeldung: true,
       transit: transit || 'Convenient U-Bahn / S-Bahn transit nearby',
       status: status || 'available',
       featured: featured !== undefined ? Boolean(featured) : true,
       description: description || '',
-      landlordContact: landlordContact || {
-        name: 'Verified German Landlord',
-        role: 'Property Representative',
-        phone: '+49 176 8921 4055',
-        whatsapp: '+4917689214055',
-        email: 'diefutureapartments@gmail.com',
-        viewingSlot: 'Daily 10:00–18:00 CET'
-      },
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -456,6 +502,16 @@ app.patch('/api/rooms/:id', async (req, res) => {
     }
 
     const updates = { ...req.body, updatedAt: new Date() };
+    delete updates._id;
+
+    if (updates.images) {
+      if (typeof updates.images === 'string') {
+        updates.images = updates.images.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+      }
+      if (Array.isArray(updates.images) && updates.images.length > 0) {
+        updates.imageUrl = updates.images[0];
+      }
+    }
     delete updates._id;
 
     const result = await col.updateOne(query, { $set: updates });

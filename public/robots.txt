@@ -1,0 +1,7 @@
+# Robots.txt for DieFuture Apartments
+User-agent: *
+Disallow: /room.html
+Disallow: /rooms.html
+Disallow: /admin.html
+Disallow: /api/
+Allow: /

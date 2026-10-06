@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/rooms/:id",
+      "destination": "/api/rooms?id=:id"
+    },
+    {
       "source": "/api/leads/:id",
       "destination": "/api/leads?id=:id"
     }
