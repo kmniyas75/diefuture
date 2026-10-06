@@ -88,9 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const notes = document.getElementById('userNotes')?.value.trim() || '';
 
       const pkgTitles = {
-        starter: '€99 Room Search Starter',
-        guaranteed: '€199 Guaranteed Hunter (100% Refund)',
-        vip: '€299 24*7 Response VIP'
+        starter: '₹8,999 Room Search Starter',
+        guaranteed: '₹17,999 Guaranteed Hunter (100% Refund)',
+        vip: '₹26,999 24*7 Response VIP',
+        lead: 'Direct Verified Lead (Variable Fee)'
       };
 
       if (submitBtn) {

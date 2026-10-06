@@ -346,6 +346,12 @@
       border: 1px solid #FCD34D;
     }
 
+    .pkg-pill.lead {
+      background: #EFF6FF;
+      color: #1D4ED8;
+      border: 1px solid #BFDBFE;
+    }
+
     .status-select {
       font-size: 12px;
       font-weight: 600;
@@ -455,7 +461,7 @@
         <div class="kpi-sub">Awaiting landlord outreach</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">GUARANTEED HUNTER (€199)</div>
+        <div class="kpi-label">GUARANTEED HUNTER (₹17,999)</div>
         <div class="kpi-num" id="kpiGuaranteed" style="color:#059669;">0</div>
         <div class="kpi-sub">100% Refund guarantee tier</div>
       </div>
@@ -481,10 +487,11 @@
         </select>
 
         <select id="filterPkg" class="filter-select">
-          <option value="all">All Packages</option>
-          <option value="starter">€99 Starter</option>
-          <option value="guaranteed">€199 Guaranteed</option>
-          <option value="vip">€299 VIP Concierge</option>
+          <option value="all">All Packages & Models</option>
+          <option value="starter">₹8,999 Starter</option>
+          <option value="guaranteed">₹17,999 Guaranteed</option>
+          <option value="vip">₹26,999 VIP Concierge</option>
+          <option value="lead">Verified Lead (Variable Fee)</option>
         </select>
 
         <select id="filterCity" class="filter-select">
@@ -667,7 +674,7 @@
       const newCount = allLeads.filter(l => (l.leadStatus || 'new') === 'new').length;
       kpiNew.textContent = newCount;
 
-      const guaranteedCount = allLeads.filter(l => l.package === 'guaranteed' || (l.package && l.package.includes('199'))).length;
+      const guaranteedCount = allLeads.filter(l => l.package === 'guaranteed' || (l.package && (l.package.includes('199') || l.package.includes('17,999')))).length;
       kpiGuaranteed.textContent = guaranteedCount;
 
       // Calculate Top City
@@ -734,13 +741,16 @@
 
         // Package Pill Class
         let pkgClass = 'guaranteed';
-        let pkgLabel = '€199 Guaranteed';
-        if (lead.package === 'starter' || (lead.package && lead.package.includes('99'))) {
+        let pkgLabel = '₹17,999 Guaranteed';
+        if (lead.package === 'starter' || (lead.package && (lead.package.includes('99') || lead.package.includes('8,999')))) {
           pkgClass = 'starter';
-          pkgLabel = '€99 Starter';
-        } else if (lead.package === 'vip' || (lead.package && lead.package.includes('299'))) {
+          pkgLabel = '₹8,999 Starter';
+        } else if (lead.package === 'vip' || (lead.package && (lead.package.includes('299') || lead.package.includes('26,999')))) {
           pkgClass = 'vip';
-          pkgLabel = '€299 VIP 24/7';
+          pkgLabel = '₹26,999 VIP 24/7';
+        } else if (lead.package === 'lead' || (lead.package && (lead.package.toLowerCase().includes('lead') || lead.package.toLowerCase().includes('variable')))) {
+          pkgClass = 'lead';
+          pkgLabel = 'Verified Lead (Variable Fee)';
         }
 
         // WhatsApp prefilled message
