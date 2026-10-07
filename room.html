@@ -536,30 +536,66 @@
 
     .btn-reserve-cta {
       width: 100%;
-      background: var(--electric);
+      background: linear-gradient(135deg, #084BE0 0%, #0637A8 100%);
       color: #FFFFFF;
       border: none;
-      border-radius: 8px;
-      padding: 16px;
-      font-size: 15px;
-      font-weight: 700;
-      font-family: var(--f-sans);
+      border-radius: 10px;
+      padding: 14px 20px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      transition: background 0.2s, transform 0.1s;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       margin-top: 18px;
-      box-shadow: 0 4px 14px rgba(8, 75, 224, 0.25);
+      box-shadow: 0 4px 16px rgba(8, 75, 224, 0.32);
     }
 
     .btn-reserve-cta:hover {
-      background: var(--royal);
+      background: linear-gradient(135deg, #0742C6 0%, #052F90 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(8, 75, 224, 0.42);
     }
 
     .btn-reserve-cta:active {
       transform: translateY(1px);
+      box-shadow: 0 2px 8px rgba(8, 75, 224, 0.25);
+    }
+
+    .pay-btn-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      line-height: 1.25;
+    }
+
+    .pay-btn-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 15.5px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .pay-btn-arrow {
+      font-size: 17px;
+      line-height: 1;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-reserve-cta:hover .pay-btn-arrow {
+      transform: translateX(3px);
+    }
+
+    .pay-btn-subtitle {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.88);
+      margin-top: 3px;
+      letter-spacing: 0.01em;
     }
 
     .btn-demo-simulate {
@@ -1006,10 +1042,10 @@
       background: rgba(255, 255, 255, 0.98) !important;
       backdrop-filter: blur(16px) !important;
       -webkit-backdrop-filter: blur(16px) !important;
-      border-top: 1px solid var(--rule) !important;
-      box-shadow: 0 -6px 24px rgba(15, 23, 42, 0.12) !important;
+      border-top: 1px solid rgba(226, 232, 240, 0.9) !important;
+      box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.08) !important;
       z-index: 999999 !important;
-      padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+      padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
       box-sizing: border-box !important;
       -webkit-transform: translate3d(0, 0, 0) !important;
       transform: translate3d(0, 0, 0) !important;
@@ -1032,12 +1068,12 @@
 
     @media (max-width: 1024px) {
       body {
-        padding-bottom: 86px !important;
+        padding-bottom: 90px !important;
       }
     }
 
     .mobile-bnav-inner {
-      max-width: 540px;
+      max-width: 520px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
@@ -1049,8 +1085,10 @@
     .mobile-bnav-price-block {
       display: flex;
       flex-direction: column;
-      line-height: 1.15;
+      line-height: 1.2;
       min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
     }
 
     .mobile-bnav-tag {
@@ -1061,19 +1099,24 @@
       text-transform: uppercase;
       letter-spacing: .05em;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
     }
 
     .mobile-bnav-price-row {
       display: flex;
       align-items: baseline;
-      gap: 3px;
-      margin-top: 2px;
+      gap: 4px;
+      flex-wrap: nowrap;
+      min-width: 0;
     }
 
     .mobile-bnav-curr {
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 800;
       color: var(--royal);
+      line-height: 1;
     }
 
     .mobile-bnav-amt {
@@ -1082,22 +1125,37 @@
       font-weight: 800;
       color: var(--royal);
       letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .mobile-bnav-inr-equiv {
+      font-size: 11px;
+      font-weight: 600;
+      color: #2563EB;
+      background: #EFF6FF;
+      border: 1px solid #DBEAFE;
+      padding: 1px 5px;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-left: 2px;
     }
 
     .mobile-bnav-period {
       font-size: 10px;
       color: #64748B;
       font-weight: 500;
-      margin-left: 2px;
       white-space: nowrap;
+      margin-left: 2px;
     }
 
     .mobile-bnav-rent {
-      font-size: 11px;
+      font-size: 10.5px;
       color: #059669;
       font-weight: 600;
       margin-top: 2px;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .mobile-bnav-btn {
@@ -1105,18 +1163,18 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 12px 18px;
-      font-size: 13.5px;
+      padding: 11px 18px;
+      font-size: 14px;
       font-weight: 700;
-      border-radius: 8px;
+      border-radius: 9px;
       white-space: nowrap;
       flex-shrink: 0;
       box-shadow: 0 4px 14px rgba(8, 75, 224, 0.28);
       cursor: pointer;
       border: none;
-      background: var(--electric);
+      background: linear-gradient(135deg, #084BE0 0%, #0637A8 100%);
       color: #FFFFFF;
-      transition: background 0.2s, transform 0.1s;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
       touch-action: manipulation !important;
       -webkit-tap-highlight-color: transparent !important;
       user-select: none !important;
@@ -1124,8 +1182,24 @@
       pointer-events: auto !important;
     }
 
+    .mobile-bnav-btn:hover {
+      box-shadow: 0 6px 18px rgba(8, 75, 224, 0.38);
+    }
+
     .mobile-bnav-btn:active {
       transform: translateY(1px);
+      box-shadow: 0 2px 6px rgba(8, 75, 224, 0.2);
+    }
+
+    .mobile-bnav-btn-arrow {
+      font-size: 15px;
+      line-height: 1;
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+
+    .mobile-bnav-btn:hover .mobile-bnav-btn-arrow {
+      transform: translateX(2px);
     }
 
     /* OFFICIAL RESERVATION SLIP (Hidden on Screen, Exclusively Displayed on Print) */
@@ -1800,8 +1874,15 @@
 
                 <!-- Instant 1-Click Pay CTA Button -->
                 <button type="button" class="btn-reserve-cta" id="payRazorpayBtn" style="cursor:pointer; width:100%;">
-                  <span id="payBtnLabel">Pay &amp; Reserve Room Lead</span>
-                  <span style="font-size:18px;">→</span>
+                  <div class="pay-btn-content">
+                    <div class="pay-btn-title-row">
+                      <span id="payBtnLabel">Reserve Room · €120</span>
+                      <span class="pay-btn-arrow">→</span>
+                    </div>
+                    <div class="pay-btn-subtitle" id="payBtnSub">
+                      ≈ ₹13,039 via UPI, GPay &amp; Cards
+                    </div>
+                  </div>
                 </button>
 
                 <div
@@ -2005,18 +2086,19 @@
   <aside class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile reservation bar">
     <div class="mobile-bnav-inner">
       <div class="mobile-bnav-price-block">
-        <span class="mobile-bnav-tag" id="mobileBnavTag">Coordination Fee</span>
+        <span class="mobile-bnav-tag" id="mobileBnavTag">Direct Lead Fee</span>
         <div class="mobile-bnav-price-row">
-          <span class="mobile-bnav-curr">₹</span>
-          <span class="mobile-bnav-amt" id="mobileBnavAmount">12,999</span>
+          <span class="mobile-bnav-curr" id="mobileBnavCurr">€</span>
+          <span class="mobile-bnav-amt" id="mobileBnavAmount">120</span>
+          <span class="mobile-bnav-inr-equiv" id="mobileBnavInrEquiv">≈ ₹13,039</span>
           <span class="mobile-bnav-period" id="mobileBnavPeriod">one-time</span>
         </div>
-        <div class="mobile-bnav-rent" id="mobileBnavRent">Warm Rent: €775 /mo</div>
+        <div class="mobile-bnav-rent" id="mobileBnavRent">Warm Rent: €480 /mo</div>
       </div>
       <button type="button" class="mobile-bnav-btn" id="mobileBnavActionBtn"
         onclick="window.initiatePayment && window.initiatePayment()">
-        <span id="mobileBnavBtnText">Reserve Now</span>
-        <span style="font-size:16px; line-height:1;">→</span>
+        <span id="mobileBnavBtnText">Reserve Slot</span>
+        <span class="mobile-bnav-btn-arrow">→</span>
       </button>
     </div>
   </aside>
@@ -2056,6 +2138,7 @@
       const paymentBreakdownBox = document.getElementById('paymentBreakdownBox');
       const paymentModeTopBanner = document.getElementById('paymentModeTopBanner');
       const payBtnLabel = document.getElementById('payBtnLabel');
+      const payBtnSub = document.getElementById('payBtnSub');
       const studentAllocatedBanner = document.getElementById('studentAllocatedBanner');
       const allocatedStudentName = document.getElementById('allocatedStudentName');
       const allocatedStudentContactRow = document.getElementById('allocatedStudentContactRow');
@@ -2375,11 +2458,17 @@
           const mobileBnavBtnText = document.getElementById('mobileBnavBtnText');
           const mobileBnavTag = document.getElementById('mobileBnavTag');
           const mobileBnavAmount = document.getElementById('mobileBnavAmount');
+          const mobileBnavCurr = document.getElementById('mobileBnavCurr');
+          const mobileBnavInrEquiv = document.getElementById('mobileBnavInrEquiv');
+          const mobileBnavPeriod = document.getElementById('mobileBnavPeriod');
           const mobileBnavBtn = document.getElementById('mobileBnavBtn');
           const mobileBnavActionBtn = document.getElementById('mobileBnavActionBtn');
-          if (mobileBnavBtnText) mobileBnavBtnText.textContent = isFilled ? '🔴 Room Leased' : '🔒 Slot Reserved';
+          if (mobileBnavBtnText) mobileBnavBtnText.textContent = isFilled ? 'Room Leased' : 'Slot Reserved';
           if (mobileBnavTag) mobileBnavTag.textContent = isFilled ? 'Closed' : 'Viewing Reserved';
           if (mobileBnavAmount) mobileBnavAmount.textContent = isFilled ? 'Leased' : 'Reserved';
+          if (mobileBnavCurr) mobileBnavCurr.style.display = 'none';
+          if (mobileBnavInrEquiv) mobileBnavInrEquiv.style.display = 'none';
+          if (mobileBnavPeriod) mobileBnavPeriod.style.display = 'none';
           if (mobileBnavBtn) {
             mobileBnavBtn.style.opacity = '0.55';
             mobileBnavBtn.style.pointerEvents = 'none';
@@ -2525,7 +2614,8 @@
               </div>
             `;
           }
-          if (payBtnLabel) payBtnLabel.textContent = `Pay ₹${holdingFeeINR.toLocaleString('en-IN')} (~€${holdingFeeEUR}) · Hold Slot via UPI & Cards`;
+          if (payBtnLabel) payBtnLabel.textContent = `Hold Slot · €${holdingFeeEUR}`;
+          if (payBtnSub) payBtnSub.textContent = `≈ ₹${holdingFeeINR.toLocaleString('en-IN')} via UPI, GPay & Cards (100% Refundable)`;
 
         } else if (paymentMode === 'holding_paid') {
           if (paymentModeTopBanner) {
@@ -2578,7 +2668,8 @@
               </div>
             `;
           }
-          if (payBtnLabel) payBtnLabel.textContent = `Pay Remaining ₹${remainingFeeINR.toLocaleString('en-IN')} (~€${remainingFeeEUR}) & Finalize Lease`;
+          if (payBtnLabel) payBtnLabel.textContent = `Pay Balance · €${remainingFeeEUR}`;
+          if (payBtnSub) payBtnSub.textContent = `≈ ₹${remainingFeeINR.toLocaleString('en-IN')} to Finalize Lease Handover`;
 
         } else {
           // Standard full fee mode
@@ -2601,31 +2692,48 @@
             }
           }
           if (paymentBreakdownBox) paymentBreakdownBox.style.display = 'none';
-          if (payBtnLabel) payBtnLabel.textContent = `Pay ₹${totalFeeINR.toLocaleString('en-IN')} (~€${totalFeeEUR}) & Reserve Room Lead`;
+          if (payBtnLabel) payBtnLabel.textContent = `Reserve Room · €${totalFeeEUR}`;
+          if (payBtnSub) payBtnSub.textContent = `≈ ₹${totalFeeINR.toLocaleString('en-IN')} via UPI, GPay & Cards (1 EUR = ₹${liveEurRate.toFixed(2)})`;
         }
 
         // Update Mobile Sticky Bottom Nav
         const mobileBnavAmount = document.getElementById('mobileBnavAmount');
+        const mobileBnavCurr = document.getElementById('mobileBnavCurr');
+        const mobileBnavInrEquiv = document.getElementById('mobileBnavInrEquiv');
+        const mobileBnavPeriod = document.getElementById('mobileBnavPeriod');
         const mobileBnavTag = document.getElementById('mobileBnavTag');
         const mobileBnavRent = document.getElementById('mobileBnavRent');
         const mobileBnavBtnText = document.getElementById('mobileBnavBtnText');
+
+        if (mobileBnavCurr) {
+          mobileBnavCurr.style.display = '';
+          mobileBnavCurr.textContent = '€';
+        }
+        if (mobileBnavInrEquiv) mobileBnavInrEquiv.style.display = '';
+        if (mobileBnavPeriod) mobileBnavPeriod.style.display = '';
 
         if (mobileBnavRent) {
           mobileBnavRent.textContent = `Warm Rent: €${currentRoom.rentWarmEUR || 775} (~₹${rentINR.toLocaleString('en-IN')}) /mo`;
         }
 
         if (paymentMode === 'holding_initial') {
-          if (mobileBnavAmount) mobileBnavAmount.textContent = `€${holdingFeeEUR} (~₹${holdingFeeINR.toLocaleString('en-IN')})`;
+          if (mobileBnavAmount) mobileBnavAmount.textContent = holdingFeeEUR;
+          if (mobileBnavInrEquiv) mobileBnavInrEquiv.textContent = `≈ ₹${holdingFeeINR.toLocaleString('en-IN')}`;
+          if (mobileBnavPeriod) mobileBnavPeriod.textContent = 'refundable';
           if (mobileBnavTag) mobileBnavTag.textContent = 'Refundable Holding Fee';
-          if (mobileBnavBtnText) mobileBnavBtnText.textContent = `Hold Slot: €${holdingFeeEUR} (₹${holdingFeeINR.toLocaleString('en-IN')})`;
+          if (mobileBnavBtnText) mobileBnavBtnText.textContent = 'Hold Slot';
         } else if (paymentMode === 'holding_paid') {
-          if (mobileBnavAmount) mobileBnavAmount.textContent = `€${remainingFeeEUR} (~₹${remainingFeeINR.toLocaleString('en-IN')})`;
+          if (mobileBnavAmount) mobileBnavAmount.textContent = remainingFeeEUR;
+          if (mobileBnavInrEquiv) mobileBnavInrEquiv.textContent = `≈ ₹${remainingFeeINR.toLocaleString('en-IN')}`;
+          if (mobileBnavPeriod) mobileBnavPeriod.textContent = 'balance';
           if (mobileBnavTag) mobileBnavTag.textContent = 'Remaining Balance';
-          if (mobileBnavBtnText) mobileBnavBtnText.textContent = `Pay Balance: €${remainingFeeEUR} (₹${remainingFeeINR.toLocaleString('en-IN')})`;
+          if (mobileBnavBtnText) mobileBnavBtnText.textContent = 'Pay Balance';
         } else {
-          if (mobileBnavAmount) mobileBnavAmount.textContent = `€${totalFeeEUR} (~₹${totalFeeINR.toLocaleString('en-IN')})`;
+          if (mobileBnavAmount) mobileBnavAmount.textContent = totalFeeEUR;
+          if (mobileBnavInrEquiv) mobileBnavInrEquiv.textContent = `≈ ₹${totalFeeINR.toLocaleString('en-IN')}`;
+          if (mobileBnavPeriod) mobileBnavPeriod.textContent = 'one-time';
           if (mobileBnavTag) mobileBnavTag.textContent = 'Direct Lead Fee';
-          if (mobileBnavBtnText) mobileBnavBtnText.textContent = `Reserve: €${totalFeeEUR} (₹${totalFeeINR.toLocaleString('en-IN')})`;
+          if (mobileBnavBtnText) mobileBnavBtnText.textContent = 'Reserve Slot';
         }
 
         // Render Guarantees & Deliverables Checklist dynamically
