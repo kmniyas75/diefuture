@@ -1229,15 +1229,28 @@
               <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
                 <div>
                   <div style="font-weight:700; font-size:13.5px; color:#0F172A; display:flex; align-items:center; gap:6px;">
-                    <span>💳 Payment Structure &amp; Holding Deposit (Scam Prevention)</span>
+                    <span>💳 Payment Structure &amp; Fee Pricing (EUR &amp; Live INR Conversion)</span>
                   </div>
                   <div style="font-size:12px; color:#475569; margin-top:2px;">
-                    For viewing students: collect a holding fee first to avoid scams/no-shows. If they like it, collect remaining balance. If they don't, refund it.
+                    Set fee in Euros (€) matching German rent &amp; deposit. Collected in INR via Razorpay (UPI, Cards &amp; NetBanking) at today's official exchange rate.
                   </div>
+                </div>
+                <!-- Live ECB Rate Indicator Badge -->
+                <div id="adminLiveRateBadge" style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:6px; padding:4px 10px; font-size:11.5px; color:#166534; display:flex; align-items:center; gap:6px;">
+                  <span>⚡ <strong>1 EUR = ₹<span id="adminRateVal">108.66</span></strong></span>
+                  <button type="button" id="btnRefreshRate" style="background:none; border:none; cursor:pointer; font-size:12px; color:#15803D; padding:0;" title="Refresh Rate">↻</button>
                 </div>
               </div>
 
-              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; align-items:flex-start;">
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; align-items:flex-start;">
+                <div>
+                  <label style="font-size:12px; font-weight:600; color:#334155; margin-bottom:5px; display:block;">Fee Currency</label>
+                  <select id="roomFieldFeeCurrency" style="width:100%; font-size:13px; padding:9px 11px; border-radius:8px; border:1px solid #CBD5E1; font-weight:700; background:#FFFFFF; color:#1E40AF;">
+                    <option value="EUR" selected>EUR (€) — Euro (Recommended)</option>
+                    <option value="INR">INR (₹) — Indian Rupee</option>
+                  </select>
+                </div>
+
                 <div>
                   <label style="font-size:12px; font-weight:600; color:#334155; margin-bottom:5px; display:block;">Payment Mode</label>
                   <select id="roomFieldPaymentMode" style="width:100%; font-size:13px; padding:9px 11px; border-radius:8px; border:1px solid #CBD5E1; font-weight:600; background:#FFFFFF;">
@@ -1248,20 +1261,23 @@
                 </div>
 
                 <div>
-                  <label style="font-size:12px; font-weight:600; color:#334155; margin-bottom:5px; display:block;">Total Service Fee (₹) *</label>
-                  <input type="number" id="roomFieldFee" class="input-highlight" required placeholder="e.g. 5000 or 1" value="" style="background:#FFFFFF; font-weight:700; width:100%; padding:9px 11px; border-radius:8px; border:1px solid #CBD5E1;" />
+                  <label id="roomFieldFeeLabel" style="font-size:12px; font-weight:600; color:#334155; margin-bottom:5px; display:block;">Total Service Fee (€) *</label>
+                  <input type="number" id="roomFieldFee" class="input-highlight" required placeholder="e.g. 140" value="" style="background:#FFFFFF; font-weight:700; width:100%; padding:9px 11px; border-radius:8px; border:1px solid #CBD5E1;" />
+                  <small id="feeConvPill" style="font-size:11px; color:#475569; margin-top:3px; display:block; font-weight:600;"></small>
                 </div>
 
-                <div id="holdingFeeInputsWrap" style="display:none; grid-column: span 2; grid-template-columns: 1fr 1fr; gap:12px;">
+                <div id="holdingFeeInputsWrap" style="display:none; grid-column: span 3; grid-template-columns: 1fr 1fr; gap:12px;">
                   <div>
-                    <label style="font-size:12px; font-weight:600; color:#15803D; margin-bottom:5px; display:block;">Holding Fee Deposit (₹)</label>
-                    <input type="number" id="roomFieldHoldingFee" placeholder="e.g. 2000" value="" style="width:100%; font-size:13px; padding:9px 11px; border-radius:8px; border:1px solid #86EFAC; background:#FFFFFF; font-weight:700; color:#14532D;" />
-                    <small style="font-size:11px; color:#15803D; margin-top:2px; display:block;">Refundable if they visit and don't like it</small>
+                    <label id="roomFieldHoldingFeeLabel" style="font-size:12px; font-weight:600; color:#15803D; margin-bottom:5px; display:block;">Holding Fee Deposit (€)</label>
+                    <input type="number" id="roomFieldHoldingFee" placeholder="e.g. 35" value="" style="width:100%; font-size:13px; padding:9px 11px; border-radius:8px; border:1px solid #86EFAC; background:#FFFFFF; font-weight:700; color:#14532D;" />
+                    <small id="holdingConvPill" style="font-size:11px; color:#15803D; margin-top:3px; display:block; font-weight:600;"></small>
+                    <small style="font-size:11px; color:#15803D; margin-top:2px; display:block;">100% Refundable if they visit and don't like it</small>
                   </div>
 
                   <div>
-                    <label style="font-size:12px; font-weight:600; color:#15803D; margin-bottom:5px; display:block;">Remaining Balance (₹)</label>
+                    <label id="roomFieldRemainingFeeLabel" style="font-size:12px; font-weight:600; color:#15803D; margin-bottom:5px; display:block;">Remaining Balance (€)</label>
                     <input type="number" id="roomFieldRemainingFee" placeholder="Auto-calculated" value="" style="width:100%; font-size:13px; padding:9px 11px; border-radius:8px; border:1px solid #86EFAC; background:#FFFFFF; font-weight:700; color:#14532D;" />
+                    <small id="remainingConvPill" style="font-size:11px; color:#15803D; margin-top:3px; display:block; font-weight:600;"></small>
                     <small style="font-size:11px; color:#15803D; margin-top:2px; display:block;">Auto-calculated: Total − Holding</small>
                   </div>
                 </div>
@@ -1879,12 +1895,21 @@
     const roomFieldStudentPhone = document.getElementById('roomFieldStudentPhone');
     const roomFieldRent = document.getElementById('roomFieldRent');
     const roomFieldDeposit = document.getElementById('roomFieldDeposit');
+    const roomFieldFeeCurrency = document.getElementById('roomFieldFeeCurrency');
+    const roomFieldFeeLabel = document.getElementById('roomFieldFeeLabel');
     const roomFieldFee = document.getElementById('roomFieldFee');
+    const feeConvPill = document.getElementById('feeConvPill');
     const roomFieldPaymentMode = document.getElementById('roomFieldPaymentMode');
+    const roomFieldHoldingFeeLabel = document.getElementById('roomFieldHoldingFeeLabel');
     const roomFieldHoldingFee = document.getElementById('roomFieldHoldingFee');
+    const holdingConvPill = document.getElementById('holdingConvPill');
+    const roomFieldRemainingFeeLabel = document.getElementById('roomFieldRemainingFeeLabel');
     const roomFieldRemainingFee = document.getElementById('roomFieldRemainingFee');
+    const remainingConvPill = document.getElementById('remainingConvPill');
     const holdingFeeInputsWrap = document.getElementById('holdingFeeInputsWrap');
     const holdingModeExplanation = document.getElementById('holdingModeExplanation');
+    const adminRateVal = document.getElementById('adminRateVal');
+    const btnRefreshRate = document.getElementById('btnRefreshRate');
     const roomFieldType = document.getElementById('roomFieldType');
     const roomFieldSize = document.getElementById('roomFieldSize');
     const roomFieldTransit = document.getElementById('roomFieldTransit');
@@ -1913,34 +1938,111 @@
 
     let allAdminRooms = [];
     let adminImages = [];
+    let adminEurRate = 108.50;
+
+    // --- Live ECB Exchange Rate Fetcher ---
+    async function fetchExchangeRate() {
+      try {
+        const res = await fetch(`${apiBase}/api/rates`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.rate) {
+            adminEurRate = Number(data.rate);
+            if (adminRateVal) adminRateVal.textContent = adminEurRate.toFixed(2);
+            updateHoldingModeUI();
+            return;
+          }
+        }
+      } catch (e) {}
+      try {
+        const res = await fetch('http://localhost:3001/api/rates');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.rate) {
+            adminEurRate = Number(data.rate);
+            if (adminRateVal) adminRateVal.textContent = adminEurRate.toFixed(2);
+            updateHoldingModeUI();
+          }
+        }
+      } catch (e) {}
+    }
+
+    if (btnRefreshRate) {
+      btnRefreshRate.addEventListener('click', async () => {
+        btnRefreshRate.textContent = '⏳';
+        await fetchExchangeRate();
+        btnRefreshRate.textContent = '↻';
+      });
+    }
 
     // --- Payment Mode & Holding Fee Calculation ---
     function updateHoldingModeUI() {
       if (!roomFieldPaymentMode) return;
+      const isEUR = !roomFieldFeeCurrency || roomFieldFeeCurrency.value === 'EUR';
+      const currSym = isEUR ? '€' : '₹';
       const mode = roomFieldPaymentMode.value;
-      const total = (roomFieldFee && roomFieldFee.value !== '') ? Number(roomFieldFee.value) : 0;
-      const holding = (roomFieldHoldingFee && roomFieldHoldingFee.value !== '') ? Number(roomFieldHoldingFee.value) : 0;
-      const remaining = Math.max(0, total - holding);
-      if (roomFieldRemainingFee) roomFieldRemainingFee.value = remaining > 0 ? remaining : (total > 0 ? total : '');
+
+      if (roomFieldFeeLabel) roomFieldFeeLabel.textContent = `Total Service Fee (${currSym}) *`;
+      if (roomFieldHoldingFeeLabel) roomFieldHoldingFeeLabel.textContent = `Holding Fee Deposit (${currSym})`;
+      if (roomFieldRemainingFeeLabel) roomFieldRemainingFeeLabel.textContent = `Remaining Balance (${currSym})`;
+
+      const totalRaw = (roomFieldFee && roomFieldFee.value !== '') ? Number(roomFieldFee.value) : 0;
+      const holdingRaw = (roomFieldHoldingFee && roomFieldHoldingFee.value !== '') ? Number(roomFieldHoldingFee.value) : 0;
+      const remainingRaw = Math.max(0, totalRaw - holdingRaw);
+      if (roomFieldRemainingFee) roomFieldRemainingFee.value = remainingRaw > 0 ? remainingRaw : (totalRaw > 0 ? totalRaw : '');
+
+      // Conversion preview pills
+      if (feeConvPill) {
+        if (totalRaw > 0) {
+          feeConvPill.textContent = isEUR
+            ? `≈ ₹${Math.round(totalRaw * adminEurRate).toLocaleString('en-IN')} via Razorpay (1 EUR = ₹${adminEurRate})`
+            : `≈ €${Math.round((totalRaw / adminEurRate) * 10) / 10} (1 EUR = ₹${adminEurRate})`;
+        } else {
+          feeConvPill.textContent = '';
+        }
+      }
+
+      if (holdingConvPill) {
+        if (holdingRaw > 0) {
+          holdingConvPill.textContent = isEUR
+            ? `≈ ₹${Math.round(holdingRaw * adminEurRate).toLocaleString('en-IN')}`
+            : `≈ €${Math.round((holdingRaw / adminEurRate) * 10) / 10}`;
+        } else {
+          holdingConvPill.textContent = '';
+        }
+      }
+
+      if (remainingConvPill) {
+        if (remainingRaw > 0) {
+          remainingConvPill.textContent = isEUR
+            ? `≈ ₹${Math.round(remainingRaw * adminEurRate).toLocaleString('en-IN')}`
+            : `≈ €${Math.round((remainingRaw / adminEurRate) * 10) / 10}`;
+        } else {
+          remainingConvPill.textContent = '';
+        }
+      }
 
       if (mode === 'full') {
         if (holdingFeeInputsWrap) holdingFeeInputsWrap.style.display = 'none';
         if (holdingModeExplanation) {
-          holdingModeExplanation.innerHTML = `💡 <strong>Full Upfront Mode:</strong> The student is charged the total service fee${total > 0 ? ' (₹' + total.toLocaleString('en-IN') + ')' : ''} upfront at checkout.`;
+          holdingModeExplanation.innerHTML = `💡 <strong>Full Upfront Mode:</strong> The student is charged the total service fee${totalRaw > 0 ? ' (' + currSym + totalRaw.toLocaleString() + (isEUR ? ' ≈ ₹' + Math.round(totalRaw * adminEurRate).toLocaleString('en-IN') : '') + ')' : ''} upfront at checkout.`;
         }
       } else if (mode === 'holding_initial') {
         if (holdingFeeInputsWrap) holdingFeeInputsWrap.style.display = 'grid';
         if (holdingModeExplanation) {
-          holdingModeExplanation.innerHTML = `🛡️ <strong>Viewing Slot Holding Fee Mode:</strong> DieFuture collects a holding deposit${holding > 0 ? ' of <strong>₹' + holding.toLocaleString('en-IN') + '</strong>' : ''} to reserve the viewing slot. <strong>100% refundable</strong> if student visits and dislikes it. Remaining balance${remaining > 0 ? ' (<strong>₹' + remaining.toLocaleString('en-IN') + '</strong>)' : ''} is collected only after they approve.`;
+          holdingModeExplanation.innerHTML = `🛡️ <strong>Viewing Slot Holding Fee Mode:</strong> DieFuture collects a holding deposit${holdingRaw > 0 ? ' of <strong>' + currSym + holdingRaw.toLocaleString() + (isEUR ? ' ≈ ₹' + Math.round(holdingRaw * adminEurRate).toLocaleString('en-IN') : '') + '</strong>' : ''} to reserve the viewing slot. <strong>100% refundable</strong> if student visits and dislikes it. Remaining balance${remainingRaw > 0 ? ' (<strong>' + currSym + remainingRaw.toLocaleString() + (isEUR ? ' ≈ ₹' + Math.round(remainingRaw * adminEurRate).toLocaleString('en-IN') : '') + '</strong>)' : ''} is collected only after they approve.`;
         }
       } else if (mode === 'holding_paid') {
         if (holdingFeeInputsWrap) holdingFeeInputsWrap.style.display = 'grid';
         if (holdingModeExplanation) {
-          holdingModeExplanation.innerHTML = `🎉 <strong>Holding Collected ✓ → Pay Remaining:</strong> Student already completed the viewing and approved the room! The link will show holding fee${holding > 0 ? ' (₹' + holding.toLocaleString('en-IN') + ')' : ''} credited and prompt for the remaining balance${remaining > 0 ? ' of <strong>₹' + remaining.toLocaleString('en-IN') + '</strong>' : ''} to finalize lease.`;
+          holdingModeExplanation.innerHTML = `🎉 <strong>Holding Collected ✓ → Pay Remaining:</strong> Student already completed the viewing and approved the room! The link will show holding fee${holdingRaw > 0 ? ' (' + currSym + holdingRaw.toLocaleString() + ')' : ''} credited and prompt for the remaining balance${remainingRaw > 0 ? ' of <strong>' + currSym + remainingRaw.toLocaleString() + (isEUR ? ' ≈ ₹' + Math.round(remainingRaw * adminEurRate).toLocaleString('en-IN') : '') + '</strong>' : ''} to finalize lease.`;
         }
       }
     }
 
+    if (roomFieldFeeCurrency) {
+      roomFieldFeeCurrency.addEventListener('change', updateHoldingModeUI);
+    }
     if (roomFieldPaymentMode) {
       roomFieldPaymentMode.addEventListener('change', updateHoldingModeUI);
     }
@@ -2035,6 +2137,7 @@
         tabBtnLeads.classList.remove('active');
         panelRooms.style.display = 'block';
         panelLeads.style.display = 'none';
+        fetchExchangeRate();
         fetchAdminRooms();
       } else {
         tabBtnLeads.classList.add('active');
@@ -2227,9 +2330,29 @@
       btnSubmitRoom.disabled = true;
       btnSubmitRoom.textContent = 'Saving to Database...';
 
-      const parsedFee = (roomFieldFee && roomFieldFee.value !== '') ? Number(roomFieldFee.value) : 0;
-      const parsedHolding = (roomFieldHoldingFee && roomFieldHoldingFee.value !== '') ? Number(roomFieldHoldingFee.value) : 0;
-      const parsedRemaining = (roomFieldRemainingFee && roomFieldRemainingFee.value !== '') ? Number(roomFieldRemainingFee.value) : Math.max(0, parsedFee - parsedHolding);
+      const isEUR = !roomFieldFeeCurrency || roomFieldFeeCurrency.value === 'EUR';
+      const enteredFee = (roomFieldFee && roomFieldFee.value !== '') ? Number(roomFieldFee.value) : 0;
+      const enteredHolding = (roomFieldHoldingFee && roomFieldHoldingFee.value !== '') ? Number(roomFieldHoldingFee.value) : 0;
+      const enteredRemaining = (roomFieldRemainingFee && roomFieldRemainingFee.value !== '') ? Number(roomFieldRemainingFee.value) : Math.max(0, enteredFee - enteredHolding);
+
+      let feeEUR, holdingFeeEUR, remainingFeeEUR;
+      let feeINR, holdingFeeINR, remainingFeeINR;
+
+      if (isEUR) {
+        feeEUR = enteredFee;
+        holdingFeeEUR = enteredHolding;
+        remainingFeeEUR = enteredRemaining;
+        feeINR = Math.round(feeEUR * adminEurRate);
+        holdingFeeINR = Math.round(holdingFeeEUR * adminEurRate);
+        remainingFeeINR = Math.round(remainingFeeEUR * adminEurRate);
+      } else {
+        feeINR = enteredFee;
+        holdingFeeINR = enteredHolding;
+        remainingFeeINR = enteredRemaining;
+        feeEUR = Math.round((feeINR / adminEurRate) * 10) / 10;
+        holdingFeeEUR = Math.round((holdingFeeINR / adminEurRate) * 10) / 10;
+        remainingFeeEUR = Math.round((remainingFeeINR / adminEurRate) * 10) / 10;
+      }
 
       const payload = {
         roomId: roomFieldId.value.trim(),
@@ -2239,9 +2362,13 @@
         rentWarmEUR: Number(roomFieldRent.value),
         depositEUR: Number(roomFieldDeposit.value) || (Number(roomFieldRent.value) * 2),
         paymentMode: roomFieldPaymentMode ? roomFieldPaymentMode.value : 'full',
-        feeINR: parsedFee,
-        holdingFeeINR: parsedHolding,
-        remainingFeeINR: parsedRemaining,
+        feeCurrency: isEUR ? 'EUR' : 'INR',
+        feeEUR,
+        holdingFeeEUR,
+        remainingFeeEUR,
+        feeINR,
+        holdingFeeINR,
+        remainingFeeINR,
         studentName: roomFieldStudentName ? roomFieldStudentName.value.trim() : '',
         studentEmail: roomFieldStudentEmail ? roomFieldStudentEmail.value.trim() : '',
         studentPhone: roomFieldStudentPhone ? roomFieldStudentPhone.value.trim() : '',
@@ -2369,29 +2496,34 @@
           <td>
             ${(() => {
               const mode = room.paymentMode || 'full';
-              const total = room.feeINR !== undefined ? Number(room.feeINR) : 0;
-              const holding = room.holdingFeeINR !== undefined ? Number(room.holdingFeeINR) : 0;
-              const remaining = room.remainingFeeINR !== undefined ? Number(room.remainingFeeINR) : Math.max(0, total - holding);
+              const isEUR = room.feeCurrency !== 'INR';
+              const fEUR = room.feeEUR !== undefined ? Number(room.feeEUR) : (room.feeINR ? Math.round(Number(room.feeINR) / adminEurRate) : 0);
+              const hEUR = room.holdingFeeEUR !== undefined ? Number(room.holdingFeeEUR) : (room.holdingFeeINR ? Math.round(Number(room.holdingFeeINR) / adminEurRate) : 0);
+              const rEUR = room.remainingFeeEUR !== undefined ? Number(room.remainingFeeEUR) : Math.max(0, fEUR - hEUR);
+              const totalINR = room.feeINR !== undefined ? Number(room.feeINR) : Math.round(fEUR * adminEurRate);
+              const holdingINR = room.holdingFeeINR !== undefined ? Number(room.holdingFeeINR) : Math.round(hEUR * adminEurRate);
+              const remainingINR = room.remainingFeeINR !== undefined ? Number(room.remainingFeeINR) : Math.max(0, totalINR - holdingINR);
+
               if (mode === 'holding_initial') {
                 return `
                   <div style="margin-bottom:3px;">
-                    <span style="display:inline-block; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; background:#FEF3C7; color:#92400E; border:1px solid #FDE68A;">🛡️ Holding: ₹${holding.toLocaleString('en-IN')}</span>
+                    <span style="display:inline-block; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; background:#FEF3C7; color:#92400E; border:1px solid #FDE68A;">🛡️ Hold: €${hEUR} (~₹${holdingINR.toLocaleString('en-IN')})</span>
                   </div>
-                  <strong style="color:var(--royal); font-size:13.5px;">Bal: ₹${remaining.toLocaleString('en-IN')}</strong><br>
-                  <span style="font-size:10.5px; color:var(--ink-3);">Total ₹${total.toLocaleString('en-IN')} (Refundable)</span>
+                  <strong style="color:var(--royal); font-size:13.5px;">Bal: €${rEUR}</strong><br>
+                  <span style="font-size:10.5px; color:var(--ink-3);">Total €${fEUR} (~₹${totalINR.toLocaleString('en-IN')})</span>
                 `;
               } else if (mode === 'holding_paid') {
                 return `
                   <div style="margin-bottom:3px;">
-                    <span style="display:inline-block; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; background:#DCFCE7; color:#166534; border:1px solid #86EFAC;">✓ Holding Paid</span>
+                    <span style="display:inline-block; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; background:#DCFCE7; color:#166534; border:1px solid #86EFAC;">✓ Hold Paid</span>
                   </div>
-                  <strong style="color:#059669; font-size:14.5px;">Pay Bal: ₹${remaining.toLocaleString('en-IN')}</strong><br>
-                  <span style="font-size:10.5px; color:var(--ink-3);">Total ₹${total.toLocaleString('en-IN')}</span>
+                  <strong style="color:#059669; font-size:14.5px;">Pay Bal: €${rEUR} (~₹${remainingINR.toLocaleString('en-IN')})</strong><br>
+                  <span style="font-size:10.5px; color:var(--ink-3);">Total €${fEUR}</span>
                 `;
               } else {
                 return `
-                  <strong style="color:var(--electric); font-size:15px;">₹${total.toLocaleString('en-IN')}</strong><br>
-                  <span style="font-size:11px; color:var(--ink-3);">One-time full fee</span>
+                  <strong style="color:var(--electric); font-size:15px;">€${fEUR}</strong> <span style="font-size:11.5px; color:var(--ink-2);">(~₹${totalINR.toLocaleString('en-IN')})</span><br>
+                  <span style="font-size:11px; color:var(--ink-3);">One-time service fee</span>
                 `;
               }
             })()}
@@ -2440,15 +2572,28 @@
           if (roomFieldStudentPhone) roomFieldStudentPhone.value = room.studentPhone || '';
           roomFieldRent.value = room.rentWarmEUR || '';
           roomFieldDeposit.value = room.depositEUR || '';
-          roomFieldFee.value = room.feeINR !== undefined ? room.feeINR : '';
+          
+          const isEUR = room.feeCurrency !== 'INR';
+          if (roomFieldFeeCurrency) roomFieldFeeCurrency.value = isEUR ? 'EUR' : 'INR';
+          if (isEUR) {
+            roomFieldFee.value = room.feeEUR !== undefined ? room.feeEUR : (room.feeINR ? Math.round(room.feeINR / adminEurRate) : '');
+            if (roomFieldHoldingFee) {
+              roomFieldHoldingFee.value = room.holdingFeeEUR !== undefined ? room.holdingFeeEUR : (room.holdingFeeINR ? Math.round(room.holdingFeeINR / adminEurRate) : '');
+            }
+            if (roomFieldRemainingFee) {
+              roomFieldRemainingFee.value = room.remainingFeeEUR !== undefined ? room.remainingFeeEUR : (room.feeEUR && room.holdingFeeEUR ? Math.max(0, Number(room.feeEUR) - Number(room.holdingFeeEUR)) : '');
+            }
+          } else {
+            roomFieldFee.value = room.feeINR !== undefined ? room.feeINR : '';
+            if (roomFieldHoldingFee) {
+              roomFieldHoldingFee.value = room.holdingFeeINR !== undefined ? room.holdingFeeINR : '';
+            }
+            if (roomFieldRemainingFee) {
+              roomFieldRemainingFee.value = room.remainingFeeINR !== undefined ? room.remainingFeeINR : (room.feeINR !== undefined && room.holdingFeeINR !== undefined ? Math.max(0, Number(room.feeINR) - Number(room.holdingFeeINR)) : '');
+            }
+          }
           if (roomFieldPaymentMode) {
             roomFieldPaymentMode.value = room.paymentMode || 'full';
-          }
-          if (roomFieldHoldingFee) {
-            roomFieldHoldingFee.value = room.holdingFeeINR !== undefined ? room.holdingFeeINR : '';
-          }
-          if (roomFieldRemainingFee) {
-            roomFieldRemainingFee.value = room.remainingFeeINR !== undefined ? room.remainingFeeINR : (room.feeINR !== undefined && room.holdingFeeINR !== undefined ? Math.max(0, Number(room.feeINR) - Number(room.holdingFeeINR)) : '');
           }
           updateHoldingModeUI();
           roomFieldType.value = room.roomType || 'WG Room (Single Private)';
@@ -2519,15 +2664,27 @@
 
           roomFieldRent.value = room.rentWarmEUR || '';
           roomFieldDeposit.value = room.depositEUR || '';
-          roomFieldFee.value = room.feeINR !== undefined ? room.feeINR : '';
+          const isEUR = room.feeCurrency !== 'INR';
+          if (roomFieldFeeCurrency) roomFieldFeeCurrency.value = isEUR ? 'EUR' : 'INR';
+          if (isEUR) {
+            roomFieldFee.value = room.feeEUR !== undefined ? room.feeEUR : (room.feeINR ? Math.round(room.feeINR / adminEurRate) : '');
+            if (roomFieldHoldingFee) {
+              roomFieldHoldingFee.value = room.holdingFeeEUR !== undefined ? room.holdingFeeEUR : (room.holdingFeeINR ? Math.round(room.holdingFeeINR / adminEurRate) : '');
+            }
+            if (roomFieldRemainingFee) {
+              roomFieldRemainingFee.value = room.remainingFeeEUR !== undefined ? room.remainingFeeEUR : (room.feeEUR && room.holdingFeeEUR ? Math.max(0, Number(room.feeEUR) - Number(room.holdingFeeEUR)) : '');
+            }
+          } else {
+            roomFieldFee.value = room.feeINR !== undefined ? room.feeINR : '';
+            if (roomFieldHoldingFee) {
+              roomFieldHoldingFee.value = room.holdingFeeINR !== undefined ? room.holdingFeeINR : '';
+            }
+            if (roomFieldRemainingFee) {
+              roomFieldRemainingFee.value = room.remainingFeeINR !== undefined ? room.remainingFeeINR : (room.feeINR !== undefined && room.holdingFeeINR !== undefined ? Math.max(0, Number(room.feeINR) - Number(room.holdingFeeINR)) : '');
+            }
+          }
           if (roomFieldPaymentMode) {
             roomFieldPaymentMode.value = room.paymentMode || 'full';
-          }
-          if (roomFieldHoldingFee) {
-            roomFieldHoldingFee.value = room.holdingFeeINR !== undefined ? room.holdingFeeINR : '';
-          }
-          if (roomFieldRemainingFee) {
-            roomFieldRemainingFee.value = room.remainingFeeINR !== undefined ? room.remainingFeeINR : (room.feeINR !== undefined && room.holdingFeeINR !== undefined ? Math.max(0, Number(room.feeINR) - Number(room.holdingFeeINR)) : '');
           }
           updateHoldingModeUI();
           roomFieldType.value = room.roomType || 'WG Room (Single Private)';
@@ -2661,6 +2818,7 @@
 
     // Initialize
     checkAuth();
+    fetchExchangeRate();
   </script>
 </body>
 </html>

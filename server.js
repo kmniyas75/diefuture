@@ -51,6 +51,65 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Daily EUR -> INR exchange rate endpoint (with in-memory cache)
+let serverRatesCache = null;
+let serverRatesLastFetch = 0;
+const SERVER_RATES_TTL = 60 * 60 * 1000; // 1 hour
+
+app.get('/api/rates', async (req, res) => {
+  const now = Date.now();
+  if (serverRatesCache && (now - serverRatesLastFetch < SERVER_RATES_TTL)) {
+    return res.json({ ...serverRatesCache, cached: true });
+  }
+
+  let rate = 108.50;
+  let dateStr = new Date().toISOString().split('T')[0];
+  let source = 'fallback';
+
+  try {
+    const ctrl1 = new AbortController();
+    const t1 = setTimeout(() => ctrl1.abort(), 3500);
+    const resp1 = await fetch('https://api.frankfurter.app/latest?from=EUR&to=INR', { signal: ctrl1.signal });
+    clearTimeout(t1);
+    if (resp1.ok) {
+      const data1 = await resp1.json();
+      if (data1?.rates?.INR) {
+        rate = Number(data1.rates.INR);
+        dateStr = data1.date || dateStr;
+        source = 'frankfurter_ecb';
+      }
+    }
+  } catch (e1) {
+    try {
+      const ctrl2 = new AbortController();
+      const t2 = setTimeout(() => ctrl2.abort(), 3500);
+      const resp2 = await fetch('https://open.er-api.com/v6/latest/EUR', { signal: ctrl2.signal });
+      clearTimeout(t2);
+      if (resp2.ok) {
+        const data2 = await resp2.json();
+        if (data2?.rates?.INR) {
+          rate = Number(data2.rates.INR);
+          dateStr = data2.time_last_update_utc?.split(' ')?.[0] || dateStr;
+          source = 'open_er_api';
+        }
+      }
+    } catch (e2) {}
+  }
+
+  const cleanRate = Math.round(rate * 100) / 100;
+  serverRatesCache = {
+    success: true,
+    base: 'EUR',
+    target: 'INR',
+    rate: cleanRate,
+    date: dateStr,
+    source,
+    updatedAt: new Date().toISOString()
+  };
+  serverRatesLastFetch = now;
+  return res.json({ ...serverRatesCache, cached: false });
+});
+
 // ----------------------------------------------------
 // Razorpay Standard Checkout Endpoints
 // ----------------------------------------------------
@@ -585,9 +644,13 @@ app.post('/api/rooms', async (req, res) => {
       rentWarmEUR: Number(rentWarmEUR),
       depositEUR: Number(depositEUR) || Number(rentWarmEUR) * 2,
       paymentMode: req.body.paymentMode || 'full',
-      feeINR: feeINR !== undefined ? Number(feeINR) : 0,
-      holdingFeeINR: req.body.holdingFeeINR !== undefined ? Number(req.body.holdingFeeINR) : 0,
-      remainingFeeINR: req.body.remainingFeeINR !== undefined ? Number(req.body.remainingFeeINR) : Math.max(0, (feeINR !== undefined ? Number(feeINR) : 0) - (req.body.holdingFeeINR !== undefined ? Number(req.body.holdingFeeINR) : 0)),
+      feeCurrency: req.body.feeCurrency || 'EUR',
+      feeEUR: req.body.feeEUR !== undefined && req.body.feeEUR !== '' ? Number(req.body.feeEUR) : undefined,
+      holdingFeeEUR: req.body.holdingFeeEUR !== undefined && req.body.holdingFeeEUR !== '' ? Number(req.body.holdingFeeEUR) : undefined,
+      remainingFeeEUR: req.body.remainingFeeEUR !== undefined && req.body.remainingFeeEUR !== '' ? Number(req.body.remainingFeeEUR) : undefined,
+      feeINR: feeINR !== undefined && feeINR !== '' ? Number(feeINR) : 0,
+      holdingFeeINR: req.body.holdingFeeINR !== undefined && req.body.holdingFeeINR !== '' ? Number(req.body.holdingFeeINR) : 0,
+      remainingFeeINR: req.body.remainingFeeINR !== undefined && req.body.remainingFeeINR !== '' ? Number(req.body.remainingFeeINR) : Math.max(0, (feeINR !== undefined ? Number(feeINR) : 0) - (req.body.holdingFeeINR !== undefined ? Number(req.body.holdingFeeINR) : 0)),
       roomSizeM2: Number(roomSizeM2) || 16,
       roomType: roomType || 'WG Room (Single Private)',
       imageUrl: imageList[0],

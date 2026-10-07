@@ -1753,12 +1753,17 @@
               <div class="fee-price-tag">
                 <div class="fee-label" id="feePriceLabel">Lead Handover & Coordination Fee</div>
                 <div class="fee-amount-row">
-                  <span class="fee-curr">₹</span>
+                  <span class="fee-curr" id="feeCurrDisplay">€</span>
                   <span class="fee-val" id="feeAmountDisplay">—</span>
                   <span class="fee-type" id="feeTypeDisplay">/ one-time service fee</span>
                 </div>
-                <div style="font-size:12px; color:var(--ink-3); margin-top:3px;">
-                  Collected securely via Razorpay
+                <!-- Live Rate & INR Equivalent Pill -->
+                <div id="feeInrEquivalentBadge" style="display:inline-flex; align-items:center; gap:6px; background:#EFF6FF; border:1px solid #BFDBFE; border-radius:20px; padding:4px 12px; margin-top:8px; font-size:12px; font-weight:600; color:#1E40AF;">
+                  <span>⚡</span>
+                  <span id="feeInrEquivalentText">≈ ₹3,803 via Razorpay (1 EUR = ₹108.66 today)</span>
+                </div>
+                <div style="font-size:11.5px; color:var(--ink-3); margin-top:5px;">
+                  Collected securely via Razorpay (UPI, Google Pay, PhonePe, Cards)
                 </div>
                 <!-- Dynamic Breakdown for Holding Deposit / Remaining Balance -->
                 <div id="paymentBreakdownBox" style="display:none; margin-top:10px;"></div>
@@ -2043,8 +2048,11 @@
       const reserveLeadCardTitle = document.getElementById('reserveLeadCardTitle');
       const reserveBadgeVerified = document.getElementById('reserveBadgeVerified');
       const feePriceLabel = document.getElementById('feePriceLabel');
+      const feeCurrDisplay = document.getElementById('feeCurrDisplay');
       const feeAmountDisplay = document.getElementById('feeAmountDisplay');
       const feeTypeDisplay = document.getElementById('feeTypeDisplay');
+      const feeInrEquivalentBadge = document.getElementById('feeInrEquivalentBadge');
+      const feeInrEquivalentText = document.getElementById('feeInrEquivalentText');
       const paymentBreakdownBox = document.getElementById('paymentBreakdownBox');
       const paymentModeTopBanner = document.getElementById('paymentModeTopBanner');
       const payBtnLabel = document.getElementById('payBtnLabel');
@@ -2159,12 +2167,43 @@
         }
       }
 
+      let liveEurRate = 108.50;
+      let liveRateDate = '';
+
+      // Fetch dynamic exchange rate
+      async function loadExchangeRate() {
+        const apiBase = getApiBase();
+        try {
+          const res = await fetch((apiBase ? apiBase : '') + '/api/rates');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.rate && Number(data.rate) > 0) {
+              liveEurRate = Number(data.rate);
+              liveRateDate = data.date || '';
+              return;
+            }
+          }
+        } catch (err) {}
+        try {
+          const res = await fetch('http://localhost:3001/api/rates');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.rate) {
+              liveEurRate = Number(data.rate);
+              liveRateDate = data.date || '';
+            }
+          }
+        } catch (e) {}
+      }
+
       // Fetch dynamic room data
       async function loadRoomDetails() {
         if (!roomIdParam) {
           showRoomNotFound('Private Room Allocation Link Required', 'Please open a valid private room allocation link shared by your DieFuture advisor, or submit an accommodation brief.');
           return;
         }
+
+        await loadExchangeRate();
 
         const apiBase = getApiBase();
         const endpoint = (apiBase ? apiBase : '') + `/api/rooms/${encodeURIComponent(roomIdParam)}`;
@@ -2218,11 +2257,15 @@
 
         const rent = currentRoom.rentWarmEUR || 775;
         const deposit = currentRoom.depositEUR || 1500;
-        const feeINR = currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0;
-        const formattedFee = `₹${feeINR.toLocaleString('en-IN')}`;
+        const rentINR = Math.round(rent * liveEurRate);
+        const depositINR = Math.round(deposit * liveEurRate);
 
-        if (specRentVal) specRentVal.textContent = `€${rent}`;
-        if (specDepositVal) specDepositVal.textContent = `€${deposit.toLocaleString()}`;
+        if (specRentVal) {
+          specRentVal.innerHTML = `€${rent} <small style="display:block; font-size:11px; font-weight:500; color:#64748B;">~₹${rentINR.toLocaleString('en-IN')}</small>`;
+        }
+        if (specDepositVal) {
+          specDepositVal.innerHTML = `€${deposit.toLocaleString()} <small style="display:block; font-size:11px; font-weight:500; color:#64748B;">~₹${depositINR.toLocaleString('en-IN')}</small>`;
+        }
         if (specSizeVal) specSizeVal.textContent = `~${currentRoom.roomSizeM2 || 16} m²`;
         if (specTransitVal && currentRoom.transit) specTransitVal.textContent = currentRoom.transit.split('(')[0].trim();
         if (captionCategoryVal) captionCategoryVal.textContent = currentRoom.roomType || 'Private Furnished Room';
@@ -2231,8 +2274,8 @@
         const calloutRent = document.getElementById('calloutRentVal');
         const calloutDep = document.getElementById('calloutDepositVal');
         const calloutCity = document.getElementById('calloutCityVal');
-        if (calloutRent) calloutRent.textContent = `€${rent}`;
-        if (calloutDep) calloutDep.textContent = `€${deposit.toLocaleString()}`;
+        if (calloutRent) calloutRent.textContent = `€${rent} (~₹${rentINR.toLocaleString('en-IN')})`;
+        if (calloutDep) calloutDep.textContent = `€${deposit.toLocaleString()} (~₹${depositINR.toLocaleString('en-IN')})`;
         if (calloutCity) calloutCity.textContent = currentRoom.city || 'Germany';
 
         // Render Advisor Notes (if provided by advisor)
@@ -2376,17 +2419,46 @@
         if (roomReservedNoticeView) roomReservedNoticeView.style.display = 'none';
 
         const paymentMode = currentRoom.paymentMode || 'full';
-        const totalFeeINR = currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0;
-        const holdingFeeINR = currentRoom.holdingFeeINR !== undefined ? Number(currentRoom.holdingFeeINR) : 0;
-        const remainingFeeINR = currentRoom.remainingFeeINR !== undefined ? Number(currentRoom.remainingFeeINR) : Math.max(0, totalFeeINR - holdingFeeINR);
+        const isEUR = currentRoom.feeCurrency !== 'INR';
 
+        let totalFeeEUR, holdingFeeEUR, remainingFeeEUR;
+        let totalFeeINR, holdingFeeINR, remainingFeeINR;
+
+        if (isEUR && (currentRoom.feeEUR !== undefined && currentRoom.feeEUR !== '')) {
+          totalFeeEUR = Number(currentRoom.feeEUR);
+          holdingFeeEUR = currentRoom.holdingFeeEUR !== undefined ? Number(currentRoom.holdingFeeEUR) : 0;
+          remainingFeeEUR = currentRoom.remainingFeeEUR !== undefined ? Number(currentRoom.remainingFeeEUR) : Math.max(0, totalFeeEUR - holdingFeeEUR);
+          totalFeeINR = currentRoom.feeINR ? Number(currentRoom.feeINR) : Math.round(totalFeeEUR * liveEurRate);
+          holdingFeeINR = currentRoom.holdingFeeINR ? Number(currentRoom.holdingFeeINR) : Math.round(holdingFeeEUR * liveEurRate);
+          remainingFeeINR = Math.max(0, totalFeeINR - holdingFeeINR);
+        } else {
+          totalFeeINR = currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0;
+          holdingFeeINR = currentRoom.holdingFeeINR !== undefined ? Number(currentRoom.holdingFeeINR) : 0;
+          remainingFeeINR = currentRoom.remainingFeeINR !== undefined ? Number(currentRoom.remainingFeeINR) : Math.max(0, totalFeeINR - holdingFeeINR);
+          totalFeeEUR = Math.round(totalFeeINR / liveEurRate);
+          holdingFeeEUR = Math.round(holdingFeeINR / liveEurRate);
+          remainingFeeEUR = Math.max(0, totalFeeEUR - holdingFeeEUR);
+        }
+
+        let payableAmountEUR = totalFeeEUR;
         let payableAmountINR = totalFeeINR;
         if (paymentMode === 'holding_initial') {
+          payableAmountEUR = holdingFeeEUR;
           payableAmountINR = holdingFeeINR;
         } else if (paymentMode === 'holding_paid') {
+          payableAmountEUR = remainingFeeEUR;
           payableAmountINR = remainingFeeINR;
         }
-        const formattedPayable = `₹${Number(payableAmountINR).toLocaleString('en-IN')}`;
+
+        // Store resolved values on currentRoom for checkout
+        currentRoom._resolvedPayableINR = payableAmountINR;
+        currentRoom._resolvedPayableEUR = payableAmountEUR;
+        currentRoom._resolvedTotalEUR = totalFeeEUR;
+        currentRoom._resolvedTotalINR = totalFeeINR;
+        currentRoom._resolvedHoldingEUR = holdingFeeEUR;
+        currentRoom._resolvedHoldingINR = holdingFeeINR;
+        currentRoom._resolvedRemainingEUR = remainingFeeEUR;
+        currentRoom._resolvedRemainingINR = remainingFeeINR;
 
         // Configure UI for Payment Modes
         if (paymentMode === 'holding_initial') {
@@ -2396,7 +2468,7 @@
               <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:8px; padding:10px 14px; display:flex; align-items:flex-start; gap:10px;">
                 <span style="font-size:20px; line-height:1;">🛡️</span>
                 <div>
-                  <div style="font-weight:700; color:#92400E; font-size:13px;">Scam Prevention · Refundable Viewing Deposit</div>
+                  <div style="font-weight:700; color:#92400E; font-size:13px;">Scam Prevention · Refundable Viewing Deposit (€${holdingFeeEUR})</div>
                   <div style="font-size:11.5px; color:#B45309; line-height:1.4; margin-top:2px;">
                     We collect a temporary holding fee to prevent scam applicants and hold your viewing slot. <strong>100% refunded</strong> if you visit and do not like the room!
                   </div>
@@ -2412,28 +2484,35 @@
           }
           if (reserveLeadCardTitle) reserveLeadCardTitle.textContent = `Hold Room ${currentRoom.roomId} for Viewing`;
           if (feePriceLabel) feePriceLabel.textContent = 'Viewing Slot Holding Deposit';
-          if (feeAmountDisplay) feeAmountDisplay.textContent = holdingFeeINR.toLocaleString('en-IN');
+          if (feeCurrDisplay) feeCurrDisplay.textContent = '€';
+          if (feeAmountDisplay) feeAmountDisplay.textContent = holdingFeeEUR;
           if (feeTypeDisplay) feeTypeDisplay.textContent = '/ refundable deposit';
+          if (feeInrEquivalentBadge) {
+            feeInrEquivalentBadge.style.display = 'inline-flex';
+            if (feeInrEquivalentText) {
+              feeInrEquivalentText.textContent = `≈ ₹${holdingFeeINR.toLocaleString('en-IN')} via Razorpay (1 EUR = ₹${liveEurRate.toFixed(2)} today)`;
+            }
+          }
           if (paymentBreakdownBox) {
             paymentBreakdownBox.style.display = 'block';
             paymentBreakdownBox.innerHTML = `
               <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:6px; padding:9px 12px; font-size:12px; line-height:1.45; color:#92400E; text-align:left;">
                 <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                   <span>Total Service Fee:</span>
-                  <span style="font-weight:700;">₹${totalFeeINR.toLocaleString('en-IN')}</span>
+                  <span style="font-weight:700;">€${totalFeeEUR} <small style="color:#B45309; font-weight:500;">(~₹${totalFeeINR.toLocaleString('en-IN')})</small></span>
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#15803D; font-weight:600;">
                   <span>Pay Now to Hold Slot:</span>
-                  <span>₹${holdingFeeINR.toLocaleString('en-IN')} (Refundable)</span>
+                  <span>€${holdingFeeEUR} <small style="color:#166534; font-weight:600;">(~₹${holdingFeeINR.toLocaleString('en-IN')})</small> (Refundable)</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; padding-top:4px; border-top:1px dashed #FCD34D; font-size:11.5px; color:#78350F;">
                   <span>Remaining after viewing:</span>
-                  <span style="font-weight:700;">₹${remainingFeeINR.toLocaleString('en-IN')} (Due only if you like it)</span>
+                  <span style="font-weight:700;">€${remainingFeeEUR} <small style="color:#92400E; font-weight:500;">(~₹${remainingFeeINR.toLocaleString('en-IN')})</small> (Due only if you like it)</span>
                 </div>
               </div>
             `;
           }
-          if (payBtnLabel) payBtnLabel.textContent = `Pay ₹${holdingFeeINR.toLocaleString('en-IN')} Holding Deposit & Reserve Slot`;
+          if (payBtnLabel) payBtnLabel.textContent = `Pay ₹${holdingFeeINR.toLocaleString('en-IN')} (~€${holdingFeeEUR}) · Hold Slot via UPI & Cards`;
 
         } else if (paymentMode === 'holding_paid') {
           if (paymentModeTopBanner) {
@@ -2444,7 +2523,7 @@
                 <div>
                   <div style="font-weight:700; color:#065F46; font-size:13.5px;">Viewing Completed &amp; Room Approved!</div>
                   <div style="font-size:12px; color:#047857; line-height:1.4; margin-top:2px;">
-                    Your holding deposit of <strong>₹${holdingFeeINR.toLocaleString('en-IN')}</strong> was collected &amp; credited ✓. Pay the remaining balance below to finalize your lease handover.
+                    Your holding deposit of <strong>€${holdingFeeEUR} (~₹${holdingFeeINR.toLocaleString('en-IN')})</strong> was collected &amp; credited ✓. Pay the remaining balance below to finalize your lease handover.
                   </div>
                 </div>
               </div>
@@ -2458,28 +2537,35 @@
           }
           if (reserveLeadCardTitle) reserveLeadCardTitle.textContent = `Finalize Lease for Room ${currentRoom.roomId}`;
           if (feePriceLabel) feePriceLabel.textContent = 'Remaining Service Fee Balance';
-          if (feeAmountDisplay) feeAmountDisplay.textContent = remainingFeeINR.toLocaleString('en-IN');
+          if (feeCurrDisplay) feeCurrDisplay.textContent = '€';
+          if (feeAmountDisplay) feeAmountDisplay.textContent = remainingFeeEUR;
           if (feeTypeDisplay) feeTypeDisplay.textContent = '/ remaining balance';
+          if (feeInrEquivalentBadge) {
+            feeInrEquivalentBadge.style.display = 'inline-flex';
+            if (feeInrEquivalentText) {
+              feeInrEquivalentText.textContent = `≈ ₹${remainingFeeINR.toLocaleString('en-IN')} via Razorpay (1 EUR = ₹${liveEurRate.toFixed(2)} today)`;
+            }
+          }
           if (paymentBreakdownBox) {
             paymentBreakdownBox.style.display = 'block';
             paymentBreakdownBox.innerHTML = `
               <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:6px; padding:9px 12px; font-size:12px; line-height:1.45; color:#166534; text-align:left;">
                 <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                   <span>Total Service Fee:</span>
-                  <span style="font-weight:600;">₹${totalFeeINR.toLocaleString('en-IN')}</span>
+                  <span style="font-weight:600;">€${totalFeeEUR} <small style="color:#166534; font-weight:500;">(~₹${totalFeeINR.toLocaleString('en-IN')})</small></span>
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#15803D;">
                   <span>Holding Deposit Credited:</span>
-                  <span style="font-weight:700;">− ₹${holdingFeeINR.toLocaleString('en-IN')} ✓</span>
+                  <span style="font-weight:700;">− €${holdingFeeEUR} (~₹${holdingFeeINR.toLocaleString('en-IN')}) ✓</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; padding-top:4px; border-top:1px solid #86EFAC; font-weight:700; color:#14532D; font-size:12.5px;">
                   <span>Balance Due to Finalize:</span>
-                  <span>₹${remainingFeeINR.toLocaleString('en-IN')}</span>
+                  <span>€${remainingFeeEUR} (~₹${remainingFeeINR.toLocaleString('en-IN')})</span>
                 </div>
               </div>
             `;
           }
-          if (payBtnLabel) payBtnLabel.textContent = `Pay Remaining ₹${remainingFeeINR.toLocaleString('en-IN')} & Finalize Lease`;
+          if (payBtnLabel) payBtnLabel.textContent = `Pay Remaining ₹${remainingFeeINR.toLocaleString('en-IN')} (~€${remainingFeeEUR}) & Finalize Lease`;
 
         } else {
           // Standard full fee mode
@@ -2492,10 +2578,17 @@
           }
           if (reserveLeadCardTitle) reserveLeadCardTitle.textContent = `Reserve Room ${currentRoom.roomId}`;
           if (feePriceLabel) feePriceLabel.textContent = 'Lead Handover & Coordination Fee';
-          if (feeAmountDisplay) feeAmountDisplay.textContent = totalFeeINR.toLocaleString('en-IN');
+          if (feeCurrDisplay) feeCurrDisplay.textContent = '€';
+          if (feeAmountDisplay) feeAmountDisplay.textContent = totalFeeEUR;
           if (feeTypeDisplay) feeTypeDisplay.textContent = '/ one-time service fee';
+          if (feeInrEquivalentBadge) {
+            feeInrEquivalentBadge.style.display = 'inline-flex';
+            if (feeInrEquivalentText) {
+              feeInrEquivalentText.textContent = `≈ ₹${totalFeeINR.toLocaleString('en-IN')} via Razorpay (1 EUR = ₹${liveEurRate.toFixed(2)} today)`;
+            }
+          }
           if (paymentBreakdownBox) paymentBreakdownBox.style.display = 'none';
-          if (payBtnLabel) payBtnLabel.textContent = `Pay ₹${totalFeeINR.toLocaleString('en-IN')} & Reserve Room Lead`;
+          if (payBtnLabel) payBtnLabel.textContent = `Pay ₹${totalFeeINR.toLocaleString('en-IN')} (~€${totalFeeEUR}) & Reserve Room Lead`;
         }
 
         // Update Mobile Sticky Bottom Nav
@@ -2505,21 +2598,21 @@
         const mobileBnavBtnText = document.getElementById('mobileBnavBtnText');
 
         if (mobileBnavRent) {
-          mobileBnavRent.textContent = `Warm Rent: €${currentRoom.rentWarmEUR || 775} /mo`;
+          mobileBnavRent.textContent = `Warm Rent: €${currentRoom.rentWarmEUR || 775} (~₹${rentINR.toLocaleString('en-IN')}) /mo`;
         }
 
         if (paymentMode === 'holding_initial') {
-          if (mobileBnavAmount) mobileBnavAmount.textContent = holdingFeeINR.toLocaleString('en-IN');
+          if (mobileBnavAmount) mobileBnavAmount.textContent = `€${holdingFeeEUR} (~₹${holdingFeeINR.toLocaleString('en-IN')})`;
           if (mobileBnavTag) mobileBnavTag.textContent = 'Refundable Holding Fee';
-          if (mobileBnavBtnText) mobileBnavBtnText.textContent = `Hold Slot (₹${holdingFeeINR.toLocaleString('en-IN')})`;
+          if (mobileBnavBtnText) mobileBnavBtnText.textContent = `Hold Slot: €${holdingFeeEUR} (₹${holdingFeeINR.toLocaleString('en-IN')})`;
         } else if (paymentMode === 'holding_paid') {
-          if (mobileBnavAmount) mobileBnavAmount.textContent = remainingFeeINR.toLocaleString('en-IN');
+          if (mobileBnavAmount) mobileBnavAmount.textContent = `€${remainingFeeEUR} (~₹${remainingFeeINR.toLocaleString('en-IN')})`;
           if (mobileBnavTag) mobileBnavTag.textContent = 'Remaining Balance';
-          if (mobileBnavBtnText) mobileBnavBtnText.textContent = `Pay Balance (₹${remainingFeeINR.toLocaleString('en-IN')})`;
+          if (mobileBnavBtnText) mobileBnavBtnText.textContent = `Pay Balance: €${remainingFeeEUR} (₹${remainingFeeINR.toLocaleString('en-IN')})`;
         } else {
-          if (mobileBnavAmount) mobileBnavAmount.textContent = totalFeeINR.toLocaleString('en-IN');
+          if (mobileBnavAmount) mobileBnavAmount.textContent = `€${totalFeeEUR} (~₹${totalFeeINR.toLocaleString('en-IN')})`;
           if (mobileBnavTag) mobileBnavTag.textContent = 'Direct Lead Fee';
-          if (mobileBnavBtnText) mobileBnavBtnText.textContent = `Reserve (₹${totalFeeINR.toLocaleString('en-IN')})`;
+          if (mobileBnavBtnText) mobileBnavBtnText.textContent = `Reserve: €${totalFeeEUR} (₹${totalFeeINR.toLocaleString('en-IN')})`;
         }
 
         // Render Guarantees & Deliverables Checklist dynamically
@@ -2626,17 +2719,14 @@
         const finalEmail = (currentRoom.studentEmail && currentRoom.studentEmail.trim()) ? currentRoom.studentEmail.trim() : 'student@diefuture.com';
 
         const paymentMode = currentRoom.paymentMode || 'full';
-        const totalFeeINR = currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0;
-        const holdingFeeINR = currentRoom.holdingFeeINR !== undefined ? Number(currentRoom.holdingFeeINR) : 0;
-        let payableINR = totalFeeINR;
-        let orderDesc = `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation & Concierge Handover`;
+        const payableINR = currentRoom._resolvedPayableINR || (currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
+        const payableEUR = currentRoom._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
+        let orderDesc = `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation (€${payableEUR} / ₹${payableINR.toLocaleString('en-IN')})`;
 
         if (paymentMode === 'holding_initial') {
-          payableINR = holdingFeeINR;
-          orderDesc = `Room ${currentRoom.roomId} Viewing Slot Holding Deposit (100% Refundable)`;
+          orderDesc = `Room ${currentRoom.roomId} Viewing Slot Holding Deposit (€${payableEUR} / ₹${payableINR.toLocaleString('en-IN')})`;
         } else if (paymentMode === 'holding_paid') {
-          payableINR = currentRoom.remainingFeeINR !== undefined ? Number(currentRoom.remainingFeeINR) : Math.max(1, totalFeeINR - holdingFeeINR);
-          orderDesc = `Room ${currentRoom.roomId} Remaining Balance for Final Lease Handover`;
+          orderDesc = `Room ${currentRoom.roomId} Remaining Lease Balance (€${payableEUR} / ₹${payableINR.toLocaleString('en-IN')})`;
         }
 
         const payBtn = document.getElementById('payRazorpayBtn');
@@ -2673,7 +2763,9 @@
             razorpay_payment_id: 'pay_test_' + Math.random().toString(36).substring(2, 10),
             name: finalName,
             email: finalEmail,
-            phone: rawPhone || finalContact
+            phone: rawPhone || finalContact,
+            amountPaidINR: payableINR,
+            amountPaidEUR: payableEUR
           });
           return;
         }
@@ -2681,12 +2773,12 @@
         try {
           const apiBase = getApiBase();
 
-          // 1. Backend: Create Razorpay Order
+          // 1. Backend: Create Razorpay Order (charged in INR paise, supports 100% UPI & cards)
           const orderRes = await fetch(`${apiBase}/api/create-order`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              amount: payableINR * 100, // paise (₹2,999 = 299900 paise, ₹12,999 = 1299900 paise)
+              amount: Math.round(payableINR * 100), // paise for Razorpay
               currency: 'INR',
               receipt: `rcpt_room_${currentRoom.roomId}_${Date.now()}`,
               notes: {
@@ -2696,7 +2788,9 @@
                 seekerEmail: finalEmail,
                 seekerPhone: rawPhone || finalContact,
                 paymentMode: paymentMode,
-                payableINR: payableINR
+                feeEUR: `€${payableEUR}`,
+                payableINR: payableINR,
+                exchangeRate: `1 EUR = ₹${liveEurRate.toFixed(2)}`
               }
             })
           });
@@ -2756,7 +2850,9 @@
                   razorpay_order_id: response.razorpay_order_id,
                   name: finalName,
                   email: finalEmail,
-                  phone: rawPhone || finalContact
+                  phone: rawPhone || finalContact,
+                  amountPaidINR: payableINR,
+                  amountPaidEUR: payableEUR
                 });
               } catch (verifyErr) {
                 console.error('Payment verification failed:', verifyErr);
@@ -2796,20 +2892,16 @@
       async function handlePaymentSuccess(payData) {
         const refCode = `DF-ROOM-${currentRoom.roomId}-` + Math.floor(100 + Math.random() * 900);
         const paymentMode = currentRoom.paymentMode || 'full';
-        const totalFeeINR = currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0;
-        const holdingFeeINR = currentRoom.holdingFeeINR !== undefined ? Number(currentRoom.holdingFeeINR) : 0;
-        let payableINR = totalFeeINR;
-        if (paymentMode === 'holding_initial') {
-          payableINR = holdingFeeINR;
-        } else if (paymentMode === 'holding_paid') {
-          payableINR = currentRoom.remainingFeeINR !== undefined ? Number(currentRoom.remainingFeeINR) : Math.max(1, totalFeeINR - holdingFeeINR);
-        }
+        const payableINR = payData.amountPaidINR || currentRoom._resolvedPayableINR || (currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
+        const payableEUR = payData.amountPaidEUR || currentRoom._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
 
         const savedReservation = {
           reference: refCode,
           paymentId: payData.razorpay_payment_id,
           seekerName: payData.name,
-          amountPaid: payableINR
+          amountPaid: payableINR,
+          amountPaidEUR: payableEUR,
+          exchangeRate: liveEurRate
         };
 
         // Send to backend MongoDB /api/reserve-room
@@ -2826,10 +2918,12 @@
               targetMoveIn: payData.moveIn || 'Immediate / Flexible',
               paymentId: payData.razorpay_payment_id,
               amount: payableINR,
+              amountEUR: payableEUR,
+              exchangeRate: liveEurRate,
               paymentMode: paymentMode,
-              totalFeeINR: currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0,
-              holdingFeeINR: currentRoom.holdingFeeINR !== undefined ? Number(currentRoom.holdingFeeINR) : 0,
-              remainingFeeINR: currentRoom.remainingFeeINR !== undefined ? Number(currentRoom.remainingFeeINR) : 0
+              totalFeeINR: currentRoom._resolvedTotalINR || (currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0),
+              holdingFeeINR: currentRoom._resolvedHoldingINR || (currentRoom.holdingFeeINR !== undefined ? Number(currentRoom.holdingFeeINR) : 0),
+              remainingFeeINR: currentRoom._resolvedRemainingINR || (currentRoom.remainingFeeINR !== undefined ? Number(currentRoom.remainingFeeINR) : 0)
             })
           });
 
@@ -2882,23 +2976,17 @@
         if (unlockedRoomTitle) unlockedRoomTitle.textContent = currentRoom.title;
 
         const paymentMode = currentRoom.paymentMode || 'full';
-        const totalFeeINR = currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0;
-        const holdingFeeINR = currentRoom.holdingFeeINR !== undefined ? Number(currentRoom.holdingFeeINR) : 0;
-        let payableINR = data.amountPaid || totalFeeINR;
-        if (paymentMode === 'holding_initial') {
-          payableINR = data.amountPaid || holdingFeeINR;
-        } else if (paymentMode === 'holding_paid') {
-          payableINR = data.amountPaid || (currentRoom.remainingFeeINR !== undefined ? Number(currentRoom.remainingFeeINR) : Math.max(1, totalFeeINR - holdingFeeINR));
-        }
+        const payableINR = data.amountPaid || currentRoom._resolvedPayableINR || (currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
+        const payableEUR = data.amountPaidEUR || currentRoom._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
 
         const bannerTextEl = document.querySelector('.unlocked-banner span');
         if (bannerTextEl) {
           if (paymentMode === 'holding_initial') {
-            bannerTextEl.textContent = `Viewing Slot Reserved & Holding Fee Paid (₹${payableINR.toLocaleString('en-IN')})!`;
+            bannerTextEl.textContent = `Viewing Slot Reserved & Holding Fee Paid: €${payableEUR} (~₹${payableINR.toLocaleString('en-IN')})!`;
           } else if (paymentMode === 'holding_paid') {
-            bannerTextEl.textContent = `Lease Handover Confirmed & Total Service Fee Settled!`;
+            bannerTextEl.textContent = `Lease Handover Confirmed & Total Service Fee Settled (€${payableEUR} / ₹${payableINR.toLocaleString('en-IN')})!`;
           } else {
-            bannerTextEl.textContent = `Room Lead Reserved & Confirmed!`;
+            bannerTextEl.textContent = `Room Lead Reserved & Confirmed: €${payableEUR} (~₹${payableINR.toLocaleString('en-IN')})!`;
           }
         }
 
@@ -2906,15 +2994,15 @@
         let dfMsg = '';
         if (paymentMode === 'holding_initial') {
           dfMsg = encodeURIComponent(
-            `Hello DieFuture Team,\n\nI just paid the ₹${payableINR.toLocaleString('en-IN')} refundable holding deposit for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease schedule my viewing slot & verify details!`
+            `Hello DieFuture Team,\n\nI just paid the €${payableEUR} (~₹${payableINR.toLocaleString('en-IN')}) refundable holding deposit for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease schedule my viewing slot & verify details!`
           );
         } else if (paymentMode === 'holding_paid') {
           dfMsg = encodeURIComponent(
-            `Hello DieFuture Team,\n\nI just paid the remaining balance of ₹${payableINR.toLocaleString('en-IN')} for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease proceed with landlord lease handover and contract audit!`
+            `Hello DieFuture Team,\n\nI just paid the remaining balance of €${payableEUR} (~₹${payableINR.toLocaleString('en-IN')}) for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease proceed with landlord lease handover and contract audit!`
           );
         } else {
           dfMsg = encodeURIComponent(
-            `Hello DieFuture Team,\n\nI just paid the ₹${payableINR.toLocaleString('en-IN')} lead handover fee for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease coordinate with the landlord and assist me with the viewing & contract review!`
+            `Hello DieFuture Team,\n\nI just paid the €${payableEUR} (~₹${payableINR.toLocaleString('en-IN')}) lead handover fee for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease coordinate with the landlord and assist me with the viewing & contract review!`
           );
         }
 
@@ -2955,17 +3043,15 @@
         if (pPayId) pPayId.textContent = payId;
 
         const paymentMode = currentRoom.paymentMode || 'full';
-        const totalFeeINR = currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0;
-        const holdingFeeINR = currentRoom.holdingFeeINR !== undefined ? Number(currentRoom.holdingFeeINR) : 0;
-        let payableINR = (lastUnlockedReservation && lastUnlockedReservation.amountPaid) || totalFeeINR;
+        const payableINR = (lastUnlockedReservation && lastUnlockedReservation.amountPaid) || currentRoom._resolvedPayableINR || (currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
+        const payableEUR = (lastUnlockedReservation && lastUnlockedReservation.amountPaidEUR) || currentRoom._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
+
         if (paymentMode === 'holding_initial') {
-          payableINR = (lastUnlockedReservation && lastUnlockedReservation.amountPaid) || holdingFeeINR;
-          if (pFee) pFee.textContent = `₹${payableINR.toLocaleString('en-IN')} (Refundable Viewing Deposit Paid — Balance ₹${(currentRoom.remainingFeeINR !== undefined ? Number(currentRoom.remainingFeeINR) : 0).toLocaleString('en-IN')} due after viewing approval)`;
+          if (pFee) pFee.textContent = `€${payableEUR} (₹${payableINR.toLocaleString('en-IN')} Refundable Viewing Deposit Paid — Balance due upon lease approval)`;
         } else if (paymentMode === 'holding_paid') {
-          payableINR = (lastUnlockedReservation && lastUnlockedReservation.amountPaid) || (currentRoom.remainingFeeINR !== undefined ? Number(currentRoom.remainingFeeINR) : Math.max(1, totalFeeINR - holdingFeeINR));
-          if (pFee) pFee.textContent = `₹${payableINR.toLocaleString('en-IN')} Remaining Balance Paid (₹${totalFeeINR.toLocaleString('en-IN')} Total Fee Settled)`;
+          if (pFee) pFee.textContent = `€${payableEUR} (₹${payableINR.toLocaleString('en-IN')} Remaining Balance Paid — Total Fee Settled)`;
         } else {
-          if (pFee) pFee.textContent = `₹${payableINR.toLocaleString('en-IN')} (Paid in Full)`;
+          if (pFee) pFee.textContent = `€${payableEUR} (₹${payableINR.toLocaleString('en-IN')} Paid in Full via Razorpay)`;
         }
 
         if (pTitle) pTitle.textContent = currentRoom.title || 'Munich Furnished WG Room';
