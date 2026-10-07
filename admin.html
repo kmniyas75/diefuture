@@ -255,7 +255,29 @@
       border: 1px solid var(--rule);
       border-radius: 16px;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       box-shadow: 0 8px 24px -10px rgba(20, 21, 26, 0.06);
+    }
+    .mobile-table-hint {
+      display: none;
+      background: #F8FAFC;
+      color: #64748B;
+      font-size: 11px;
+      font-family: var(--f-mono);
+      text-align: center;
+      padding: 6px 10px;
+      border-bottom: 1px solid #E2E8F0;
+      font-weight: 500;
+      letter-spacing: .02em;
+    }
+    .table-panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .leads-table {
@@ -405,6 +427,7 @@
       border: 1px solid #D5DEE8;
       margin-bottom: 28px;
       gap: 4px;
+      max-width: 100%;
     }
     .admin-tab-btn {
       font-family: var(--f-sans);
@@ -418,6 +441,7 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       transition: all 0.18s ease;
       white-space: nowrap;
@@ -431,6 +455,20 @@
       color: var(--royal);
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
       font-weight: 700;
+    }
+    .tab-label-mob {
+      display: none;
+    }
+    .tab-label-full {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .db-status-text-mob {
+      display: none;
+    }
+    .db-status-text-full {
+      display: inline;
     }
 
     /* Importer & Lead Generator Card */
@@ -537,14 +575,6 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 16px;
     }
-    @media (max-width: 900px) {
-      .form-grid-3, .form-grid-2 {
-        grid-template-columns: 1fr !important;
-      }
-      .importer-card {
-        padding: 20px 18px;
-      }
-    }
 
     .room-input-group label {
       display: flex;
@@ -560,6 +590,8 @@
     .room-input-group select,
     .room-input-group textarea {
       width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
       padding: 9px 12px;
       border: 1px solid #CBD5E1;
       border-radius: 8px;
@@ -625,6 +657,7 @@
       gap: 12px;
     }
 
+    /* Tablet & Medium Screens Breakpoints */
     @media (max-width: 980px) {
       .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -638,6 +671,296 @@
       }
       .search-input {
         width: 100%;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .form-grid-3, .form-grid-2 {
+        grid-template-columns: 1fr !important;
+      }
+      .form-grid-3 > *, .form-grid-2 > * {
+        grid-column: 1 / -1 !important;
+      }
+      .importer-card {
+        padding: 20px 18px;
+      }
+    }
+
+    /* Mobile Responsive Screens (<= 640px) */
+    @media (max-width: 640px) {
+      .admin-main {
+        padding: 14px 10px 48px;
+      }
+
+      /* Compact, Clean Topbar */
+      .admin-nav {
+        padding: 10px 12px;
+        gap: 8px;
+      }
+      .admin-brand {
+        gap: 8px;
+      }
+      .admin-brand a span {
+        font-size: 16px !important;
+      }
+      .admin-tag {
+        font-size: 9px;
+        padding: 2px 5px;
+      }
+      .admin-actions {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+      }
+      .db-status-pill {
+        font-size: 10.5px;
+        padding: 4px 8px;
+        flex-shrink: 0;
+      }
+      .db-status-text-full {
+        display: none;
+      }
+      .db-status-text-mob {
+        display: inline;
+      }
+      .admin-top-btn {
+        padding: 5px 10px !important;
+        font-size: 11.5px !important;
+        border-radius: 6px !important;
+      }
+
+      /* Segmented Tab Bar - Full Width 50/50 */
+      .admin-tab-bar {
+        display: flex;
+        width: 100%;
+        padding: 3px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+      }
+      .admin-tab-btn {
+        flex: 1 1 0;
+        padding: 8px 4px;
+        font-size: 12px;
+        border-radius: 7px;
+      }
+      .tab-label-full {
+        display: none;
+      }
+      .tab-label-mob {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        font-weight: 700;
+      }
+
+      /* KPI Cards */
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+        margin-bottom: 16px !important;
+      }
+      .kpi-card {
+        padding: 12px 12px;
+        border-radius: 10px;
+      }
+      .kpi-label {
+        font-size: 9.5px;
+        letter-spacing: .04em;
+        margin-bottom: 4px;
+      }
+      .kpi-num {
+        font-size: 24px;
+      }
+      .kpi-num#kpiTopCity {
+        font-size: 17px !important;
+      }
+      .kpi-sub {
+        font-size: 10.5px;
+        margin-top: 3px;
+      }
+
+      /* Controls Bar */
+      .controls-bar {
+        padding: 12px;
+        border-radius: 12px;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .controls-left, .controls-right {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+      .search-input, .filter-select {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        font-size: 13px;
+        padding: 9px 10px;
+      }
+      .controls-right button {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 14px !important;
+        font-size: 13px !important;
+      }
+
+      /* Room Lead Generator Card */
+      .importer-card {
+        padding: 16px 12px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+      }
+      .importer-title {
+        font-size: 16px;
+        line-height: 1.25;
+      }
+      .importer-sub {
+        font-size: 12px;
+        line-height: 1.45;
+        margin-top: 4px;
+      }
+      .url-fetch-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 10px;
+        border-radius: 10px;
+      }
+      .url-fetch-input {
+        min-width: 0;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 12.5px;
+        padding: 9px 10px;
+      }
+      #btnFetchStayforall {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 14px;
+        font-size: 13px;
+      }
+
+      /* Form Section Cards */
+      .form-section-card {
+        padding: 14px 12px;
+        border-radius: 10px;
+        margin-bottom: 14px;
+      }
+      .form-section-title {
+        font-size: 13px;
+      }
+      .form-section-sub {
+        font-size: 11px;
+      }
+      .room-input-group label {
+        font-size: 11.5px;
+      }
+      .room-input-group input,
+      .room-input-group select,
+      .room-input-group textarea {
+        font-size: 13px;
+        padding: 8px 10px;
+      }
+
+      /* Payment Box & Holding Fee inputs */
+      .payment-mode-config-box {
+        padding: 14px 12px;
+        border-radius: 10px;
+      }
+      #holdingFeeInputsWrap {
+        grid-column: 1 / -1 !important;
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+      }
+
+      /* Guarantees Box */
+      .guarantees-config-box {
+        padding: 14px 12px;
+        border-radius: 10px;
+      }
+      #guaranteesControlsWrap {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+      }
+      #guaranteesControlsWrap > * {
+        grid-column: 1 / -1 !important;
+      }
+
+      /* Form Actions Bar */
+      .form-action-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 10px;
+        margin-top: 18px;
+      }
+      .form-action-bar > div:last-child {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+      }
+      #btnSubmitRoom {
+        width: 100%;
+        justify-content: center;
+        padding: 11px 16px !important;
+        font-size: 13.5px !important;
+        order: 1;
+      }
+      #btnResetRoomForm {
+        width: 100%;
+        justify-content: center;
+        padding: 8px 14px !important;
+        font-size: 12px !important;
+        order: 2;
+      }
+      #formEditStatusNote {
+        text-align: center;
+        font-size: 11.5px;
+      }
+
+      /* Leads & Rooms Table Mobile Improvements */
+      .leads-table-wrap {
+        border-radius: 12px;
+      }
+      .mobile-table-hint {
+        display: block;
+      }
+      .leads-table th, .leads-table td {
+        padding: 10px 12px;
+        font-size: 12px;
+      }
+      .table-panel-header {
+        padding: 12px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .table-panel-header button {
+        width: 100%;
+        justify-content: center;
+      }
+
+      /* Auth Gate */
+      .auth-gate {
+        padding: 40px 12px;
+      }
+      .auth-card {
+        padding: 24px 16px;
+        border-radius: 14px;
+      }
+      .auth-title {
+        font-size: 20px;
+      }
+      .auth-sub {
+        font-size: 13px;
+        margin-bottom: 18px;
       }
     }
   </style>
@@ -658,10 +981,11 @@
       <div class="admin-actions">
         <div class="db-status-pill">
           <span class="db-dot"></span>
-          <span>MongoDB Atlas: Connected</span>
+          <span class="db-status-text-full">MongoDB Atlas: Connected</span>
+          <span class="db-status-text-mob">Atlas: Connected</span>
         </div>
-        <a href="/" class="btn-line" style="padding:7px 14px; font-size:13px;">View Website ↗</a>
-        <button id="logoutBtn" class="btn-line" style="padding:7px 14px; font-size:13px; display:none;">Sign Out</button>
+        <a href="/" class="btn-line admin-top-btn" style="padding:7px 14px; font-size:13px;">View Website ↗</a>
+        <button id="logoutBtn" class="btn-line admin-top-btn" style="padding:7px 14px; font-size:13px; display:none;">Sign Out</button>
       </div>
     </div>
   </header>
@@ -688,10 +1012,12 @@
     <!-- ADMIN TABS -->
     <div class="admin-tab-bar">
       <button class="admin-tab-btn active" id="tabBtnLeads" type="button">
-        📋 Customer Briefs & Inquiries
+        <span class="tab-label-full">📋 Customer Briefs &amp; Inquiries</span>
+        <span class="tab-label-mob">📋 Client Briefs</span>
       </button>
       <button class="admin-tab-btn" id="tabBtnRooms" type="button">
-        🏠 Verified Rooms & StayforAll Importer
+        <span class="tab-label-full">🏠 Verified Rooms &amp; StayforAll Importer</span>
+        <span class="tab-label-mob">🏠 Room Catalog</span>
       </button>
     </div>
 
@@ -762,6 +1088,7 @@
 
       <!-- LEADS TABLE -->
       <div class="leads-table-wrap">
+        <div class="mobile-table-hint">← Swipe sideways to view all columns &amp; actions →</div>
         <table class="leads-table" id="leadsTable">
           <thead>
             <tr>
@@ -1099,7 +1426,8 @@
 
       <!-- Current Rooms Table -->
       <div class="leads-table-wrap">
-        <div style="padding:16px 20px; border-bottom:1px solid var(--rule); display:flex; justify-content:space-between; align-items:center;">
+        <div class="mobile-table-hint">← Swipe sideways to view room actions &amp; links →</div>
+        <div class="table-panel-header">
           <div>
             <h3 style="font-size:16px; font-weight:700; color:var(--ink);">Active Verified Rooms in Database</h3>
             <div style="font-size:12px; color:var(--ink-3);">Private lead payment links for seekers (unindexed & hidden from public site). Copy link to share with seekers.</div>
