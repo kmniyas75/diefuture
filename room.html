@@ -1209,14 +1209,9 @@
                 </button>
               </form>
 
-              <!-- Local Demo / Test Simulation Option -->
-              <button type="button" class="btn-demo-simulate" id="simulatePaymentBtn">
-                ⚡ Test Mode: Simulate Successful Payment & Unlock Immediately
-              </button>
-
               <div style="font-size:11.5px; color:var(--ink-3); text-align:center; margin-top:14px; line-height:1.4;">
                 🔒 256-bit Encrypted Checkout via Razorpay.<br>
-                Sponsored by Stayforall Plus Services Private Limited.
+                Verified &amp; Protected by DieFuture Relocations.
               </div>
             </div>
 
@@ -1422,7 +1417,6 @@
       const unlockedSeekerName = document.getElementById('unlockedSeekerName');
       const unlockedRoomTitle = document.getElementById('unlockedRoomTitle');
       const conciergeWaBtn = document.getElementById('conciergeWaBtn');
-      const simulatePaymentBtn = document.getElementById('simulatePaymentBtn');
 
       let currentPhotoIndex = 0;
       let roomPhotos = [];
@@ -1757,19 +1751,6 @@
             payBtn.innerHTML = origBtnHtml;
           }
         }
-      });
-
-      // Simulation Button Handler
-      simulatePaymentBtn.addEventListener('click', () => {
-        const name = document.getElementById('seekerName').value.trim() || 'Abhishek Menon';
-        const email = document.getElementById('seekerEmail').value.trim() || 'abhishek.menon@example.com';
-        const phone = document.getElementById('seekerPhone').value.trim() || '+91 95679 41647';
-        const moveIn = document.getElementById('seekerMoveIn').value || '2026-11-01';
-
-        handlePaymentSuccess({
-          razorpay_payment_id: 'sim_live_' + Math.random().toString(36).substring(2, 10),
-          name, email, phone, moveIn
-        });
       });
 
       // Handle successful payment
