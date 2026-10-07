@@ -150,45 +150,139 @@ document.addEventListener('DOMContentLoaded', () => {
         okPkgPrice.textContent = '₹' + chosenPrice.toLocaleString('en-IN');
       }
 
-      // Razorpay Checkout Handler
+      function getApiBase() {
+        const stored = localStorage.getItem('df_api_endpoint');
+        if (stored) return stored.replace(/\/$/, '');
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          return 'http://localhost:3001';
+        }
+        return '';
+      }
+
+      // Razorpay Standard Web Checkout Handler
       const payBriefPackageBtn = document.getElementById('payBriefPackageBtn');
       if (payBriefPackageBtn) {
-        payBriefPackageBtn.onclick = () => {
-          const razorpayKey = "rzp_live_Sv6jDRCvxBn5qA";
+        payBriefPackageBtn.onclick = async () => {
           if (typeof Razorpay === 'undefined') {
-            alert('Razorpay gateway is initializing, please try again or message our desk on WhatsApp.');
+            alert('Razorpay gateway is initializing, please check your internet connection or message our desk on WhatsApp.');
             return;
           }
-          const options = {
-            key: razorpayKey,
-            amount: chosenPrice * 100,
-            currency: 'INR',
-            name: 'Stayforall Plus Services Pvt Ltd',
-            description: `${pkgTitles[pkg] || 'Accommodation Package'} · Ref ${refCode}`,
-            image: './assets/diefuture-logo.jpg',
-            prefill: {
-              name: name,
-              email: email,
-              contact: phone
-            },
-            notes: {
-              reference: refCode,
-              city: city,
-              package: pkg
-            },
-            theme: {
-              color: '#0055FF'
-            },
-            handler: function(response) {
-              alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}. Your accommodation search has been activated.`);
-              const successText = encodeURIComponent(
-                `Hello DieFuture Relocation Desk,\n\nI have successfully paid and activated my package!\n- Reference: ${refCode}\n- Razorpay Payment ID: ${response.razorpay_payment_id}\n- Package: ${pkgTitles[pkg] || pkg}\n- Amount: ₹${chosenPrice.toLocaleString('en-IN')}\n\nPlease confirm activation!`
-              );
-              window.open(`https://wa.me/919567941647?text=${successText}`, '_blank');
+
+          payBriefPackageBtn.disabled = true;
+          const origBtnHtml = payBriefPackageBtn.innerHTML;
+          payBriefPackageBtn.innerHTML = '<span>Creating Secure Order...</span>';
+
+          try {
+            const apiBase = getApiBase();
+
+            // 1. Backend: Create Order
+            const orderRes = await fetch(`${apiBase}/api/create-order`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                amount: chosenPrice * 100, // paise (e.g. ₹17,999 = 1799900 paise)
+                currency: 'INR',
+                receipt: `rcpt_${refCode}`,
+                notes: {
+                  reference: refCode,
+                  package: pkgTitles[pkg] || pkg,
+                  city: city
+                }
+              })
+            });
+
+            if (!orderRes.ok) {
+              const errData = await orderRes.json().catch(() => ({}));
+              throw new Error(errData.error || `Failed to create order (status: ${orderRes.status})`);
             }
-          };
-          const rzp = new Razorpay(options);
-          rzp.open();
+
+            const orderData = await orderRes.json();
+            const razorpayKey = orderData.key_id || (import.meta && import.meta.env && import.meta.env.VITE_RAZORPAY_KEY_ID) || 'rzp_test_TktQXMOmOzjGKv';
+
+            // 2. Frontend: Open Razorpay Standard Modal
+            const options = {
+              key: razorpayKey,
+              amount: orderData.amount,
+              currency: orderData.currency || 'INR',
+              name: 'Stayforall Plus Services Pvt Ltd',
+              description: `${pkgTitles[pkg] || 'Accommodation Package'} · Ref ${refCode}`,
+              image: './assets/diefuture-logo.jpg',
+              order_id: orderData.order_id,
+              prefill: {
+                name: name,
+                email: email,
+                contact: phone
+              },
+              notes: {
+                reference: refCode,
+                city: city,
+                package: pkg
+              },
+              theme: {
+                color: '#0055FF'
+              },
+              // 3. Backend: Verify Signature on Payment Success
+              handler: async function(response) {
+                payBriefPackageBtn.innerHTML = '<span>Verifying Payment...</span>';
+
+                try {
+                  const verifyRes = await fetch(`${apiBase}/api/verify-payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      razorpay_order_id: response.razorpay_order_id,
+                      razorpay_payment_id: response.razorpay_payment_id,
+                      razorpay_signature: response.razorpay_signature
+                    })
+                  });
+
+                  const verifyData = await verifyRes.json().catch(() => ({}));
+
+                  if (!verifyData.verified) {
+                    alert('Payment verification failed: ' + (verifyData.error || 'Invalid signature. Please contact our desk.'));
+                    payBriefPackageBtn.disabled = false;
+                    payBriefPackageBtn.innerHTML = origBtnHtml;
+                    return;
+                  }
+
+                  alert(`Payment Verified! Reference: ${refCode}\nPayment ID: ${response.razorpay_payment_id}\nOrder ID: ${response.razorpay_order_id}\n\nYour accommodation package has been activated.`);
+                  payBriefPackageBtn.innerHTML = '✓ Payment Confirmed';
+                  payBriefPackageBtn.style.background = '#10B981';
+
+                  const successText = encodeURIComponent(
+                    `Hello DieFuture Relocation Desk,\n\nI have successfully paid and activated my package!\n- Reference: ${refCode}\n- Razorpay Payment ID: ${response.razorpay_payment_id}\n- Razorpay Order ID: ${response.razorpay_order_id}\n- Package: ${pkgTitles[pkg] || pkg}\n- Amount: ₹${chosenPrice.toLocaleString('en-IN')}\n\nPlease confirm activation!`
+                  );
+                  window.open(`https://wa.me/919567941647?text=${successText}`, '_blank');
+                } catch (verifyErr) {
+                  console.error('Verification error:', verifyErr);
+                  alert('Payment was received, but verification timed out. Please contact our WhatsApp desk with payment ID: ' + response.razorpay_payment_id);
+                  payBriefPackageBtn.disabled = false;
+                  payBriefPackageBtn.innerHTML = origBtnHtml;
+                }
+              },
+              modal: {
+                ondismiss: function() {
+                  console.log('Razorpay modal closed by user.');
+                  payBriefPackageBtn.disabled = false;
+                  payBriefPackageBtn.innerHTML = origBtnHtml;
+                }
+              }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function(resp) {
+              console.error('Razorpay payment failed:', resp.error);
+              alert(`Payment failed: ${resp.error.description || resp.error.reason || 'Transaction could not be completed.'}`);
+              payBriefPackageBtn.disabled = false;
+              payBriefPackageBtn.innerHTML = origBtnHtml;
+            });
+            rzp.open();
+          } catch (err) {
+            console.error('Razorpay checkout error:', err);
+            alert(`Unable to initialize payment: ${err.message}. Please try again or contact our WhatsApp desk.`);
+            payBriefPackageBtn.disabled = false;
+            payBriefPackageBtn.innerHTML = origBtnHtml;
+          }
         };
       }
 

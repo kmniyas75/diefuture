@@ -4,6 +4,8 @@ import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import Razorpay from 'razorpay';
+import crypto from 'crypto';
 
 dotenv.config();
 
@@ -47,6 +49,108 @@ async function getRoomsCollection() {
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// ----------------------------------------------------
+// Razorpay Standard Checkout Endpoints
+// ----------------------------------------------------
+
+// 1. Create Order
+app.post('/api/create-order', async (req, res) => {
+  const key_id = process.env.RAZORPAY_KEY_ID;
+  const key_secret = process.env.RAZORPAY_KEY_SECRET;
+
+  if (!key_id || !key_secret) {
+    return res.status(500).json({ error: 'Razorpay credentials not configured in environment.' });
+  }
+
+  try {
+    const { amount, currency = 'INR', receipt, notes } = req.body || {};
+
+    const amountInPaise = Number(amount);
+    if (!amountInPaise || isNaN(amountInPaise) || amountInPaise < 100) {
+      return res.status(400).json({ error: 'Invalid amount. Minimum amount is 100 paise (₹1).' });
+    }
+
+    const instance = new Razorpay({
+      key_id,
+      key_secret
+    });
+
+    const options = {
+      amount: Math.round(amountInPaise),
+      currency: String(currency).toUpperCase(),
+      receipt: receipt || `rcpt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+      notes: notes || {}
+    };
+
+    const order = await instance.orders.create(options);
+
+    return res.json({
+      success: true,
+      order_id: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      key_id: key_id
+    });
+  } catch (error) {
+    console.error('Razorpay create-order error:', error);
+    if (error.statusCode === 401 || (error.error && error.error.code === 'BAD_REQUEST_ERROR' && error.statusCode === 401)) {
+      return res.status(401).json({ error: 'Razorpay authentication failed. Verify API keys.', details: error.error || error.message });
+    }
+    return res.status(500).json({ error: 'Failed to create Razorpay order', details: error.error || error.message });
+  }
+});
+
+// 2. Verify Payment Signature
+app.post('/api/verify-payment', async (req, res) => {
+  const key_secret = process.env.RAZORPAY_KEY_SECRET;
+
+  if (!key_secret) {
+    return res.status(500).json({ error: 'Razorpay secret key not configured in environment.' });
+  }
+
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body || {};
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required payment verification parameters (razorpay_order_id, razorpay_payment_id, razorpay_signature).'
+      });
+    }
+
+    // HMAC-SHA256(order_id + "|" + payment_id, KEY_SECRET)
+    const expectedSignature = crypto
+      .createHmac('sha256', key_secret)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest('hex');
+
+    const isMatch = (expectedSignature === razorpay_signature);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        verified: false,
+        error: 'Invalid payment signature. Payment verification failed.'
+      });
+    }
+
+    return res.json({
+      success: true,
+      verified: true,
+      message: 'Payment verified successfully.',
+      payment_id: razorpay_payment_id,
+      order_id: razorpay_order_id
+    });
+  } catch (error) {
+    console.error('Razorpay verify-payment error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error during payment verification.',
+      details: error.message
+    });
+  }
 });
 
 // Submit brief endpoint

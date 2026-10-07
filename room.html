@@ -1208,8 +1208,8 @@
         });
       }
 
-      // Handle Form Submit -> Launch Razorpay
-      form.addEventListener('submit', (e) => {
+      // Handle Form Submit -> Launch Razorpay Standard Checkout
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const name = document.getElementById('seekerName').value.trim();
@@ -1223,54 +1223,140 @@
         }
 
         const feeINR = currentRoom.feeINR || 12999;
-        const razorpayKey = "rzp_live_Sv6jDRCvxBn5qA";
+        const payBtn = document.getElementById('payRazorpayBtn');
+        const origBtnHtml = payBtn ? payBtn.innerHTML : '';
+        if (payBtn) {
+          payBtn.disabled = true;
+          payBtn.innerHTML = '<span>Creating Secure Order...</span>';
+        }
 
         if (typeof Razorpay === 'undefined') {
           console.warn('Razorpay script not loaded, using simulation fallback.');
+          if (payBtn) {
+            payBtn.disabled = false;
+            payBtn.innerHTML = origBtnHtml;
+          }
           handlePaymentSuccess({
-            razorpay_payment_id: 'pay_live_' + Math.random().toString(36).substring(2, 10),
+            razorpay_payment_id: 'pay_test_' + Math.random().toString(36).substring(2, 10),
             name, email, phone, moveIn
           });
           return;
         }
 
-        const options = {
-          key: razorpayKey,
-          amount: feeINR * 100, // in paise
-          currency: "INR",
-          name: "DieFuture Apartments",
-          description: `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation & Concierge Handover`,
-          image: "./assets/diefuture-logo.jpg",
-          prefill: {
-            name: name,
-            email: email,
-            contact: phone
-          },
-          theme: {
-            color: "#084BE0"
-          },
-          modal: {
-            ondismiss: function () {
-              console.log('Razorpay modal closed without payment.');
-            }
-          },
-          handler: function (response) {
-            handlePaymentSuccess({
-              razorpay_payment_id: response.razorpay_payment_id,
-              name, email, phone, moveIn
-            });
-          }
-        };
-
         try {
+          const apiBase = getApiBase();
+
+          // 1. Backend: Create Razorpay Order
+          const orderRes = await fetch(`${apiBase}/api/create-order`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              amount: feeINR * 100, // paise (₹12,999 = 1299900 paise)
+              currency: 'INR',
+              receipt: `rcpt_room_${currentRoom.roomId}_${Date.now()}`,
+              notes: {
+                roomId: currentRoom.roomId,
+                city: currentRoom.city,
+                seekerName: name,
+                seekerEmail: email
+              }
+            })
+          });
+
+          if (!orderRes.ok) {
+            const errData = await orderRes.json().catch(() => ({}));
+            throw new Error(errData.error || `Failed to create order (status: ${orderRes.status})`);
+          }
+
+          const orderData = await orderRes.json();
+          const razorpayKey = orderData.key_id || (import.meta && import.meta.env && import.meta.env.VITE_RAZORPAY_KEY_ID) || 'rzp_test_TktQXMOmOzjGKv';
+
+          // 2. Frontend: Open Razorpay Standard Checkout Modal
+          const options = {
+            key: razorpayKey,
+            amount: orderData.amount,
+            currency: orderData.currency || 'INR',
+            name: "DieFuture Apartments",
+            description: `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation & Concierge Handover`,
+            image: "./assets/diefuture-logo.jpg",
+            order_id: orderData.order_id,
+            prefill: {
+              name: name,
+              email: email,
+              contact: phone
+            },
+            theme: {
+              color: "#084BE0"
+            },
+            // 3. Backend: Verify Signature on Payment Success
+            handler: async function (response) {
+              if (payBtn) payBtn.innerHTML = '<span>Verifying Payment...</span>';
+
+              try {
+                const verifyRes = await fetch(`${apiBase}/api/verify-payment`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature
+                  })
+                });
+
+                const verifyData = await verifyRes.json().catch(() => ({}));
+
+                if (!verifyData.verified) {
+                  alert('Payment verification failed: ' + (verifyData.error || 'Invalid payment signature.'));
+                  if (payBtn) {
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = origBtnHtml;
+                  }
+                  return;
+                }
+
+                // Proceed with Room Reservation unlock
+                handlePaymentSuccess({
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_order_id: response.razorpay_order_id,
+                  name, email, phone, moveIn
+                });
+              } catch (verifyErr) {
+                console.error('Payment verification failed:', verifyErr);
+                alert('Payment was captured, but signature verification timed out. Please contact our WhatsApp desk with payment ID: ' + response.razorpay_payment_id);
+                if (payBtn) {
+                  payBtn.disabled = false;
+                  payBtn.innerHTML = origBtnHtml;
+                }
+              }
+            },
+            modal: {
+              ondismiss: function () {
+                console.log('Razorpay modal closed by user.');
+                if (payBtn) {
+                  payBtn.disabled = false;
+                  payBtn.innerHTML = origBtnHtml;
+                }
+              }
+            }
+          };
+
           const rzp = new Razorpay(options);
+          rzp.on('payment.failed', function (resp) {
+            console.error('Razorpay payment failed:', resp.error);
+            alert(`Payment failed: ${resp.error.description || resp.error.reason || 'Transaction could not be completed.'}`);
+            if (payBtn) {
+              payBtn.disabled = false;
+              payBtn.innerHTML = origBtnHtml;
+            }
+          });
           rzp.open();
         } catch (err) {
-          console.error('Failed to open Razorpay modal:', err);
-          handlePaymentSuccess({
-            razorpay_payment_id: 'pay_live_' + Math.random().toString(36).substring(2, 10),
-            name, email, phone, moveIn
-          });
+          console.error('Razorpay checkout error:', err);
+          alert(`Unable to initialize payment gateway: ${err.message}. Please try again or contact our WhatsApp desk.`);
+          if (payBtn) {
+            payBtn.disabled = false;
+            payBtn.innerHTML = origBtnHtml;
+          }
         }
       });
 
