@@ -755,9 +755,52 @@
               <input type="number" id="roomFieldDeposit" placeholder="1500" />
             </div>
 
-            <div class="room-input-group">
-              <label style="color:var(--electric);">DieFuture Service Fee (₹) *</label>
-              <input type="number" id="roomFieldFee" class="input-highlight" required placeholder="12999" value="12999" />
+            <!-- Payment Structure & Holding Fee Box -->
+            <div class="payment-mode-config-box" style="grid-column: span 3; background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:16px 20px; margin: 4px 0 8px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                <div>
+                  <div style="font-weight:700; font-size:13.5px; color:#14532D; display:flex; align-items:center; gap:6px;">
+                    <span>💳 Payment Structure &amp; Holding Deposit (Scam Prevention)</span>
+                  </div>
+                  <div style="font-size:12px; color:#166534; margin-top:2px;">
+                    For viewing students: collect a holding fee first to avoid scams/no-shows. If they like it, collect remaining balance. If they don't, refund it.
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; align-items:flex-start;">
+                <div>
+                  <label style="font-size:12px; font-weight:700; color:#14532D; margin-bottom:4px; display:block;">Payment Mode</label>
+                  <select id="roomFieldPaymentMode" style="width:100%; font-size:12.5px; padding:8px 10px; border-radius:6px; border:1px solid #86EFAC; font-weight:600; background:#FFFFFF;">
+                    <option value="full">1. Full Upfront Fee (Standard)</option>
+                    <option value="holding_initial">2. Collect Holding Fee First (Viewing Slot)</option>
+                    <option value="holding_paid">3. Holding Collected ✓ → Pay Remaining Balance</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style="font-size:12px; font-weight:700; color:#14532D; margin-bottom:4px; display:block;">Total Service Fee (₹) *</label>
+                  <input type="number" id="roomFieldFee" class="input-highlight" required placeholder="12999" value="12999" style="background:#FFFFFF; font-weight:700; width:100%; padding:8px 10px; border-radius:6px; border:1px solid #86EFAC;" />
+                </div>
+
+                <div id="holdingFeeInputsWrap" style="display:none; grid-column: span 2; grid-template-columns: 1fr 1fr; gap:10px;">
+                  <div>
+                    <label style="font-size:12px; font-weight:700; color:#14532D; margin-bottom:4px; display:block;">Holding Fee Deposit (₹)</label>
+                    <input type="number" id="roomFieldHoldingFee" placeholder="2999" value="2999" style="width:100%; font-size:13px; padding:8px 10px; border-radius:6px; border:1px solid #86EFAC; background:#FFFFFF; font-weight:700;" />
+                    <small style="font-size:11px; color:#15803D; margin-top:2px; display:block;">Refundable if they visit and don't like it</small>
+                  </div>
+
+                  <div>
+                    <label style="font-size:12px; font-weight:700; color:#14532D; margin-bottom:4px; display:block;">Remaining Balance (₹)</label>
+                    <input type="number" id="roomFieldRemainingFee" placeholder="10000" value="10000" style="width:100%; font-size:13px; padding:8px 10px; border-radius:6px; border:1px solid #86EFAC; background:#FFFFFF; font-weight:700;" />
+                    <small style="font-size:11px; color:#15803D; margin-top:2px; display:block;">Auto-calculated: Total − Holding</small>
+                  </div>
+                </div>
+              </div>
+
+              <div id="holdingModeExplanation" style="margin-top:10px; font-size:12px; line-height:1.45; background:#FFFFFF; border:1px dashed #86EFAC; border-radius:6px; padding:8px 12px; color:#166534;">
+                💡 <strong>Full Upfront Mode:</strong> The student is charged the total service fee upfront at checkout.
+              </div>
             </div>
 
             <div class="room-input-group">
@@ -1136,7 +1179,13 @@
         // Package Pill Class
         let pkgClass = 'guaranteed';
         let pkgLabel = '₹17,999 Guaranteed';
-        if (lead.package === 'starter' || (lead.package && (lead.package.includes('99') || lead.package.includes('8,999')))) {
+        if (lead.paymentMode === 'holding_initial' || (lead.package && lead.package.toLowerCase().includes('holding'))) {
+          pkgClass = 'starter';
+          pkgLabel = `🛡️ Holding Fee: ₹${(lead.amountPaidINR || 2999).toLocaleString('en-IN')}`;
+        } else if (lead.paymentMode === 'holding_paid' || (lead.package && lead.package.toLowerCase().includes('balance'))) {
+          pkgClass = 'guaranteed';
+          pkgLabel = `🎉 Balance Paid: ₹${(lead.amountPaidINR || 10000).toLocaleString('en-IN')}`;
+        } else if (lead.package === 'starter' || (lead.package && (lead.package.includes('99') || lead.package.includes('8,999')))) {
           pkgClass = 'starter';
           pkgLabel = '₹8,999 Starter';
         } else if (lead.package === 'vip' || (lead.package && (lead.package.includes('299') || lead.package.includes('26,999')))) {
@@ -1148,7 +1197,12 @@
         }
 
         // WhatsApp prefilled message
-        const waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Apartments regarding your accommodation brief (${lead.reference}) for ${lead.city}. We have found verified room matches!`);
+        let waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Apartments regarding your accommodation brief (${lead.reference}) for ${lead.city}. We have found verified room matches!`);
+        if (lead.paymentMode === 'holding_initial') {
+          waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Concierge confirming your holding deposit (₹${lead.amountPaidINR || 2999}) for Room ${lead.roomId || 'DF-ROOM'} (${lead.reference}). Let's schedule your viewing slot!`);
+        } else if (lead.paymentMode === 'holding_paid') {
+          waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Concierge confirming your remaining balance (₹${lead.amountPaidINR || 10000}) for Room ${lead.roomId || 'DF-ROOM'} (${lead.reference}). We are initiating the lease contract audit!`);
+        }
         const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
 
         tr.innerHTML = `
@@ -1303,6 +1357,11 @@
     const roomFieldRent = document.getElementById('roomFieldRent');
     const roomFieldDeposit = document.getElementById('roomFieldDeposit');
     const roomFieldFee = document.getElementById('roomFieldFee');
+    const roomFieldPaymentMode = document.getElementById('roomFieldPaymentMode');
+    const roomFieldHoldingFee = document.getElementById('roomFieldHoldingFee');
+    const roomFieldRemainingFee = document.getElementById('roomFieldRemainingFee');
+    const holdingFeeInputsWrap = document.getElementById('holdingFeeInputsWrap');
+    const holdingModeExplanation = document.getElementById('holdingModeExplanation');
     const roomFieldType = document.getElementById('roomFieldType');
     const roomFieldSize = document.getElementById('roomFieldSize');
     const roomFieldTransit = document.getElementById('roomFieldTransit');
@@ -1331,6 +1390,43 @@
 
     let allAdminRooms = [];
     let adminImages = [];
+
+    // --- Payment Mode & Holding Fee Calculation ---
+    function updateHoldingModeUI() {
+      if (!roomFieldPaymentMode) return;
+      const mode = roomFieldPaymentMode.value;
+      const total = Number(roomFieldFee.value) || 12999;
+      const holding = Number(roomFieldHoldingFee ? roomFieldHoldingFee.value : 2999) || 2999;
+      const remaining = Math.max(0, total - holding);
+      if (roomFieldRemainingFee) roomFieldRemainingFee.value = remaining;
+
+      if (mode === 'full') {
+        if (holdingFeeInputsWrap) holdingFeeInputsWrap.style.display = 'none';
+        if (holdingModeExplanation) {
+          holdingModeExplanation.innerHTML = `💡 <strong>Full Upfront Mode:</strong> The student is charged the total service fee (₹${total.toLocaleString('en-IN')}) upfront at checkout.`;
+        }
+      } else if (mode === 'holding_initial') {
+        if (holdingFeeInputsWrap) holdingFeeInputsWrap.style.display = 'grid';
+        if (holdingModeExplanation) {
+          holdingModeExplanation.innerHTML = `🛡️ <strong>Viewing Slot Holding Fee Mode:</strong> DieFuture collects a holding deposit of <strong>₹${holding.toLocaleString('en-IN')}</strong> to reserve the viewing slot and avoid scam / no-shows. <strong>100% refundable</strong> if student visits and dislikes it. Remaining balance (<strong>₹${remaining.toLocaleString('en-IN')}</strong>) is collected only after they approve.`;
+        }
+      } else if (mode === 'holding_paid') {
+        if (holdingFeeInputsWrap) holdingFeeInputsWrap.style.display = 'grid';
+        if (holdingModeExplanation) {
+          holdingModeExplanation.innerHTML = `🎉 <strong>Holding Collected ✓ → Pay Remaining:</strong> Student already completed the viewing and approved the room! The link will show holding fee (₹${holding.toLocaleString('en-IN')}) credited and prompt for the remaining balance of <strong>₹${remaining.toLocaleString('en-IN')}</strong> to finalize lease.`;
+        }
+      }
+    }
+
+    if (roomFieldPaymentMode) {
+      roomFieldPaymentMode.addEventListener('change', updateHoldingModeUI);
+    }
+    if (roomFieldFee) {
+      roomFieldFee.addEventListener('input', updateHoldingModeUI);
+    }
+    if (roomFieldHoldingFee) {
+      roomFieldHoldingFee.addEventListener('input', updateHoldingModeUI);
+    }
 
     if (roomFieldShowGuarantees && guaranteesControlsWrap) {
       roomFieldShowGuarantees.addEventListener('change', () => {
@@ -1575,6 +1671,10 @@
       setAdminImages([]);
       fetchNotice.style.display = 'none';
       roomFieldFee.value = '12999';
+      if (roomFieldPaymentMode) roomFieldPaymentMode.value = 'full';
+      if (roomFieldHoldingFee) roomFieldHoldingFee.value = '2999';
+      if (roomFieldRemainingFee) roomFieldRemainingFee.value = '10000';
+      updateHoldingModeUI();
       autoAssignRoomId();
       if (roomFieldDescription) roomFieldDescription.value = '';
       if (roomFieldShowGuarantees) roomFieldShowGuarantees.checked = true;
@@ -1609,7 +1709,10 @@
         address: roomFieldAddress.value.trim(),
         rentWarmEUR: Number(roomFieldRent.value),
         depositEUR: Number(roomFieldDeposit.value) || (Number(roomFieldRent.value) * 2),
+        paymentMode: roomFieldPaymentMode ? roomFieldPaymentMode.value : 'full',
         feeINR: Number(roomFieldFee.value) || 12999,
+        holdingFeeINR: Number(roomFieldHoldingFee ? roomFieldHoldingFee.value : 2999) || 2999,
+        remainingFeeINR: Number(roomFieldRemainingFee ? roomFieldRemainingFee.value : 10000) || 10000,
         roomType: roomFieldType.value,
         roomSizeM2: Number(roomFieldSize.value) || 16,
         transit: roomFieldTransit.value.trim(),
@@ -1725,8 +1828,34 @@
             <span style="font-size:11.5px; color:var(--ink-3);">Deposit: €${room.depositEUR || 1500}</span>
           </td>
           <td>
-            <strong style="color:var(--electric); font-size:15px;">₹${(room.feeINR || 12999).toLocaleString('en-IN')}</strong><br>
-            <span style="font-size:11px; color:var(--ink-3);">One-time lead fee</span>
+            ${(() => {
+              const mode = room.paymentMode || 'full';
+              const total = (room.feeINR || 12999);
+              const holding = (room.holdingFeeINR || 2999);
+              const remaining = room.remainingFeeINR !== undefined ? room.remainingFeeINR : Math.max(0, total - holding);
+              if (mode === 'holding_initial') {
+                return `
+                  <div style="margin-bottom:3px;">
+                    <span style="display:inline-block; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; background:#FEF3C7; color:#92400E; border:1px solid #FDE68A;">🛡️ Holding: ₹${holding.toLocaleString('en-IN')}</span>
+                  </div>
+                  <strong style="color:var(--royal); font-size:13.5px;">Bal: ₹${remaining.toLocaleString('en-IN')}</strong><br>
+                  <span style="font-size:10.5px; color:var(--ink-3);">Total ₹${total.toLocaleString('en-IN')} (Refundable)</span>
+                `;
+              } else if (mode === 'holding_paid') {
+                return `
+                  <div style="margin-bottom:3px;">
+                    <span style="display:inline-block; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; background:#DCFCE7; color:#166534; border:1px solid #86EFAC;">✓ Holding Paid</span>
+                  </div>
+                  <strong style="color:#059669; font-size:14.5px;">Pay Bal: ₹${remaining.toLocaleString('en-IN')}</strong><br>
+                  <span style="font-size:10.5px; color:var(--ink-3);">Total ₹${total.toLocaleString('en-IN')}</span>
+                `;
+              } else {
+                return `
+                  <strong style="color:var(--electric); font-size:15px;">₹${total.toLocaleString('en-IN')}</strong><br>
+                  <span style="font-size:11px; color:var(--ink-3);">One-time full fee</span>
+                `;
+              }
+            })()}
           </td>
           <td>
             <select class="room-status-select" data-id="${room.roomId || room._id}" style="padding:5px 8px; font-size:12px; border-radius:6px; font-weight:600;">
@@ -1737,6 +1866,11 @@
           </td>
           <td>
             <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+              ${(room.paymentMode === 'holding_initial') ? `
+                <button type="button" class="btn-line btn-quick-toggle-holding" data-id="${room.roomId || room._id}" data-target="holding_paid" style="padding:4px 8px; font-size:11px; border-color:#86EFAC; color:#15803D; background:#F0FDF4; font-weight:700; border-radius:4px; cursor:pointer;" title="Student attended viewing & liked it? Switch link to 'Pay Remaining Balance'">✓ Liked it? Pay Bal</button>
+              ` : (room.paymentMode === 'holding_paid') ? `
+                <button type="button" class="btn-line btn-quick-toggle-holding" data-id="${room.roomId || room._id}" data-target="holding_initial" style="padding:4px 8px; font-size:11px; border-color:#FDE68A; color:#B45309; background:#FEF3C7; font-weight:600; border-radius:4px; cursor:pointer;" title="Revert to initial holding fee mode">↺ Reset to Holding</button>
+              ` : ''}
               <button type="button" class="btn-line btn-edit-room" data-id="${room.roomId || room._id}" style="padding:4px 9px; font-size:11.5px; border-radius:4px; cursor:pointer;" title="Edit room details & guarantees">✏️ Edit</button>
               <button type="button" class="btn-electric btn-copy-link" data-id="${room.roomId || room._id}" style="padding:4px 9px; font-size:11.5px; border-radius:4px; cursor:pointer;" title="Copy private payment link to share with student">📋 Copy Link</button>
               <a href="room?id=${encodeURIComponent(room.roomId || room._id)}" target="_blank" class="btn-line" style="padding:4px 8px; font-size:11.5px;" title="Preview payment page">↗ View</a>
@@ -1764,6 +1898,16 @@
           roomFieldRent.value = room.rentWarmEUR || '';
           roomFieldDeposit.value = room.depositEUR || '';
           roomFieldFee.value = room.feeINR !== undefined ? room.feeINR : 12999;
+          if (roomFieldPaymentMode) {
+            roomFieldPaymentMode.value = room.paymentMode || 'full';
+          }
+          if (roomFieldHoldingFee) {
+            roomFieldHoldingFee.value = room.holdingFeeINR !== undefined ? room.holdingFeeINR : 2999;
+          }
+          if (roomFieldRemainingFee) {
+            roomFieldRemainingFee.value = room.remainingFeeINR !== undefined ? room.remainingFeeINR : Math.max(0, (room.feeINR || 12999) - (room.holdingFeeINR || 2999));
+          }
+          updateHoldingModeUI();
           roomFieldType.value = room.roomType || 'WG Room (Single Private)';
           roomFieldSize.value = room.roomSizeM2 || 16;
           roomFieldTransit.value = room.transit || '';
@@ -1809,6 +1953,36 @@
           }).catch(() => {
             prompt('Direct payment link for student:', url);
           });
+        });
+      });
+
+      // Attach Quick Holding Mode Toggle handlers
+      document.querySelectorAll('.btn-quick-toggle-holding').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const roomId = btn.dataset.id;
+          const targetMode = btn.dataset.target;
+          btn.disabled = true;
+          btn.textContent = 'Updating...';
+          const apiBase = getApiBase();
+          try {
+            const res = await fetch(`${apiBase}/api/rooms/${encodeURIComponent(roomId)}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ paymentMode: targetMode })
+            });
+            if (res.ok) {
+              showNotice(targetMode === 'holding_paid' 
+                ? '✓ Room updated to "Holding Collected ✓ Pay Remaining". The link now requests final balance!' 
+                : '✓ Room reset to "Collect Holding Fee First".', 'success');
+              fetchAdminRooms();
+            } else {
+              showNotice('Failed to update payment mode.', 'error');
+              btn.disabled = false;
+            }
+          } catch (err) {
+            showNotice('Network error: ' + err.message, 'error');
+            btn.disabled = false;
+          }
         });
       });
 

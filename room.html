@@ -1134,9 +1134,12 @@
             
             <!-- Pre-Payment Form View -->
             <div id="prePaymentView">
+              <!-- Top Banner for Special Payment Modes (e.g. Holding Collected -> Pay Remaining) -->
+              <div id="paymentModeTopBanner" style="display:none; margin-bottom:14px;"></div>
+
               <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div>
-                  <span class="room-badge-verified">Direct Verified Lead</span>
+                  <span class="room-badge-verified" id="reserveBadgeVerified">Direct Verified Lead</span>
                   <div style="font-family:var(--f-display); font-size:19px; font-weight:700; margin-top:6px; color:var(--ink);" id="reserveLeadCardTitle">Reserve Room 1004</div>
                 </div>
                 <div style="text-align:right;">
@@ -1146,15 +1149,17 @@
 
               <!-- Price Box -->
               <div class="fee-price-tag">
-                <div class="fee-label">Lead Handover & Coordination Fee</div>
+                <div class="fee-label" id="feePriceLabel">Lead Handover & Coordination Fee</div>
                 <div class="fee-amount-row">
                   <span class="fee-curr">₹</span>
                   <span class="fee-val" id="feeAmountDisplay">12,999</span>
-                  <span class="fee-type">/ one-time service fee</span>
+                  <span class="fee-type" id="feeTypeDisplay">/ one-time service fee</span>
                 </div>
                 <div style="font-size:12px; color:var(--ink-3); margin-top:3px;">
                   Collected securely via Razorpay
                 </div>
+                <!-- Dynamic Breakdown for Holding Deposit / Remaining Balance -->
+                <div id="paymentBreakdownBox" style="display:none; margin-top:10px;"></div>
               </div>
 
               <!-- Deliverables Checklist (Dynamically rendered based on admin settings) -->
@@ -1341,7 +1346,12 @@
       const specSizeVal = document.getElementById('specSizeVal');
       const specTransitVal = document.getElementById('specTransitVal');
       const reserveLeadCardTitle = document.getElementById('reserveLeadCardTitle');
+      const reserveBadgeVerified = document.getElementById('reserveBadgeVerified');
+      const feePriceLabel = document.getElementById('feePriceLabel');
       const feeAmountDisplay = document.getElementById('feeAmountDisplay');
+      const feeTypeDisplay = document.getElementById('feeTypeDisplay');
+      const paymentBreakdownBox = document.getElementById('paymentBreakdownBox');
+      const paymentModeTopBanner = document.getElementById('paymentModeTopBanner');
       const payBtnLabel = document.getElementById('payBtnLabel');
       const captionCategoryVal = document.getElementById('captionCategoryVal');
 
@@ -1548,6 +1558,129 @@
           }
         }
 
+        const paymentMode = currentRoom.paymentMode || 'full';
+        const totalFeeINR = currentRoom.feeINR || 12999;
+        const holdingFeeINR = currentRoom.holdingFeeINR || 2999;
+        const remainingFeeINR = currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(0, totalFeeINR - holdingFeeINR);
+
+        let payableAmountINR = totalFeeINR;
+        if (paymentMode === 'holding_initial') {
+          payableAmountINR = holdingFeeINR;
+        } else if (paymentMode === 'holding_paid') {
+          payableAmountINR = remainingFeeINR;
+        }
+        const formattedPayable = `₹${payableAmountINR.toLocaleString('en-IN')}`;
+
+        // Configure UI for Payment Modes
+        if (paymentMode === 'holding_initial') {
+          if (paymentModeTopBanner) {
+            paymentModeTopBanner.style.display = 'block';
+            paymentModeTopBanner.innerHTML = `
+              <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:8px; padding:10px 14px; display:flex; align-items:flex-start; gap:10px;">
+                <span style="font-size:20px; line-height:1;">🛡️</span>
+                <div>
+                  <div style="font-weight:700; color:#92400E; font-size:13px;">Scam Prevention · Refundable Viewing Deposit</div>
+                  <div style="font-size:11.5px; color:#B45309; line-height:1.4; margin-top:2px;">
+                    We collect a temporary holding fee to prevent scam applicants and hold your viewing slot. <strong>100% refunded</strong> if you visit and do not like the room!
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+          if (reserveBadgeVerified) {
+            reserveBadgeVerified.textContent = '🛡️ Refundable Viewing Deposit';
+            reserveBadgeVerified.style.background = '#FEF3C7';
+            reserveBadgeVerified.style.color = '#92400E';
+            reserveBadgeVerified.style.borderColor = '#FDE68A';
+          }
+          if (reserveLeadCardTitle) reserveLeadCardTitle.textContent = `Hold Room ${currentRoom.roomId} for Viewing`;
+          if (feePriceLabel) feePriceLabel.textContent = 'Viewing Slot Holding Deposit';
+          if (feeAmountDisplay) feeAmountDisplay.textContent = holdingFeeINR.toLocaleString('en-IN');
+          if (feeTypeDisplay) feeTypeDisplay.textContent = '/ refundable deposit';
+          if (paymentBreakdownBox) {
+            paymentBreakdownBox.style.display = 'block';
+            paymentBreakdownBox.innerHTML = `
+              <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:6px; padding:9px 12px; font-size:12px; line-height:1.45; color:#92400E; text-align:left;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+                  <span>Total Service Fee:</span>
+                  <span style="font-weight:700;">₹${totalFeeINR.toLocaleString('en-IN')}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#15803D; font-weight:600;">
+                  <span>Pay Now to Hold Slot:</span>
+                  <span>₹${holdingFeeINR.toLocaleString('en-IN')} (Refundable)</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding-top:4px; border-top:1px dashed #FCD34D; font-size:11.5px; color:#78350F;">
+                  <span>Remaining after viewing:</span>
+                  <span style="font-weight:700;">₹${remainingFeeINR.toLocaleString('en-IN')} (Due only if you like it)</span>
+                </div>
+              </div>
+            `;
+          }
+          if (payBtnLabel) payBtnLabel.textContent = `Pay ₹${holdingFeeINR.toLocaleString('en-IN')} Holding Deposit & Reserve Slot`;
+
+        } else if (paymentMode === 'holding_paid') {
+          if (paymentModeTopBanner) {
+            paymentModeTopBanner.style.display = 'block';
+            paymentModeTopBanner.innerHTML = `
+              <div style="background:#ECFDF5; border:1px solid #A7F3D0; border-radius:8px; padding:11px 14px; display:flex; align-items:flex-start; gap:10px;">
+                <span style="font-size:20px; line-height:1;">🎉</span>
+                <div>
+                  <div style="font-weight:700; color:#065F46; font-size:13.5px;">Viewing Completed &amp; Room Approved!</div>
+                  <div style="font-size:12px; color:#047857; line-height:1.4; margin-top:2px;">
+                    Your holding deposit of <strong>₹${holdingFeeINR.toLocaleString('en-IN')}</strong> was collected &amp; credited ✓. Pay the remaining balance below to finalize your lease handover.
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+          if (reserveBadgeVerified) {
+            reserveBadgeVerified.textContent = '✓ Holding Collected · Approved';
+            reserveBadgeVerified.style.background = '#DCFCE7';
+            reserveBadgeVerified.style.color = '#15803D';
+            reserveBadgeVerified.style.borderColor = '#86EFAC';
+          }
+          if (reserveLeadCardTitle) reserveLeadCardTitle.textContent = `Finalize Lease for Room ${currentRoom.roomId}`;
+          if (feePriceLabel) feePriceLabel.textContent = 'Remaining Service Fee Balance';
+          if (feeAmountDisplay) feeAmountDisplay.textContent = remainingFeeINR.toLocaleString('en-IN');
+          if (feeTypeDisplay) feeTypeDisplay.textContent = '/ remaining balance';
+          if (paymentBreakdownBox) {
+            paymentBreakdownBox.style.display = 'block';
+            paymentBreakdownBox.innerHTML = `
+              <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:6px; padding:9px 12px; font-size:12px; line-height:1.45; color:#166534; text-align:left;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+                  <span>Total Service Fee:</span>
+                  <span style="font-weight:600;">₹${totalFeeINR.toLocaleString('en-IN')}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#15803D;">
+                  <span>Holding Deposit Credited:</span>
+                  <span style="font-weight:700;">− ₹${holdingFeeINR.toLocaleString('en-IN')} ✓</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding-top:4px; border-top:1px solid #86EFAC; font-weight:700; color:#14532D; font-size:12.5px;">
+                  <span>Balance Due to Finalize:</span>
+                  <span>₹${remainingFeeINR.toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+            `;
+          }
+          if (payBtnLabel) payBtnLabel.textContent = `Pay Remaining ₹${remainingFeeINR.toLocaleString('en-IN')} & Finalize Lease`;
+
+        } else {
+          // Standard full fee mode
+          if (paymentModeTopBanner) paymentModeTopBanner.style.display = 'none';
+          if (reserveBadgeVerified) {
+            reserveBadgeVerified.textContent = 'Direct Verified Lead';
+            reserveBadgeVerified.style.background = '';
+            reserveBadgeVerified.style.color = '';
+            reserveBadgeVerified.style.borderColor = '';
+          }
+          if (reserveLeadCardTitle) reserveLeadCardTitle.textContent = `Reserve Room ${currentRoom.roomId}`;
+          if (feePriceLabel) feePriceLabel.textContent = 'Lead Handover & Coordination Fee';
+          if (feeAmountDisplay) feeAmountDisplay.textContent = totalFeeINR.toLocaleString('en-IN');
+          if (feeTypeDisplay) feeTypeDisplay.textContent = '/ one-time service fee';
+          if (paymentBreakdownBox) paymentBreakdownBox.style.display = 'none';
+          if (payBtnLabel) payBtnLabel.textContent = `Pay ₹${totalFeeINR.toLocaleString('en-IN')} & Reserve Room Lead`;
+        }
+
         // Render Guarantees & Deliverables Checklist dynamically
         const g = currentRoom.guarantees || {
           showGuarantees: true,
@@ -1565,30 +1698,46 @@
             deliverablesEl.innerHTML = '';
           } else {
             deliverablesEl.style.display = 'flex';
-            const items = [];
+            let items = [];
 
-            if (g.concierge !== false) {
-              items.push(`<li><span class="check">✓</span> <span><strong>Dedicated Relocation Concierge:</strong> 1-on-1 WhatsApp assistance for viewing coordination, contract review & landlord communication.</span></li>`);
-            }
+            if (paymentMode === 'holding_initial') {
+              items = [
+                `<li><span class="check" style="background:#FEF3C7; color:#B45309; border-color:#FDE68A;">✓</span> <span><strong>Guaranteed Viewing Appointment:</strong> In-person visit or live WhatsApp video tour coordinated exclusively for you.</span></li>`,
+                `<li><span class="check" style="background:#FEF3C7; color:#B45309; border-color:#FDE68A;">✓</span> <span><strong>Exclusive Slot Hold:</strong> Room is locked for your viewing so no one else can take it beforehand.</span></li>`,
+                `<li><span class="check" style="background:#FEF3C7; color:#B45309; border-color:#FDE68A;">✓</span> <span><strong>100% Visit Satisfaction Refund:</strong> If you attend the viewing and do not like the room, your ₹${holdingFeeINR.toLocaleString('en-IN')} holding deposit is immediately refunded in full.</span></li>`,
+                `<li><span class="check" style="background:#FEF3C7; color:#B45309; border-color:#FDE68A;">✓</span> <span><strong>Balance Due Only on Approval:</strong> The remaining ₹${remainingFeeINR.toLocaleString('en-IN')} balance is paid only if you decide to take the room!</span></li>`
+              ];
+            } else if (paymentMode === 'holding_paid') {
+              items = [
+                `<li><span class="check" style="background:#DCFCE7; color:#15803D; border-color:#86EFAC;">✓</span> <span><strong>Viewing Completed &amp; Approved:</strong> Landlord confirmed allocation for you.</span></li>`,
+                `<li><span class="check" style="background:#DCFCE7; color:#15803D; border-color:#86EFAC;">✓</span> <span><strong>German Lease Agreement Audit:</strong> DieFuture team checks all clauses before you sign.</span></li>`,
+                `<li><span class="check" style="background:#DCFCE7; color:#15803D; border-color:#86EFAC;">✓</span> <span><strong>City Registration (Anmeldung):</strong> Signed German Wohnungsgeberbestätigung guaranteed upon lease.</span></li>`,
+                `<li><span class="check" style="background:#DCFCE7; color:#15803D; border-color:#86EFAC;">✓</span> <span><strong>Move-In &amp; Key Handover Concierge:</strong> Seamless support until you settle into your new home.</span></li>`
+              ];
+            } else {
+              if (g.concierge !== false) {
+                items.push(`<li><span class="check">✓</span> <span><strong>Dedicated Relocation Concierge:</strong> 1-on-1 WhatsApp assistance for viewing coordination, contract review & landlord communication.</span></li>`);
+              }
 
-            if (g.viewingType === 'viewing') {
-              items.push(`<li><span class="check">✓</span> <span><strong>Guaranteed Viewing Slot:</strong> In-person or live WhatsApp video tour coordinated for you.</span></li>`);
-            } else if (g.viewingType === 'direct') {
-              items.push(`<li><span class="check">✓</span> <span><strong>Direct Booking Allocation:</strong> Fast-track priority lease allocation directly coordinated with the landlord.</span></li>`);
-            }
+              if (g.viewingType === 'viewing') {
+                items.push(`<li><span class="check">✓</span> <span><strong>Guaranteed Viewing Slot:</strong> In-person or live WhatsApp video tour coordinated for you.</span></li>`);
+              } else if (g.viewingType === 'direct') {
+                items.push(`<li><span class="check">✓</span> <span><strong>Direct Booking Allocation:</strong> Fast-track priority lease allocation directly coordinated with the landlord.</span></li>`);
+              }
 
-            if (g.anmeldung !== false) {
-              items.push(`<li><span class="check">✓</span> <span><strong>Anmeldung Commitment:</strong> Signed German Wohnungsgeberbestätigung upon lease.</span></li>`);
-            }
+              if (g.anmeldung !== false) {
+                items.push(`<li><span class="check">✓</span> <span><strong>Anmeldung Commitment:</strong> Signed German Wohnungsgeberbestätigung upon lease.</span></li>`);
+              }
 
-            if (g.contractAudit !== false) {
-              items.push(`<li><span class="check">✓</span> <span><strong>Tenancy Agreement Audit:</strong> DieFuture team checks lease terms & clauses before you sign.</span></li>`);
-            }
+              if (g.contractAudit !== false) {
+                items.push(`<li><span class="check">✓</span> <span><strong>Tenancy Agreement Audit:</strong> DieFuture team checks lease terms & clauses before you sign.</span></li>`);
+              }
 
-            if (g.refundPolicy === 'visit') {
-              items.push(`<li><span class="check">✓</span> <span><strong>Visit Satisfaction Refund:</strong> Full refund of your lead fee if you attend the scheduled viewing and do not like the room.</span></li>`);
-            } else if (g.refundPolicy === 'slot') {
-              items.push(`<li><span class="check">✓</span> <span><strong>100% Protection:</strong> Full refund if the room is taken before your scheduled viewing.</span></li>`);
+              if (g.refundPolicy === 'visit') {
+                items.push(`<li><span class="check">✓</span> <span><strong>Visit Satisfaction Refund:</strong> Full refund of your lead fee if you attend the scheduled viewing and do not like the room.</span></li>`);
+              } else if (g.refundPolicy === 'slot') {
+                items.push(`<li><span class="check">✓</span> <span><strong>100% Protection:</strong> Full refund if the room is taken before your scheduled viewing.</span></li>`);
+              }
             }
 
             if (items.length === 0) {
@@ -1600,11 +1749,7 @@
         }
 
         // Update all dynamic fee mentions across the page
-        document.querySelectorAll('.dynamic-lead-fee').forEach(el => el.textContent = formattedFee);
-
-        if (reserveLeadCardTitle) reserveLeadCardTitle.textContent = `Reserve Room ${currentRoom.roomId}`;
-        if (feeAmountDisplay) feeAmountDisplay.textContent = feeINR.toLocaleString('en-IN');
-        if (payBtnLabel) payBtnLabel.textContent = `Pay ${formattedFee} & Reserve Room Lead`;
+        document.querySelectorAll('.dynamic-lead-fee').forEach(el => el.textContent = formattedPayable);
       }
 
       // Check if URL has ?unlocked=1
@@ -1630,7 +1775,18 @@
           return;
         }
 
-        const feeINR = currentRoom.feeINR || 12999;
+        const paymentMode = currentRoom.paymentMode || 'full';
+        let payableINR = currentRoom.feeINR || 12999;
+        let orderDesc = `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation & Concierge Handover`;
+
+        if (paymentMode === 'holding_initial') {
+          payableINR = currentRoom.holdingFeeINR || 2999;
+          orderDesc = `Room ${currentRoom.roomId} Viewing Slot Holding Deposit (100% Refundable)`;
+        } else if (paymentMode === 'holding_paid') {
+          payableINR = currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(1, (currentRoom.feeINR || 12999) - (currentRoom.holdingFeeINR || 2999));
+          orderDesc = `Room ${currentRoom.roomId} Remaining Balance for Final Lease Handover`;
+        }
+
         const payBtn = document.getElementById('payRazorpayBtn');
         const origBtnHtml = payBtn ? payBtn.innerHTML : '';
         if (payBtn) {
@@ -1659,14 +1815,16 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              amount: feeINR * 100, // paise (₹12,999 = 1299900 paise)
+              amount: payableINR * 100, // paise (₹2,999 = 299900 paise, ₹12,999 = 1299900 paise)
               currency: 'INR',
               receipt: `rcpt_room_${currentRoom.roomId}_${Date.now()}`,
               notes: {
                 roomId: currentRoom.roomId,
                 city: currentRoom.city,
                 seekerName: name,
-                seekerEmail: email
+                seekerEmail: email,
+                paymentMode: paymentMode,
+                payableINR: payableINR
               }
             })
           });
@@ -1685,7 +1843,7 @@
             amount: orderData.amount,
             currency: orderData.currency || 'INR',
             name: "DieFuture Apartments",
-            description: `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation & Concierge Handover`,
+            description: orderDesc,
             image: "./assets/diefuture-logo.jpg",
             order_id: orderData.order_id,
             prefill: {
@@ -1771,7 +1929,13 @@
       // Handle successful payment
       async function handlePaymentSuccess(payData) {
         const refCode = `DF-ROOM-${currentRoom.roomId}-` + Math.floor(100 + Math.random() * 900);
-        const feeINR = currentRoom.feeINR || 12999;
+        const paymentMode = currentRoom.paymentMode || 'full';
+        let payableINR = currentRoom.feeINR || 12999;
+        if (paymentMode === 'holding_initial') {
+          payableINR = currentRoom.holdingFeeINR || 2999;
+        } else if (paymentMode === 'holding_paid') {
+          payableINR = currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(1, (currentRoom.feeINR || 12999) - (currentRoom.holdingFeeINR || 2999));
+        }
 
         // Send to backend MongoDB /api/reserve-room
         try {
@@ -1786,7 +1950,11 @@
               seekerPhone: payData.phone,
               targetMoveIn: payData.moveIn,
               paymentId: payData.razorpay_payment_id,
-              amount: feeINR
+              amount: payableINR,
+              paymentMode: paymentMode,
+              totalFeeINR: currentRoom.feeINR || 12999,
+              holdingFeeINR: currentRoom.holdingFeeINR || 2999,
+              remainingFeeINR: currentRoom.remainingFeeINR || 10000
             })
           });
 
@@ -1795,7 +1963,8 @@
             unlockDossier({
               reference: result.reference || refCode,
               paymentId: payData.razorpay_payment_id,
-              seekerName: payData.name
+              seekerName: payData.name,
+              amountPaid: payableINR
             });
             return;
           }
@@ -1807,7 +1976,8 @@
         unlockDossier({
           reference: refCode,
           paymentId: payData.razorpay_payment_id,
-          seekerName: payData.name
+          seekerName: payData.name,
+          amountPaid: payableINR
         });
       }
 
@@ -1830,11 +2000,41 @@
         if (unlockedSeekerName) unlockedSeekerName.textContent = data.seekerName || 'Reserved Seeker';
         if (unlockedRoomTitle) unlockedRoomTitle.textContent = currentRoom.title;
 
+        const paymentMode = currentRoom.paymentMode || 'full';
+        let payableINR = data.amountPaid || (currentRoom.feeINR || 12999);
+        if (paymentMode === 'holding_initial') {
+          payableINR = currentRoom.holdingFeeINR || 2999;
+        } else if (paymentMode === 'holding_paid') {
+          payableINR = currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(1, (currentRoom.feeINR || 12999) - (currentRoom.holdingFeeINR || 2999));
+        }
+
+        const bannerTextEl = document.querySelector('.unlocked-banner span');
+        if (bannerTextEl) {
+          if (paymentMode === 'holding_initial') {
+            bannerTextEl.textContent = `Viewing Slot Reserved & Holding Fee Paid (₹${payableINR.toLocaleString('en-IN')})!`;
+          } else if (paymentMode === 'holding_paid') {
+            bannerTextEl.textContent = `Lease Handover Confirmed & Total Service Fee Settled!`;
+          } else {
+            bannerTextEl.textContent = `Room Lead Reserved & Confirmed!`;
+          }
+        }
+
         // WhatsApp direct link to DieFuture support desk (+91 95679 41647)
-        const feeINR = currentRoom.feeINR || 12999;
-        const dfMsg = encodeURIComponent(
-          `Hello DieFuture Team,\n\nI just paid the ₹${feeINR.toLocaleString('en-IN')} lead handover fee for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease coordinate with the landlord and assist me with the viewing & contract review!`
-        );
+        let dfMsg = '';
+        if (paymentMode === 'holding_initial') {
+          dfMsg = encodeURIComponent(
+            `Hello DieFuture Team,\n\nI just paid the ₹${payableINR.toLocaleString('en-IN')} refundable holding deposit for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease schedule my viewing slot & verify details!`
+          );
+        } else if (paymentMode === 'holding_paid') {
+          dfMsg = encodeURIComponent(
+            `Hello DieFuture Team,\n\nI just paid the remaining balance of ₹${payableINR.toLocaleString('en-IN')} for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease proceed with landlord lease handover and contract audit!`
+          );
+        } else {
+          dfMsg = encodeURIComponent(
+            `Hello DieFuture Team,\n\nI just paid the ₹${payableINR.toLocaleString('en-IN')} lead handover fee for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease coordinate with the landlord and assist me with the viewing & contract review!`
+          );
+        }
+
         if (conciergeWaBtn) {
           conciergeWaBtn.href = `https://wa.me/919567941647?text=${dfMsg}`;
         }
@@ -1870,7 +2070,19 @@
         if (pName) pName.textContent = name;
         if (pPhone) pPhone.textContent = phone;
         if (pPayId) pPayId.textContent = payId;
-        if (pFee) pFee.textContent = `₹${(currentRoom.feeINR || 12999).toLocaleString('en-IN')} (Paid in Full)`;
+
+        const paymentMode = currentRoom.paymentMode || 'full';
+        let payableINR = (lastUnlockedReservation && lastUnlockedReservation.amountPaid) || (currentRoom.feeINR || 12999);
+        if (paymentMode === 'holding_initial') {
+          payableINR = currentRoom.holdingFeeINR || 2999;
+          if (pFee) pFee.textContent = `₹${payableINR.toLocaleString('en-IN')} (Refundable Viewing Deposit Paid — Balance ₹${(currentRoom.remainingFeeINR || 10000).toLocaleString('en-IN')} due after viewing approval)`;
+        } else if (paymentMode === 'holding_paid') {
+          payableINR = currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(1, (currentRoom.feeINR || 12999) - (currentRoom.holdingFeeINR || 2999));
+          if (pFee) pFee.textContent = `₹${payableINR.toLocaleString('en-IN')} Remaining Balance Paid (₹${(currentRoom.feeINR || 12999).toLocaleString('en-IN')} Total Fee Settled)`;
+        } else {
+          if (pFee) pFee.textContent = `₹${(currentRoom.feeINR || 12999).toLocaleString('en-IN')} (Paid in Full)`;
+        }
+
         if (pTitle) pTitle.textContent = currentRoom.title || 'Munich Furnished WG Room';
         if (pAddr) pAddr.textContent = currentRoom.address || `${currentRoom.city}, Germany`;
         if (pType) pType.textContent = currentRoom.roomType || 'WG Room (Single Private)';

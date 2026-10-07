@@ -336,6 +336,20 @@ app.post('/api/reserve-room', async (req, res) => {
       console.warn('[MongoDB] Room lookup warning in /api/reserve-room:', roomErr.message);
     }
 
+    const {
+      paymentMode = 'full',
+      totalFeeINR,
+      holdingFeeINR,
+      remainingFeeINR
+    } = req.body;
+
+    let packageLabel = `Direct Verified Room Lead (${amount ? '₹' + amount : 'Variable Fee'})`;
+    if (paymentMode === 'holding_initial') {
+      packageLabel = `Viewing Holding Fee (₹${amount || 2999} Paid - Refundable Deposit)`;
+    } else if (paymentMode === 'holding_paid') {
+      packageLabel = `Lease Handover Remaining Balance (₹${amount || 10000} Paid - Settled in Full)`;
+    }
+
     const reservationDoc = {
       reference: bookingRef,
       roomId: roomId || '1004',
@@ -347,11 +361,19 @@ app.post('/api/reserve-room', async (req, res) => {
       moveInDate: targetMoveIn || 'Immediate / Flexible',
       budget: resolvedBudget,
       roomType: 'WG Room (Single Private)',
-      package: `Direct Verified Room Lead (${amount ? '₹' + amount : 'Variable Fee'})`,
+      package: packageLabel,
+      paymentMode,
+      totalFeeINR: Number(totalFeeINR) || 12999,
+      holdingFeeINR: Number(holdingFeeINR) || 2999,
+      remainingFeeINR: Number(remainingFeeINR) || 10000,
       leadStatus: 'paid_confirmed',
       paymentId: paymentId || 'manual_or_simulated',
       amountPaidINR: amount || 12999,
-      notes: notes || 'Verified room lead reservation & handover fee paid via Razorpay.',
+      notes: notes || (paymentMode === 'holding_initial' 
+        ? 'Viewing slot holding fee paid. 100% refundable if seeker attends viewing and dislikes room.' 
+        : paymentMode === 'holding_paid' 
+        ? 'Remaining balance paid after approved viewing. Finalize lease handover.'
+        : 'Verified room lead reservation & handover fee paid via Razorpay.'),
       createdAt: new Date()
     };
 
@@ -551,7 +573,10 @@ app.post('/api/rooms', async (req, res) => {
       address: address || `${city}, Germany`,
       rentWarmEUR: Number(rentWarmEUR),
       depositEUR: Number(depositEUR) || Number(rentWarmEUR) * 2,
+      paymentMode: req.body.paymentMode || 'full',
       feeINR: Number(feeINR) || 12999,
+      holdingFeeINR: Number(req.body.holdingFeeINR) || 2999,
+      remainingFeeINR: Number(req.body.remainingFeeINR) || Math.max(0, (Number(feeINR) || 12999) - (Number(req.body.holdingFeeINR) || 2999)),
       roomSizeM2: Number(roomSizeM2) || 16,
       roomType: roomType || 'WG Room (Single Private)',
       imageUrl: imageList[0],

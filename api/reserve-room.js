@@ -65,6 +65,24 @@ export default async function handler(req, res) {
       }
     }
 
+    const {
+      paymentMode = 'full',
+      totalFeeINR,
+      holdingFeeINR,
+      remainingFeeINR
+    } = req.body;
+
+    let packageLabel = `Direct Verified Room Lead (${amount ? '₹' + amount : 'Variable Fee'})`;
+    let emailSubject = `💰 Room Lead Reserved: ${bookingRef} — ${seekerName} (₹${amount || 12999})`;
+
+    if (paymentMode === 'holding_initial') {
+      packageLabel = `Viewing Holding Fee (₹${amount || 2999} Paid - Refundable Deposit)`;
+      emailSubject = `🛡️ Viewing Holding Fee Paid: ${bookingRef} — ${seekerName} (₹${amount || 2999})`;
+    } else if (paymentMode === 'holding_paid') {
+      packageLabel = `Lease Handover Remaining Balance (₹${amount || 10000} Paid - Settled in Full)`;
+      emailSubject = `🎉 Remaining Balance Paid: ${bookingRef} — ${seekerName} (₹${amount || 10000})`;
+    }
+
     const reservationDoc = {
       reference: bookingRef,
       roomId: roomId || '1004',
@@ -76,11 +94,19 @@ export default async function handler(req, res) {
       moveInDate: targetMoveIn || 'Immediate / Flexible',
       budget: '€775 / month (Warmmiete)',
       roomType: 'WG Room (Single Private)',
-      package: `Direct Verified Room Lead (${amount ? '₹' + amount : 'Variable Fee'})`,
+      package: packageLabel,
+      paymentMode,
+      totalFeeINR: Number(totalFeeINR) || 12999,
+      holdingFeeINR: Number(holdingFeeINR) || 2999,
+      remainingFeeINR: Number(remainingFeeINR) || 10000,
       leadStatus: 'paid_confirmed',
       paymentId: paymentId || 'manual_or_simulated',
       amountPaidINR: amount || 12999,
-      notes: notes || 'Verified room lead reservation & handover fee paid via Razorpay.',
+      notes: notes || (paymentMode === 'holding_initial' 
+        ? 'Viewing slot holding fee paid. 100% refundable if seeker attends viewing and dislikes room.' 
+        : paymentMode === 'holding_paid' 
+        ? 'Remaining balance paid after approved viewing. Finalize lease handover.'
+        : 'Verified room lead reservation & handover fee paid via Razorpay.'),
       createdAt: new Date()
     };
 
@@ -99,18 +125,19 @@ export default async function handler(req, res) {
           body: JSON.stringify({
             from: 'DieFuture Apartments <onboarding@resend.dev>',
             to: ['diefutureapartments@gmail.com'],
-            subject: `💰 Room Lead Reserved: ${bookingRef} — ${seekerName} (₹${amount || 12999})`,
+            subject: emailSubject,
             html: `
               <div style="font-family: Arial, sans-serif; max-width:600px; padding:24px; border:1px solid #10b981; border-radius:12px; background:#ffffff;">
                 <div style="border-bottom:2px solid #10b981; padding-bottom:12px; margin-bottom:16px;">
-                  <h2 style="color:#059669; margin:0; font-size:20px;">🎉 Room Lead Reservation Paid</h2>
-                  <p style="color:#64748B; margin:4px 0 0; font-size:13px;">Razorpay Payment ID: <strong>${paymentId || 'N/A'}</strong></p>
+                  <h2 style="color:#059669; margin:0; font-size:20px;">${paymentMode === 'holding_initial' ? '🛡️ Viewing Holding Fee Paid' : paymentMode === 'holding_paid' ? '🎉 Remaining Balance Paid' : '💰 Room Lead Reservation Paid'}</h2>
+                  <p style="color:#64748B; margin:4px 0 0; font-size:13px;">Razorpay Payment ID: <strong>${paymentId || 'N/A'}</strong> · Mode: <strong>${paymentMode}</strong></p>
                 </div>
 
                 <table style="width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;">
                   <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B; width:35%;">Booking Reference:</td><td style="font-weight:bold; font-family:monospace; font-size:16px; color:#059669;">${bookingRef}</td></tr>
                   <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Room ID:</td><td style="font-weight:bold;">${roomId || '1004'}</td></tr>
                   <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Property Title:</td><td style="font-weight:600;">${roomTitle}</td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Payment Type:</td><td style="font-weight:600; color:#0F766E;">${packageLabel}</td></tr>
                   <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Amount Collected:</td><td style="font-weight:bold; font-size:16px; color:#0055FF;">₹${amount ? Number(amount).toLocaleString('en-IN') : '12,999'}</td></tr>
                   <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Seeker Name:</td><td style="font-weight:bold; color:#1e293b;">${seekerName}</td></tr>
                   <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Email Address:</td><td><a href="mailto:${seekerEmail}" style="color:#0055FF;">${seekerEmail}</a></td></tr>
