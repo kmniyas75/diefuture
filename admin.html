@@ -396,129 +396,233 @@
       margin-bottom: 6px;
     }
 
-    /* Admin Tabs */
+    /* Modern Segmented Tab Switcher */
     .admin-tab-bar {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid var(--rule);
-      padding-bottom: 12px;
+      display: inline-flex;
+      background: #E8EEF5;
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid #D5DEE8;
+      margin-bottom: 28px;
+      gap: 4px;
     }
     .admin-tab-btn {
       font-family: var(--f-sans);
-      font-size: 14px;
-      font-weight: 700;
-      padding: 10px 20px;
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 9px 20px;
       border-radius: 8px;
-      border: 1px solid transparent;
+      border: none;
       background: transparent;
-      color: var(--ink-2);
+      color: #475569;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.2s;
+      transition: all 0.18s ease;
+      white-space: nowrap;
     }
     .admin-tab-btn:hover {
-      background: var(--paper-2);
-      color: var(--ink);
+      color: #0F172A;
+      background: rgba(255, 255, 255, 0.5);
     }
     .admin-tab-btn.active {
-      background: var(--royal);
-      color: #FFFFFF;
+      background: #FFFFFF;
+      color: var(--royal);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+      font-weight: 700;
     }
 
-    /* Importer Card */
+    /* Importer & Lead Generator Card */
     .importer-card {
       background: #FFFFFF;
       border: 1px solid var(--rule);
-      border-radius: 14px;
-      padding: 24px 28px;
-      margin-bottom: 28px;
-      box-shadow: 0 4px 12px -4px rgba(20, 21, 26, 0.05);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 20px -6px rgba(20, 21, 26, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
     }
     .importer-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
       gap: 12px;
     }
     .importer-title {
       font-family: var(--f-display);
-      font-size: 20px;
+      font-size: 21px;
       font-weight: 800;
       color: var(--ink);
+      letter-spacing: -.02em;
     }
     .importer-sub {
       font-size: 13.5px;
       color: var(--ink-2);
-      max-width: 740px;
+      max-width: 720px;
       line-height: 1.5;
       margin-top: 4px;
     }
+
+    /* Quick Fetch Toolbar */
     .url-fetch-bar {
       display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 10px;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 24px;
+      align-items: center;
       flex-wrap: wrap;
     }
     .url-fetch-input {
       flex: 1;
-      min-width: 320px;
-      padding: 12px 16px;
-      border: 2px solid var(--rule-2);
+      min-width: 280px;
+      padding: 10px 14px;
+      border: 1px solid #CBD5E1;
       border-radius: 8px;
-      font-size: 14px;
-      background: var(--paper);
+      font-size: 13.5px;
+      background: #FFFFFF;
+      outline: none;
+      color: #0F172A;
+      transition: all 0.15s;
     }
     .url-fetch-input:focus {
       border-color: var(--electric);
-      background: #FFFFFF;
-      outline: none;
+      box-shadow: 0 0 0 3px rgba(8, 75, 224, 0.12);
     }
-    .room-form-grid {
+
+    /* Structured Form Sections */
+    .form-section-card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin-bottom: 18px;
+    }
+    .form-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #F1F5F9;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .form-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0F172A;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.01em;
+    }
+    .form-section-sub {
+      font-size: 12px;
+      color: #64748B;
+      margin-top: 2px;
+    }
+
+    .form-grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      margin-bottom: 20px;
+    }
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
     }
     @media (max-width: 900px) {
-      .room-form-grid {
-        grid-template-columns: 1fr;
+      .form-grid-3, .form-grid-2 {
+        grid-template-columns: 1fr !important;
+      }
+      .importer-card {
+        padding: 20px 18px;
       }
     }
+
     .room-input-group label {
-      display: block;
-      font-family: var(--f-mono);
-      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--f-sans);
+      font-size: 12px;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-      color: var(--ink-2);
+      color: #334155;
       margin-bottom: 6px;
     }
     .room-input-group input,
-    .room-input-group select {
+    .room-input-group select,
+    .room-input-group textarea {
       width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--rule-2);
-      border-radius: 6px;
+      padding: 9px 12px;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
       font-size: 13.5px;
-      background: var(--paper);
+      font-family: var(--f-sans);
+      background: #FFFFFF;
+      color: #0F172A;
+      transition: all 0.15s;
+      outline: none;
     }
     .room-input-group input:focus,
-    .room-input-group select:focus {
+    .room-input-group select:focus,
+    .room-input-group textarea:focus {
       border-color: var(--electric);
-      background: #FFFFFF;
-      outline: none;
+      box-shadow: 0 0 0 3px rgba(8, 75, 224, 0.12);
     }
     .input-highlight {
       border: 2px solid var(--electric) !important;
-      background: #EFF6FF !important;
+      background: #F8FAFC !important;
       font-weight: 700 !important;
       color: var(--royal) !important;
+    }
+
+    /* Payment & Holding Deposit Section */
+    .payment-mode-config-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-top: 14px;
+    }
+
+    /* Guarantees Box */
+    .guarantees-config-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin-top: 16px;
+    }
+    .guarantee-card-item {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      transition: border-color 0.15s;
+    }
+    .guarantee-card-item:hover {
+      border-color: #CBD5E1;
+    }
+
+    /* Form Action Bar */
+    .form-action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     @media (max-width: 980px) {
@@ -688,90 +792,128 @@
     <!-- PANEL 2: VERIFIED ROOMS & STAYFORALL IMPORTER -->
     <div id="panelRooms" style="display:none;">
       
-      <!-- 1-Click StayforAll Importer Card -->
+      <!-- Room Lead Generator Card -->
       <div class="importer-card">
         <div class="importer-header">
           <div>
-            <div class="importer-title">⚡ 1-Click StayforAll Room Importer</div>
+            <div class="importer-title">🏠 Verified Room Lead Catalog &amp; Generator</div>
             <p class="importer-sub">
-              Paste any StayforAll room URL or ID (e.g. <code>https://stayforall.com/rooms/1004</code> or <code>1004</code>). 
-              Our system will automatically extract the photos, city, address, and warm rent, allowing you to configure our DieFuture lead handover fee and landlord contact.
+              Create and manage private booking links for seekers. Paste a StayforAll listing URL to auto-extract details, or configure the room terms manually.
             </p>
           </div>
           <div>
-            <span style="font-family:var(--f-mono); font-size:11.5px; background:#ECFDF5; color:#065F46; padding:5px 12px; border-radius:999px; font-weight:600;">
-              ✓ Auto-Scraping Active
+            <span style="font-family:var(--f-mono); font-size:11.5px; background:#ECFDF5; color:#065F46; padding:5px 12px; border-radius:999px; font-weight:600; border:1px solid #A7F3D0; display:inline-flex; align-items:center; gap:6px;">
+              <span class="db-dot"></span> Auto-Scraping Active
             </span>
           </div>
         </div>
 
-        <!-- Quick Fetch Bar -->
+        <!-- Quick Importer Toolbar -->
         <div class="url-fetch-bar">
+          <div style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#334155; white-space:nowrap;">
+            <span>⚡ Quick Import:</span>
+          </div>
           <input type="text" id="stayforallUrlInput" class="url-fetch-input" placeholder="Paste StayforAll URL or Room ID (e.g. https://stayforall.com/rooms/1004 or 1004)" />
-          <button type="button" class="btn-electric" id="btnFetchStayforall" style="padding:12px 20px; font-weight:700; white-space:nowrap;">
-            ⚡ Auto-Fetch Room Data
+          <button type="button" class="btn-electric" id="btnFetchStayforall" style="padding:10px 18px; font-weight:700; white-space:nowrap; font-size:13px;">
+            ⚡ Auto-Fetch Listing
           </button>
         </div>
 
-        <div id="fetchNotice" style="font-size:12.5px; margin-bottom:16px; display:none; padding:10px 14px; border-radius:6px;"></div>
+        <div id="fetchNotice" style="font-size:12.5px; margin-bottom:16px; display:none; padding:10px 14px; border-radius:8px;"></div>
 
         <!-- Room Details & Edit Form -->
         <form id="roomUpsertForm">
-          <div class="room-form-grid">
-            <div class="room-input-group">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <label style="margin-bottom:0;">Room ID / URL Slug *</label>
-                <span style="font-size:10.5px; font-weight:700; color:#059669; background:#ECFDF5; padding:2px 7px; border-radius:4px; font-family:var(--f-mono);">✓ Auto-Generated</span>
+          
+          <!-- SECTION 1: IDENTIFICATION & ADDRESS -->
+          <div class="form-section-card">
+            <div class="form-section-header">
+              <div>
+                <div class="form-section-title">
+                  <span>📍 1. Room Identification &amp; German Location</span>
+                </div>
+                <div class="form-section-sub">Configure the private share link slug and physical apartment address.</div>
               </div>
-              <div style="display:flex; gap:6px;">
-                <input type="text" id="roomFieldId" required placeholder="e.g. 1005" style="flex:1; font-weight:600; font-family:var(--f-mono);" />
-                <button type="button" id="btnGenUniqueId" class="btn-line" style="padding:0 10px; font-size:11.5px; white-space:nowrap; background:#FFFFFF;" title="Generate another new unique URL slug">🔄 New ID</button>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="room-input-group">
+                <label>
+                  <span>Room ID / URL Slug *</span>
+                  <span style="font-size:10px; font-weight:700; color:#059669; background:#ECFDF5; padding:2px 6px; border-radius:4px; font-family:var(--f-mono);">Auto</span>
+                </label>
+                <div style="display:flex; gap:6px;">
+                  <input type="text" id="roomFieldId" required placeholder="e.g. 1005" style="flex:1; font-weight:600; font-family:var(--f-mono);" />
+                  <button type="button" id="btnGenUniqueId" class="btn-line" style="padding:0 10px; font-size:11.5px; white-space:nowrap; background:#FFFFFF;" title="Generate another new unique URL slug">🔄 New ID</button>
+                </div>
+                <small style="font-size:11px; color:#64748B; margin-top:4px; display:block;">Private Link: <code style="font-size:11px; color:var(--royal); font-weight:600;">/room?id=<span id="slugPreview">1005</span></code></small>
               </div>
-              <small style="font-size:11px; color:#64748B; margin-top:4px; display:block;">Private Share Link: <code style="font-size:11px; color:var(--royal); font-weight:600;">/room?id=<span id="slugPreview">1005</span></code></small>
+
+              <div class="room-input-group" style="grid-column: span 2;">
+                <label>Room Title / Name *</label>
+                <input type="text" id="roomFieldTitle" required placeholder="e.g. Stylish and high-quality furnished WG room in Munich Thalkirchen" />
+              </div>
+
+              <div class="room-input-group">
+                <label>City *</label>
+                <input type="text" id="roomFieldCity" required placeholder="e.g. München" />
+              </div>
+
+              <div class="room-input-group" style="grid-column: span 2;">
+                <label>Full Address in Germany</label>
+                <input type="text" id="roomFieldAddress" placeholder="e.g. Gabriele-Münter-Straße 11, 81477 München" />
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: RENT & DIEFUTURE SERVICE FEE -->
+          <div class="form-section-card">
+            <div class="form-section-header">
+              <div>
+                <div class="form-section-title">
+                  <span>💶 2. Rental Terms &amp; Scam-Free Payment Model</span>
+                </div>
+                <div class="form-section-sub">Set monthly rent, deposit, and how DieFuture collects the service fee.</div>
+              </div>
             </div>
 
-            <div class="room-input-group" style="grid-column: span 2;">
-              <label>Room Title / Name *</label>
-              <input type="text" id="roomFieldTitle" required placeholder="e.g. Stylish and high-quality furnished WG room in Munich Thalkirchen" />
-            </div>
+            <div class="form-grid-3">
+              <div class="room-input-group">
+                <label>Monthly Warm Rent (€) *</label>
+                <input type="number" id="roomFieldRent" required placeholder="775" />
+              </div>
 
-            <div class="room-input-group">
-              <label>City *</label>
-              <input type="text" id="roomFieldCity" required placeholder="e.g. München" />
-            </div>
+              <div class="room-input-group">
+                <label>Rental Deposit (€)</label>
+                <input type="number" id="roomFieldDeposit" placeholder="1500" />
+              </div>
 
-            <div class="room-input-group" style="grid-column: span 2;">
-              <label>Full Address in Germany</label>
-              <input type="text" id="roomFieldAddress" placeholder="e.g. Gabriele-Münter-Straße 11, 81477 München" />
-            </div>
-
-            <div class="room-input-group">
-              <label>Monthly Warm Rent (€) *</label>
-              <input type="number" id="roomFieldRent" required placeholder="775" />
-            </div>
-
-            <div class="room-input-group">
-              <label>Rental Deposit (€)</label>
-              <input type="number" id="roomFieldDeposit" placeholder="1500" />
+              <div class="room-input-group">
+                <label>Room Vacancy Status</label>
+                <select id="roomFieldStatus">
+                  <option value="available">🟢 Available (Active on Website)</option>
+                  <option value="reserved">🟡 Reserved (Viewing in Progress)</option>
+                  <option value="filled">🔴 Filled / Sold Out</option>
+                </select>
+              </div>
             </div>
 
             <!-- Payment Structure & Holding Fee Box -->
-            <div class="payment-mode-config-box" style="grid-column: span 3; background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:16px 20px; margin: 4px 0 8px;">
-              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+            <div class="payment-mode-config-box">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
                 <div>
-                  <div style="font-weight:700; font-size:13.5px; color:#14532D; display:flex; align-items:center; gap:6px;">
+                  <div style="font-weight:700; font-size:13.5px; color:#0F172A; display:flex; align-items:center; gap:6px;">
                     <span>💳 Payment Structure &amp; Holding Deposit (Scam Prevention)</span>
                   </div>
-                  <div style="font-size:12px; color:#166534; margin-top:2px;">
+                  <div style="font-size:12px; color:#475569; margin-top:2px;">
                     For viewing students: collect a holding fee first to avoid scams/no-shows. If they like it, collect remaining balance. If they don't, refund it.
                   </div>
                 </div>
               </div>
 
-              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; align-items:flex-start;">
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; align-items:flex-start;">
                 <div>
-                  <label style="font-size:12px; font-weight:700; color:#14532D; margin-bottom:4px; display:block;">Payment Mode</label>
-                  <select id="roomFieldPaymentMode" style="width:100%; font-size:12.5px; padding:8px 10px; border-radius:6px; border:1px solid #86EFAC; font-weight:600; background:#FFFFFF;">
+                  <label style="font-size:12px; font-weight:600; color:#334155; margin-bottom:5px; display:block;">Payment Mode</label>
+                  <select id="roomFieldPaymentMode" style="width:100%; font-size:13px; padding:9px 11px; border-radius:8px; border:1px solid #CBD5E1; font-weight:600; background:#FFFFFF;">
                     <option value="full">1. Full Upfront Fee (Standard)</option>
                     <option value="holding_initial">2. Collect Holding Fee First (Viewing Slot)</option>
                     <option value="holding_paid">3. Holding Collected ✓ → Pay Remaining Balance</option>
@@ -779,164 +921,178 @@
                 </div>
 
                 <div>
-                  <label style="font-size:12px; font-weight:700; color:#14532D; margin-bottom:4px; display:block;">Total Service Fee (₹) *</label>
-                  <input type="number" id="roomFieldFee" class="input-highlight" required placeholder="12999" value="12999" style="background:#FFFFFF; font-weight:700; width:100%; padding:8px 10px; border-radius:6px; border:1px solid #86EFAC;" />
+                  <label style="font-size:12px; font-weight:600; color:#334155; margin-bottom:5px; display:block;">Total Service Fee (₹) *</label>
+                  <input type="number" id="roomFieldFee" class="input-highlight" required placeholder="12999" value="12999" style="background:#FFFFFF; font-weight:700; width:100%; padding:9px 11px; border-radius:8px; border:1px solid #CBD5E1;" />
                 </div>
 
-                <div id="holdingFeeInputsWrap" style="display:none; grid-column: span 2; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div id="holdingFeeInputsWrap" style="display:none; grid-column: span 2; grid-template-columns: 1fr 1fr; gap:12px;">
                   <div>
-                    <label style="font-size:12px; font-weight:700; color:#14532D; margin-bottom:4px; display:block;">Holding Fee Deposit (₹)</label>
-                    <input type="number" id="roomFieldHoldingFee" placeholder="2999" value="2999" style="width:100%; font-size:13px; padding:8px 10px; border-radius:6px; border:1px solid #86EFAC; background:#FFFFFF; font-weight:700;" />
+                    <label style="font-size:12px; font-weight:600; color:#15803D; margin-bottom:5px; display:block;">Holding Fee Deposit (₹)</label>
+                    <input type="number" id="roomFieldHoldingFee" placeholder="2999" value="2999" style="width:100%; font-size:13px; padding:9px 11px; border-radius:8px; border:1px solid #86EFAC; background:#FFFFFF; font-weight:700; color:#14532D;" />
                     <small style="font-size:11px; color:#15803D; margin-top:2px; display:block;">Refundable if they visit and don't like it</small>
                   </div>
 
                   <div>
-                    <label style="font-size:12px; font-weight:700; color:#14532D; margin-bottom:4px; display:block;">Remaining Balance (₹)</label>
-                    <input type="number" id="roomFieldRemainingFee" placeholder="10000" value="10000" style="width:100%; font-size:13px; padding:8px 10px; border-radius:6px; border:1px solid #86EFAC; background:#FFFFFF; font-weight:700;" />
+                    <label style="font-size:12px; font-weight:600; color:#15803D; margin-bottom:5px; display:block;">Remaining Balance (₹)</label>
+                    <input type="number" id="roomFieldRemainingFee" placeholder="10000" value="10000" style="width:100%; font-size:13px; padding:9px 11px; border-radius:8px; border:1px solid #86EFAC; background:#FFFFFF; font-weight:700; color:#14532D;" />
                     <small style="font-size:11px; color:#15803D; margin-top:2px; display:block;">Auto-calculated: Total − Holding</small>
                   </div>
                 </div>
               </div>
 
-              <div id="holdingModeExplanation" style="margin-top:10px; font-size:12px; line-height:1.45; background:#FFFFFF; border:1px dashed #86EFAC; border-radius:6px; padding:8px 12px; color:#166534;">
+              <div id="holdingModeExplanation" style="margin-top:12px; font-size:12px; line-height:1.45; background:#EFF6FF; border:1px solid #BFDBFE; border-radius:8px; padding:9px 12px; color:#1E40AF;">
                 💡 <strong>Full Upfront Mode:</strong> The student is charged the total service fee upfront at checkout.
-              </div>
-            </div>
-
-            <div class="room-input-group">
-              <label>Room Type</label>
-              <select id="roomFieldType">
-                <option value="WG Room (Single Private)">WG Room (Single Private)</option>
-                <option value="Private Studio Apartment">Private Studio Apartment</option>
-                <option value="1-Bedroom Apartment">1-Bedroom Apartment</option>
-                <option value="Shared Double Room">Shared Double Room</option>
-              </select>
-            </div>
-
-            <div class="room-input-group">
-              <label>Room Size (m²)</label>
-              <input type="number" id="roomFieldSize" placeholder="16" value="16" />
-            </div>
-
-            <div class="room-input-group">
-              <label>Public Transit Notes</label>
-              <input type="text" id="roomFieldTransit" placeholder="e.g. 6 min to U3 (12 min to TUM / LMU / Hbf)" />
-            </div>
-
-            <div class="room-input-group" style="grid-column: span 3;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <label style="margin-bottom:0;">Property Photos / Multiple Image URLs</label>
-                <span style="font-size:11.5px; font-family:var(--f-mono); color:var(--electric); font-weight:600;" id="imgCountIndicator">0 photos</span>
-              </div>
-              <textarea id="roomFieldImages" rows="3" placeholder="Enter image URLs (one per line, or separated by commas)&#10;https://stayforall-public.s3.../photo1.jpg&#10;https://stayforall-public.s3.../photo2.jpg" style="font-family:var(--f-mono); font-size:12px; line-height:1.45; resize:vertical; width:100%; padding:10px 12px; border:1px solid var(--rule-2); border-radius:6px; background:var(--paper);"></textarea>
-              
-              <!-- Quick Add Single Image URL -->
-              <div style="display:flex; gap:8px; margin-top:8px;">
-                <input type="url" id="quickAddImgInput" placeholder="Or paste single image URL here to add..." style="flex:1; font-size:12px; padding:7px 12px; border:1px solid var(--rule-2); border-radius:6px;" />
-                <button type="button" id="btnAddImgBtn" class="btn-line" style="padding:6px 14px; font-size:12px; white-space:nowrap;">+ Add Photo</button>
-              </div>
-
-              <!-- Thumbnails Preview Strip -->
-              <div id="adminImgPreviewStrip" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; min-height:48px; padding:8px; background:var(--paper-2); border-radius:8px; border:1px dashed var(--rule-2); align-items:center;">
-                <span style="font-size:12px; color:var(--ink-3); font-family:var(--f-mono);" id="emptyThumbsNote">No photos added yet. Enter or paste URLs above.</span>
-              </div>
-            </div>
-
-            <div class="room-input-group">
-              <label>Room Vacancy Status</label>
-              <select id="roomFieldStatus">
-                <option value="available">Available (Active on Website)</option>
-                <option value="reserved">Reserved (Viewing in Progress)</option>
-                <option value="filled">Filled / Sold Out</option>
-              </select>
-            </div>
-
-            <div class="room-input-group" style="grid-column: span 2;">
-              <label>Advisor Notes / Special Details (Optional)</label>
-              <input type="text" id="roomFieldDescription" placeholder="e.g. Quiet rear building facing green courtyard, female-only WG" />
-              <small style="font-size:11px; color:#64748B; margin-top:3px; display:block;">Keeps the room page concise and avoids confusion for fast conversion.</small>
-            </div>
-
-            <!-- Guarantees & Deliverables Configuration Box -->
-            <div class="guarantees-config-box" style="grid-column: span 3; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:18px 20px; margin-top:8px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #E2E8F0; padding-bottom:10px; flex-wrap:wrap; gap:8px;">
-                <div>
-                  <div style="font-weight:700; font-size:14px; color:var(--ink); display:flex; align-items:center; gap:8px;">
-                    <span>🛡️ Room Guarantees & Deliverables Configuration</span>
-                  </div>
-                  <div style="font-size:12px; color:var(--ink-3); margin-top:2px;">
-                    Control which guarantees appear on this room's checkout card to avoid legal issues.
-                  </div>
-                </div>
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-bottom:0; font-weight:700; font-size:13px; color:var(--royal); background:#EFF6FF; padding:5px 12px; border-radius:6px; border:1px solid #BFDBFE;">
-                  <input type="checkbox" id="roomFieldShowGuarantees" checked style="width:16px; height:16px;" />
-                  <span>Show Deliverables / Guarantees</span>
-                </label>
-              </div>
-
-              <div id="guaranteesControlsWrap" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
-                
-                <!-- Concierge -->
-                <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; padding:12px;">
-                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600; font-size:13px; margin-bottom:4px; color:var(--ink);">
-                    <input type="checkbox" id="roomFieldGuaranteeConcierge" checked style="width:16px; height:16px;" />
-                    <span>Dedicated Relocation Concierge</span>
-                  </label>
-                  <div style="font-size:11.5px; color:#64748B; margin-left:24px;">1-on-1 WhatsApp assistance for viewing coordination & landlord communication.</div>
-                </div>
-
-                <!-- Viewing Slot Option -->
-                <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; padding:12px;">
-                  <label style="display:block; font-weight:600; font-size:13px; margin-bottom:6px; color:var(--ink);">Viewing Option</label>
-                  <select id="roomFieldGuaranteeViewing" style="width:100%; font-size:12.5px; padding:7px 10px; border-radius:6px; border:1px solid #CBD5E1; background:#FFFFFF;">
-                    <option value="viewing">✓ Guaranteed Viewing Slot (In-person or video tour)</option>
-                    <option value="direct">✓ Direct Booking Allocation (Fast-track lease, no viewing)</option>
-                    <option value="none">✕ None / Hide viewing line</option>
-                  </select>
-                </div>
-
-                <!-- Anmeldung -->
-                <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; padding:12px;">
-                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600; font-size:13px; margin-bottom:4px; color:var(--ink);">
-                    <input type="checkbox" id="roomFieldGuaranteeAnmeldung" checked style="width:16px; height:16px;" />
-                    <span>Anmeldung Commitment</span>
-                  </label>
-                  <div style="font-size:11.5px; color:#64748B; margin-left:24px;">Signed German Wohnungsgeberbestätigung provided upon lease.</div>
-                </div>
-
-                <!-- Tenancy Agreement Audit -->
-                <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; padding:12px;">
-                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600; font-size:13px; margin-bottom:4px; color:var(--ink);">
-                    <input type="checkbox" id="roomFieldGuaranteeAudit" checked style="width:16px; height:16px;" />
-                    <span>Tenancy Agreement Audit</span>
-                  </label>
-                  <div style="font-size:11.5px; color:#64748B; margin-left:24px;">DieFuture team reviews German lease terms before seeker signs.</div>
-                </div>
-
-                <!-- Refund Policy -->
-                <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px; padding:12px; grid-column: span 2;">
-                  <label style="display:block; font-weight:700; font-size:13px; color:var(--ink); margin-bottom:3px;">
-                    💰 Refund Guarantee Policy
-                  </label>
-                  <div style="font-size:11.5px; color:#64748B; margin-bottom:6px;">
-                    Choose whether to display a refund promise. If direct booking without visit, keep "No Refund Displayed" to avoid legal liability.
-                  </div>
-                  <select id="roomFieldGuaranteeRefund" style="width:100%; font-size:12.5px; padding:8px 10px; border-radius:6px; border:1px solid #CBD5E1; font-weight:600; background:#FFFFFF;">
-                    <option value="none" selected>✕ No Refund Displayed (Recommended for direct booking / non-refundable lead)</option>
-                    <option value="visit">✓ Visit Satisfaction Refund: "Full refund if you visit and don't like the room"</option>
-                    <option value="slot">✓ Viewing Slot Protection: "Full refund if room is taken before scheduled viewing"</option>
-                  </select>
-                </div>
-
               </div>
             </div>
           </div>
 
-          <div style="display:flex; justify-content:flex-end; gap:12px;">
-            <button type="button" class="btn-line" id="btnResetRoomForm">Clear Form</button>
-            <button type="submit" class="btn-electric" id="btnSubmitRoom" style="padding:12px 24px;">
-              Save & Publish Room Lead →
-            </button>
+          <!-- SECTION 3: SPECS & PHOTOS -->
+          <div class="form-section-card">
+            <div class="form-section-header">
+              <div>
+                <div class="form-section-title">
+                  <span>📐 3. Room Specifications &amp; Property Photos</span>
+                </div>
+                <div class="form-section-sub">Add size, WG type, public transit, and listing photos.</div>
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="room-input-group">
+                <label>Room Type</label>
+                <select id="roomFieldType">
+                  <option value="WG Room (Single Private)">WG Room (Single Private)</option>
+                  <option value="Private Studio Apartment">Private Studio Apartment</option>
+                  <option value="1-Bedroom Apartment">1-Bedroom Apartment</option>
+                  <option value="Shared Double Room">Shared Double Room</option>
+                </select>
+              </div>
+
+              <div class="room-input-group">
+                <label>Room Size (m²)</label>
+                <input type="number" id="roomFieldSize" placeholder="16" value="16" />
+              </div>
+
+              <div class="room-input-group">
+                <label>Public Transit Notes</label>
+                <input type="text" id="roomFieldTransit" placeholder="e.g. 6 min to U3 (12 min to TUM / LMU / Hbf)" />
+              </div>
+
+              <div class="room-input-group" style="grid-column: span 3;">
+                <label>Advisor Notes / Special Details (Optional)</label>
+                <input type="text" id="roomFieldDescription" placeholder="e.g. Quiet rear building facing green courtyard, female-only WG" />
+                <small style="font-size:11px; color:#64748B; margin-top:3px; display:block;">Keeps the room page concise and avoids confusion for fast conversion.</small>
+              </div>
+
+              <!-- Property Photos Management -->
+              <div class="room-input-group" style="grid-column: span 3; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                  <span style="font-size:13px; font-weight:700; color:#0F172A;">🖼️ Property Photos</span>
+                  <span style="font-size:11.5px; font-family:var(--f-mono); color:var(--electric); font-weight:600; background:#EFF6FF; padding:3px 8px; border-radius:4px;" id="imgCountIndicator">0 photos</span>
+                </div>
+                
+                <!-- Quick Add Single Image URL -->
+                <div style="display:flex; gap:8px; margin-bottom:10px;">
+                  <input type="url" id="quickAddImgInput" placeholder="Paste single image URL here to add..." style="flex:1; font-size:12.5px; padding:8px 12px; border:1px solid #CBD5E1; border-radius:6px; background:#FFFFFF;" />
+                  <button type="button" id="btnAddImgBtn" class="btn-line" style="padding:7px 14px; font-size:12px; white-space:nowrap; background:#FFFFFF;">+ Add Photo</button>
+                </div>
+
+                <!-- Textarea for Bulk Paste -->
+                <textarea id="roomFieldImages" rows="2" placeholder="Or enter multiple image URLs (one per line, or separated by commas)" style="font-family:var(--f-mono); font-size:11.5px; line-height:1.45; resize:vertical; width:100%; padding:8px 10px; border:1px solid #CBD5E1; border-radius:6px; background:#FFFFFF; margin-bottom:10px;"></textarea>
+
+                <!-- Thumbnails Preview Strip -->
+                <div id="adminImgPreviewStrip" style="display:flex; gap:8px; flex-wrap:wrap; min-height:48px; padding:8px; background:#FFFFFF; border-radius:8px; border:1px dashed #CBD5E1; align-items:center;">
+                  <span style="font-size:12px; color:var(--ink-3); font-family:var(--f-mono);" id="emptyThumbsNote">No photos added yet. Enter or paste URLs above.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 4: GUARANTEES CONFIGURATION -->
+          <div class="guarantees-config-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid #E2E8F0; padding-bottom:10px; flex-wrap:wrap; gap:8px;">
+              <div>
+                <div style="font-weight:700; font-size:14px; color:var(--ink); display:flex; align-items:center; gap:8px;">
+                  <span>🛡️ 4. Room Guarantees &amp; Verification Deliverables</span>
+                </div>
+                <div style="font-size:12px; color:var(--ink-3); margin-top:2px;">
+                  Control which guarantees appear on this room's checkout card to avoid legal issues.
+                </div>
+              </div>
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-bottom:0; font-weight:700; font-size:12.5px; color:var(--royal); background:#EFF6FF; padding:6px 12px; border-radius:6px; border:1px solid #BFDBFE;">
+                <input type="checkbox" id="roomFieldShowGuarantees" checked style="width:16px; height:16px;" />
+                <span>Show Deliverables / Guarantees</span>
+              </label>
+            </div>
+
+            <div id="guaranteesControlsWrap" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
+              
+              <!-- Concierge -->
+              <div class="guarantee-card-item">
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600; font-size:13px; margin-bottom:4px; color:var(--ink);">
+                  <input type="checkbox" id="roomFieldGuaranteeConcierge" checked style="width:16px; height:16px;" />
+                  <span>Dedicated Relocation Concierge</span>
+                </label>
+                <div style="font-size:11.5px; color:#64748B; margin-left:24px;">1-on-1 WhatsApp assistance for viewing coordination &amp; landlord communication.</div>
+              </div>
+
+              <!-- Viewing Slot Option -->
+              <div class="guarantee-card-item">
+                <label style="display:block; font-weight:600; font-size:13px; margin-bottom:6px; color:var(--ink);">Viewing Option</label>
+                <select id="roomFieldGuaranteeViewing" style="width:100%; font-size:12.5px; padding:7px 10px; border-radius:6px; border:1px solid #CBD5E1; background:#FFFFFF;">
+                  <option value="viewing">✓ Guaranteed Viewing Slot (In-person or video tour)</option>
+                  <option value="direct">✓ Direct Booking Allocation (Fast-track lease, no viewing)</option>
+                  <option value="none">✕ None / Hide viewing line</option>
+                </select>
+              </div>
+
+              <!-- Anmeldung -->
+              <div class="guarantee-card-item">
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600; font-size:13px; margin-bottom:4px; color:var(--ink);">
+                  <input type="checkbox" id="roomFieldGuaranteeAnmeldung" checked style="width:16px; height:16px;" />
+                  <span>Anmeldung Commitment</span>
+                </label>
+                <div style="font-size:11.5px; color:#64748B; margin-left:24px;">Signed German Wohnungsgeberbestätigung provided upon lease.</div>
+              </div>
+
+              <!-- Tenancy Agreement Audit -->
+              <div class="guarantee-card-item">
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600; font-size:13px; margin-bottom:4px; color:var(--ink);">
+                  <input type="checkbox" id="roomFieldGuaranteeAudit" checked style="width:16px; height:16px;" />
+                  <span>Tenancy Agreement Audit</span>
+                </label>
+                <div style="font-size:11.5px; color:#64748B; margin-left:24px;">DieFuture team reviews German lease terms before seeker signs.</div>
+              </div>
+
+              <!-- Refund Policy -->
+              <div class="guarantee-card-item" style="grid-column: span 2;">
+                <label style="display:block; font-weight:700; font-size:13px; color:var(--ink); margin-bottom:3px;">
+                  💰 Refund Guarantee Policy
+                </label>
+                <div style="font-size:11.5px; color:#64748B; margin-bottom:6px;">
+                  Choose whether to display a refund promise. If direct booking without visit, keep "No Refund Displayed" to avoid legal liability.
+                </div>
+                <select id="roomFieldGuaranteeRefund" style="width:100%; font-size:12.5px; padding:8px 10px; border-radius:6px; border:1px solid #CBD5E1; font-weight:600; background:#FFFFFF;">
+                  <option value="none" selected>✕ No Refund Displayed (Recommended for direct booking / non-refundable lead)</option>
+                  <option value="visit">✓ Visit Satisfaction Refund: "Full refund if you visit and don't like the room"</option>
+                  <option value="slot">✓ Viewing Slot Protection: "Full refund if room is taken before scheduled viewing"</option>
+                </select>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- FORM ACTIONS BAR -->
+          <div class="form-action-bar">
+            <div style="font-size:12.5px; color:#64748B;" id="formEditStatusNote">
+              Fill details above or paste a StayforAll link to auto-populate.
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button type="button" class="btn-line" id="btnResetRoomForm" style="padding:9px 18px; font-size:13px;">Clear Form</button>
+              <button type="submit" class="btn-electric" id="btnSubmitRoom" style="padding:10px 22px; font-size:13.5px; font-weight:700;">
+                Save &amp; Publish Room Lead →
+              </button>
+            </div>
           </div>
         </form>
       </div>
