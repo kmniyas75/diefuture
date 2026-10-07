@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const orderData = await orderRes.json();
-            const razorpayKey = orderData.key_id || (import.meta && import.meta.env && import.meta.env.VITE_RAZORPAY_KEY_ID) || 'rzp_test_TktQXMOmOzjGKv';
+            const razorpayKey = orderData.key_id;
 
             // 2. Frontend: Open Razorpay Standard Modal
             const options = {
