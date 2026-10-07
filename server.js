@@ -126,7 +126,55 @@ app.post('/api/create-order', async (req, res) => {
   try {
     const { amount, currency = 'INR', receipt, notes } = req.body || {};
 
-    const amountInPaise = Number(amount);
+    let amountInPaise = Number(amount);
+
+    // --- IMMUTABLE ANTI-TAMPER SECURITY ---
+    // If a roomId is provided in notes or body, look up the room in MongoDB
+    // and strictly enforce the database price calculated with the official live rate!
+    const targetRoomId = notes?.roomId || req.body?.roomId;
+    if (targetRoomId) {
+      try {
+        const roomsCol = await getRoomsCollection();
+        const room = await roomsCol.findOne({ roomId: String(targetRoomId) });
+        if (room) {
+          const liveRate = serverRatesCache?.rate || 108.50;
+          const mode = room.paymentMode || 'full';
+          let requiredINR = 0;
+
+          if (room.feeCurrency !== 'INR' && room.feeEUR) {
+            const feeEUR = Number(room.feeEUR);
+            const holdingEUR = room.holdingFeeEUR !== undefined ? Number(room.holdingFeeEUR) : 0;
+            const remainingEUR = room.remainingFeeEUR !== undefined ? Number(room.remainingFeeEUR) : Math.max(0, feeEUR - holdingEUR);
+            if (mode === 'holding_initial') {
+              requiredINR = Math.round(holdingEUR * liveRate);
+            } else if (mode === 'holding_paid') {
+              requiredINR = Math.round(remainingEUR * liveRate);
+            } else {
+              requiredINR = Math.round(feeEUR * liveRate);
+            }
+          } else if (room.feeINR) {
+            const feeINR = Number(room.feeINR);
+            const holdingINR = room.holdingFeeINR !== undefined ? Number(room.holdingFeeINR) : 0;
+            const remainingINR = room.remainingFeeINR !== undefined ? Number(room.remainingFeeINR) : Math.max(0, feeINR - holdingINR);
+            if (mode === 'holding_initial') {
+              requiredINR = holdingINR;
+            } else if (mode === 'holding_paid') {
+              requiredINR = remainingINR;
+            } else {
+              requiredINR = feeINR;
+            }
+          }
+
+          if (requiredINR > 0) {
+            // Strictly enforce the server-calculated amount
+            amountInPaise = Math.round(requiredINR * 100);
+          }
+        }
+      } catch (err) {
+        console.warn('Server price validation note in server.js:', err.message);
+      }
+    }
+
     if (!amountInPaise || isNaN(amountInPaise) || amountInPaise < 100) {
       return res.status(400).json({ error: 'Invalid amount. Minimum amount is 100 paise (₹1).' });
     }
