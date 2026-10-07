@@ -487,6 +487,8 @@ app.post('/api/reserve-room', async (req, res) => {
       leadStatus: 'paid_confirmed',
       paymentId: paymentId || 'manual_or_simulated',
       amountPaidINR: amount || 0,
+      amountPaidEUR: req.body.amountEUR !== undefined ? Number(req.body.amountEUR) : (req.body.amountPaidEUR !== undefined ? Number(req.body.amountPaidEUR) : undefined),
+      exchangeRate: req.body.exchangeRate !== undefined ? Number(req.body.exchangeRate) : undefined,
       notes: notes || (paymentMode === 'holding_initial' 
         ? 'Viewing slot holding fee paid. 100% refundable if seeker attends viewing and dislikes room.' 
         : paymentMode === 'holding_paid' 

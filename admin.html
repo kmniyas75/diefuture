@@ -1717,10 +1717,12 @@
         let pkgLabel = '₹17,999 Guaranteed';
         if (lead.paymentMode === 'holding_initial' || (lead.package && lead.package.toLowerCase().includes('holding'))) {
           pkgClass = 'starter';
-          pkgLabel = lead.amountPaidINR ? `🛡️ Holding Fee: ₹${lead.amountPaidINR.toLocaleString('en-IN')}` : '🛡️ Holding Deposit';
+          const eurStr = lead.amountPaidEUR ? ` (~€${lead.amountPaidEUR})` : '';
+          pkgLabel = lead.amountPaidINR ? `🛡️ Holding Fee: ₹${lead.amountPaidINR.toLocaleString('en-IN')}${eurStr}` : '🛡️ Holding Deposit';
         } else if (lead.paymentMode === 'holding_paid' || (lead.package && lead.package.toLowerCase().includes('balance'))) {
           pkgClass = 'guaranteed';
-          pkgLabel = lead.amountPaidINR ? `🎉 Balance Paid: ₹${lead.amountPaidINR.toLocaleString('en-IN')}` : '🎉 Balance Paid';
+          const eurStr = lead.amountPaidEUR ? ` (~€${lead.amountPaidEUR})` : '';
+          pkgLabel = lead.amountPaidINR ? `🎉 Balance Paid: ₹${lead.amountPaidINR.toLocaleString('en-IN')}${eurStr}` : '🎉 Balance Paid';
         } else if (lead.package === 'starter' || (lead.package && (lead.package.includes('99') || lead.package.includes('8,999')))) {
           pkgClass = 'starter';
           pkgLabel = '₹8,999 Starter';
@@ -1735,10 +1737,12 @@
         // WhatsApp prefilled message
         let waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Apartments regarding your accommodation brief (${lead.reference}) for ${lead.city}. We have found verified room matches!`);
         if (lead.paymentMode === 'holding_initial') {
-          const paidStr = lead.amountPaidINR ? ` (₹${lead.amountPaidINR.toLocaleString('en-IN')})` : '';
+          const eurPart = lead.amountPaidEUR ? ` / €${lead.amountPaidEUR}` : '';
+          const paidStr = lead.amountPaidINR ? ` (₹${lead.amountPaidINR.toLocaleString('en-IN')}${eurPart})` : '';
           waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Concierge confirming your holding deposit${paidStr} for Room ${lead.roomId || 'DF-ROOM'} (${lead.reference}). Let's schedule your viewing slot!`);
         } else if (lead.paymentMode === 'holding_paid') {
-          const paidStr = lead.amountPaidINR ? ` (₹${lead.amountPaidINR.toLocaleString('en-IN')})` : '';
+          const eurPart = lead.amountPaidEUR ? ` / €${lead.amountPaidEUR}` : '';
+          const paidStr = lead.amountPaidINR ? ` (₹${lead.amountPaidINR.toLocaleString('en-IN')}${eurPart})` : '';
           waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Concierge confirming your remaining balance${paidStr} for Room ${lead.roomId || 'DF-ROOM'} (${lead.reference}). We are initiating the lease contract audit!`);
         }
         const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
