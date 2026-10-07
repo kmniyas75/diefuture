@@ -2408,6 +2408,7 @@
                 <button type="button" class="btn-line btn-quick-toggle-holding" data-id="${room.roomId || room._id}" data-target="holding_initial" style="padding:4px 8px; font-size:11px; border-color:#FDE68A; color:#B45309; background:#FEF3C7; font-weight:600; border-radius:4px; cursor:pointer;" title="Revert to initial holding fee mode">↺ Reset to Holding</button>
               ` : ''}
               <button type="button" class="btn-line btn-edit-room" data-id="${room.roomId || room._id}" style="padding:4px 9px; font-size:11.5px; border-radius:4px; cursor:pointer;" title="Edit room details & guarantees">✏️ Edit</button>
+              <button type="button" class="btn-line btn-clone-candidate" data-id="${room.roomId || room._id}" style="padding:4px 8px; font-size:11.5px; border-radius:4px; cursor:pointer; color:#0284C7; border-color:#BAE6FD; background:#F0F9FF; font-weight:600;" title="Duplicate this property for another candidate or group (e.g. ${room.roomId}-B)">👥 Duplicate for Candidate</button>
               <button type="button" class="btn-electric btn-copy-link" data-id="${room.roomId || room._id}" style="padding:4px 9px; font-size:11.5px; border-radius:4px; cursor:pointer;" title="Copy private payment link to share with student">📋 Copy Link</button>
               <a href="room?id=${encodeURIComponent(room.roomId || room._id)}" target="_blank" class="btn-line" style="padding:4px 8px; font-size:11.5px;" title="Preview payment page">↗ View</a>
               <button type="button" class="btn-action-del btn-del-room" data-id="${room.roomId || room._id}" title="Delete room">🗑️</button>
@@ -2473,6 +2474,91 @@
           btnSubmitRoom.textContent = `Update Room DF-ROOM-${room.roomId} →`;
           showNotice(`Now editing room DF-ROOM-${room.roomId}. Adjust guarantees and settings above and click Update.`, 'info');
           roomUpsertForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+      // Attach Duplicate for Candidate handlers
+      document.querySelectorAll('.btn-clone-candidate').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const roomId = btn.dataset.id;
+          const room = allAdminRooms.find(r => r.roomId === roomId || r._id === roomId);
+          if (!room) return;
+
+          // Clear any edit mode flag so this creates a brand new room
+          delete roomUpsertForm.dataset.editing;
+
+          // Generate next candidate suffix (e.g. 934 -> 934-B, or 934-B -> 934-C)
+          let baseId = String(room.roomId || '1000').replace(/-(candidate-)?[a-z0-9]+$/i, '');
+          const existingIds = allAdminRooms.map(r => String(r.roomId).toUpperCase());
+          let nextSuffix = 'B';
+          const alphabet = ['B', 'C', 'D', 'E', 'F', 'G', 'H'];
+          for (const char of alphabet) {
+            if (!existingIds.includes(`${baseId}-${char}`.toUpperCase())) {
+              nextSuffix = char;
+              break;
+            }
+          }
+          const nextRoomId = `${baseId}-${nextSuffix}`;
+
+          roomFieldId.value = nextRoomId;
+          if (slugPreview) slugPreview.textContent = nextRoomId;
+
+          // Clean title and attach candidate label
+          const cleanTitle = (room.title || '').replace(/\s*\((Candidate|Group)\s*[A-Z0-9]+\)/i, '').trim();
+          roomFieldTitle.value = `${cleanTitle} (Candidate ${nextSuffix})`;
+          roomFieldCity.value = room.city || '';
+          roomFieldAddress.value = room.address || '';
+          
+          // Clear previous candidate's personal data so admin can fill in new student's info
+          if (roomFieldStudentName) roomFieldStudentName.value = '';
+          if (roomFieldStudentEmail) roomFieldStudentEmail.value = '';
+          if (roomFieldStudentPhone) roomFieldStudentPhone.value = '';
+
+          roomFieldRent.value = room.rentWarmEUR || '';
+          roomFieldDeposit.value = room.depositEUR || '';
+          roomFieldFee.value = room.feeINR !== undefined ? room.feeINR : 12999;
+          if (roomFieldPaymentMode) {
+            roomFieldPaymentMode.value = room.paymentMode || 'full';
+          }
+          if (roomFieldHoldingFee) {
+            roomFieldHoldingFee.value = room.holdingFeeINR !== undefined ? room.holdingFeeINR : 2999;
+          }
+          if (roomFieldRemainingFee) {
+            roomFieldRemainingFee.value = room.remainingFeeINR !== undefined ? room.remainingFeeINR : Math.max(0, (room.feeINR || 12999) - (room.holdingFeeINR || 2999));
+          }
+          updateHoldingModeUI();
+          roomFieldType.value = room.roomType || 'WG Room (Single Private)';
+          roomFieldSize.value = room.roomSizeM2 || 16;
+          roomFieldTransit.value = room.transit || '';
+          if (roomFieldDescription) roomFieldDescription.value = room.description || '';
+          stayforallUrlInput.value = room.stayforallUrl || '';
+          
+          // Reset status to Available for the new candidate!
+          roomFieldStatus.value = 'available';
+
+          // Clone guarantees
+          const g = room.guarantees || {};
+          if (roomFieldShowGuarantees) roomFieldShowGuarantees.checked = (g.showGuarantees !== false);
+          if (roomFieldGuaranteeConcierge) roomFieldGuaranteeConcierge.checked = (g.concierge !== false);
+          if (roomFieldGuaranteeViewing) roomFieldGuaranteeViewing.value = g.viewingType || 'viewing';
+          if (roomFieldGuaranteeAnmeldung) roomFieldGuaranteeAnmeldung.checked = (g.anmeldung !== false);
+          if (roomFieldGuaranteeAudit) roomFieldGuaranteeAudit.checked = (g.contractAudit !== false);
+          if (roomFieldGuaranteeRefund) roomFieldGuaranteeRefund.value = g.refundPolicy || 'none';
+
+          if (guaranteesControlsWrap) {
+            guaranteesControlsWrap.style.opacity = (g.showGuarantees !== false) ? '1' : '0.4';
+            guaranteesControlsWrap.style.pointerEvents = (g.showGuarantees !== false) ? 'auto' : 'none';
+          }
+
+          // Clone images
+          const imgs = (Array.isArray(room.images) && room.images.length > 0) ? room.images : (room.imageUrl ? [room.imageUrl] : []);
+          setAdminImages(imgs);
+
+          btnSubmitRoom.textContent = `Save & Publish Room DF-ROOM-${nextRoomId} →`;
+          showNotice(`Duplicated Room ${room.roomId} as DF-ROOM-${nextRoomId}! Enter Candidate ${nextSuffix}'s name & phone and click 'Save & Publish' to get their unique link.`, 'success');
+          
+          roomUpsertForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (roomFieldStudentName) roomFieldStudentName.focus();
         });
       });
 

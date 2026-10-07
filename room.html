@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Private Room Lead Allocation | DieFuture Apartments</title>
 
@@ -17,7 +19,9 @@
   <!-- Fonts: Geist, Geist Mono, Archivo -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Archivo:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Archivo:wght@600;700;800;900&display=swap"
+    rel="stylesheet" />
 
   <link rel="stylesheet" href="./style.css" />
 
@@ -37,6 +41,7 @@
       max-width: 100%;
       box-sizing: border-box;
     }
+
     .room-header-flex {
       display: flex;
       justify-content: space-between;
@@ -47,6 +52,7 @@
       max-width: 100%;
       box-sizing: border-box;
     }
+
     .room-header-meta {
       display: flex;
       align-items: center;
@@ -57,6 +63,7 @@
       min-width: 0;
       box-sizing: border-box;
     }
+
     .room-badge-verified {
       display: inline-flex;
       align-items: center;
@@ -70,6 +77,7 @@
       font-size: 11.5px;
       box-sizing: border-box;
     }
+
     .room-badge-anmeldung {
       display: inline-flex;
       align-items: center;
@@ -91,6 +99,7 @@
       overflow: hidden;
       box-sizing: border-box;
     }
+
     .room-title-block {
       margin-bottom: 24px;
       width: 100%;
@@ -98,6 +107,7 @@
       min-width: 0;
       box-sizing: border-box;
     }
+
     .room-ref-tag {
       font-family: var(--f-mono);
       font-size: 12px;
@@ -110,6 +120,7 @@
       word-break: break-word;
       overflow-wrap: break-word;
     }
+
     .room-main-title {
       font-family: var(--f-display);
       font-size: clamp(24px, 4.5vw, 40px);
@@ -123,6 +134,7 @@
       min-width: 0;
       max-width: 100%;
     }
+
     .room-address-bar {
       display: flex;
       align-items: flex-start;
@@ -148,6 +160,7 @@
       max-width: 100%;
       box-sizing: border-box;
     }
+
     .room-left-col,
     .room-right-col {
       min-width: 0;
@@ -155,6 +168,7 @@
       width: 100%;
       box-sizing: border-box;
     }
+
     @media (max-width: 1024px) {
       .room-layout-grid {
         grid-template-columns: minmax(0, 1fr) !important;
@@ -172,12 +186,14 @@
       overflow: hidden;
       margin-bottom: 28px;
     }
+
     .gallery-main-image-wrap {
       position: relative;
       width: 100%;
       background: #0F172A;
       overflow: hidden;
     }
+
     .gallery-main-image {
       width: 100%;
       height: auto;
@@ -187,6 +203,7 @@
       margin: 0 auto;
       transition: transform 0.4s ease;
     }
+
     .gallery-badge-overlay {
       position: absolute;
       bottom: 16px;
@@ -202,6 +219,7 @@
       align-items: center;
       gap: 8px;
     }
+
     .gallery-caption {
       padding: 14px 18px;
       background: var(--paper-2);
@@ -236,12 +254,19 @@
       transition: background 0.2s, transform 0.2s;
       z-index: 5;
     }
+
     .gallery-nav-btn:hover {
       background: var(--electric);
       transform: translateY(-50%) scale(1.08);
     }
-    .gallery-nav-prev { left: 14px; }
-    .gallery-nav-next { right: 14px; }
+
+    .gallery-nav-prev {
+      left: 14px;
+    }
+
+    .gallery-nav-next {
+      right: 14px;
+    }
 
     .gallery-counter-badge {
       position: absolute;
@@ -270,6 +295,7 @@
       overflow-x: auto;
       scroll-behavior: smooth;
     }
+
     .gallery-thumb-item {
       width: 76px;
       height: 56px;
@@ -282,14 +308,17 @@
       transition: opacity 0.2s, border-color 0.2s, transform 0.2s;
       background: #0F172A;
     }
+
     .gallery-thumb-item:hover {
       opacity: 1;
       transform: translateY(-2px);
     }
+
     .gallery-thumb-item.active {
       opacity: 1;
       border-color: var(--electric);
     }
+
     .gallery-thumb-item img {
       width: 100%;
       height: 100%;
@@ -306,11 +335,13 @@
       width: 100%;
       min-width: 0;
     }
+
     @media (max-width: 640px) {
       .specs-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
       }
     }
+
     .spec-item {
       background: #FFFFFF;
       border: 1px solid var(--rule);
@@ -319,6 +350,7 @@
       min-width: 0;
       overflow: hidden;
     }
+
     .spec-k {
       font-family: var(--f-mono);
       font-size: 11px;
@@ -327,11 +359,13 @@
       letter-spacing: .06em;
       margin-bottom: 4px;
     }
+
     .spec-v {
       font-size: 16px;
       font-weight: 700;
       color: var(--ink);
     }
+
     .spec-sub {
       font-size: 11.5px;
       color: var(--ink-3);
@@ -350,6 +384,7 @@
       line-height: 1.6;
       color: #334155;
     }
+
     .financial-callout strong {
       color: #0F172A;
     }
@@ -364,12 +399,14 @@
       padding-bottom: 8px;
       border-bottom: 1px solid var(--rule);
     }
+
     .amenities-list {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px 20px;
       margin-bottom: 32px;
     }
+
     .amenity-item {
       display: flex;
       align-items: center;
@@ -377,6 +414,7 @@
       font-size: 14px;
       color: var(--ink-2);
     }
+
     .amenity-icon {
       color: var(--electric);
       font-size: 16px;
@@ -393,6 +431,7 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
       transition: all 0.3s ease;
     }
+
     .lead-checkout-card.unlocked {
       border-color: #10B981;
       background: #F0FDF4;
@@ -403,6 +442,7 @@
       padding-bottom: 16px;
       border-bottom: 1px solid var(--rule);
     }
+
     .fee-label {
       font-family: var(--f-mono);
       font-size: 11px;
@@ -410,17 +450,20 @@
       letter-spacing: .08em;
       color: var(--ink-3);
     }
+
     .fee-amount-row {
       display: flex;
       align-items: baseline;
       gap: 6px;
       margin-top: 4px;
     }
+
     .fee-curr {
       font-size: 20px;
       font-weight: 700;
       color: var(--ink);
     }
+
     .fee-val {
       font-family: var(--f-display);
       font-size: 38px;
@@ -428,6 +471,7 @@
       color: var(--royal);
       letter-spacing: -0.02em;
     }
+
     .fee-type {
       font-size: 13px;
       color: var(--ink-3);
@@ -441,6 +485,7 @@
       flex-direction: column;
       gap: 10px;
     }
+
     .deliverables-checklist li {
       font-size: 13.5px;
       color: var(--ink-2);
@@ -449,6 +494,7 @@
       gap: 10px;
       line-height: 1.45;
     }
+
     .deliverables-checklist li span.check {
       color: var(--electric);
       font-weight: 800;
@@ -458,6 +504,7 @@
     .form-group-room {
       margin-bottom: 14px;
     }
+
     .form-group-room label {
       display: block;
       font-size: 12px;
@@ -468,6 +515,7 @@
       letter-spacing: .04em;
       margin-bottom: 6px;
     }
+
     .form-group-room input,
     .form-group-room select {
       width: 100%;
@@ -479,6 +527,7 @@
       color: var(--ink);
       font-family: var(--f-sans);
     }
+
     .form-group-room input:focus {
       outline: none;
       border-color: var(--electric);
@@ -504,9 +553,11 @@
       margin-top: 18px;
       box-shadow: 0 4px 14px rgba(8, 75, 224, 0.25);
     }
+
     .btn-reserve-cta:hover {
       background: var(--royal);
     }
+
     .btn-reserve-cta:active {
       transform: translateY(1px);
     }
@@ -525,6 +576,7 @@
       text-align: center;
       transition: all 0.2s;
     }
+
     .btn-demo-simulate:hover {
       border-color: var(--electric);
       color: var(--electric);
@@ -536,10 +588,19 @@
       display: none;
       animation: fadeIn 0.4s ease-out;
     }
+
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     .unlocked-banner {
       background: #10B981;
       color: #FFFFFF;
@@ -552,6 +613,7 @@
       gap: 10px;
       margin-bottom: 20px;
     }
+
     .dossier-contact-card {
       background: #FFFFFF;
       border: 1px solid #A7F3D0;
@@ -559,16 +621,19 @@
       padding: 18px;
       margin-bottom: 18px;
     }
+
     .dossier-row {
       margin-bottom: 12px;
       padding-bottom: 10px;
       border-bottom: 1px solid #E2E8F0;
     }
+
     .dossier-row:last-child {
       margin-bottom: 0;
       padding-bottom: 0;
       border-bottom: none;
     }
+
     .dossier-k {
       font-size: 11px;
       font-family: var(--f-mono);
@@ -576,12 +641,14 @@
       text-transform: uppercase;
       letter-spacing: .04em;
     }
+
     .dossier-v {
       font-size: 15px;
       font-weight: 700;
       color: #0F172A;
       margin-top: 2px;
     }
+
     .btn-wa-landlord {
       background: #25D366;
       color: #FFFFFF;
@@ -596,9 +663,11 @@
       font-size: 14.5px;
       transition: background .2s;
     }
+
     .btn-wa-landlord:hover {
       background: #1EBE5D;
     }
+
     .btn-concierge-sync {
       background: var(--royal);
       color: #FFFFFF;
@@ -612,6 +681,7 @@
       margin-top: 10px;
       font-size: 13.5px;
     }
+
     .btn-print-receipt {
       background: transparent;
       border: 1px solid var(--rule-2);
@@ -625,11 +695,13 @@
       text-align: center;
       transition: all .2s;
     }
+
     @media (max-width: 1024px) {
       .room-layout-grid {
         grid-template-columns: 1fr;
         gap: 28px;
       }
+
       .lead-checkout-card {
         position: static !important;
         top: auto;
@@ -640,16 +712,19 @@
       .room-hero-section {
         padding: 16px 0 40px;
       }
+
       .room-header-band {
         padding: 10px 0;
         font-size: 11px;
       }
+
       .room-header-flex {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
         width: 100%;
       }
+
       .room-header-meta {
         display: flex;
         flex-wrap: wrap;
@@ -660,13 +735,16 @@
         font-size: 11px;
         line-height: 1.4;
       }
+
       .room-header-meta .meta-sep {
         display: none;
       }
-      .room-header-meta > span {
+
+      .room-header-meta>span {
         word-break: break-word;
         overflow-wrap: anywhere;
       }
+
       .room-badge-verified,
       .room-badge-anmeldung {
         font-size: 10.5px !important;
@@ -677,16 +755,19 @@
         line-height: 1.3 !important;
         box-sizing: border-box !important;
       }
+
       .room-title-block {
         margin-bottom: 16px;
         width: 100%;
         max-width: 100%;
       }
+
       .room-ref-tag {
         font-size: 10.5px;
         letter-spacing: .04em;
         margin-bottom: 5px;
       }
+
       .room-main-title {
         font-size: clamp(20px, 5.5vw, 24px) !important;
         line-height: 1.25 !important;
@@ -696,6 +777,7 @@
         overflow-wrap: break-word !important;
         max-width: 100% !important;
       }
+
       .room-address-bar {
         font-size: 12px !important;
         line-height: 1.4 !important;
@@ -713,39 +795,52 @@
         width: 100%;
         max-width: 100%;
       }
+
       .gallery-main-image {
         max-height: 280px;
         width: 100%;
       }
+
       .gallery-nav-btn {
         width: 34px;
         height: 34px;
         font-size: 18px;
       }
-      .gallery-nav-prev { left: 8px; }
-      .gallery-nav-next { right: 8px; }
+
+      .gallery-nav-prev {
+        left: 8px;
+      }
+
+      .gallery-nav-next {
+        right: 8px;
+      }
+
       .gallery-counter-badge {
         top: 8px;
         right: 8px;
         font-size: 10.5px;
         padding: 3px 8px;
       }
+
       .gallery-badge-overlay {
         bottom: 8px;
         left: 8px;
         font-size: 11px;
         padding: 4px 8px;
       }
+
       .gallery-thumbs {
         padding: 8px 10px;
         gap: 8px;
         width: 100%;
         max-width: 100%;
       }
+
       .gallery-thumb-item {
         width: 60px;
         height: 44px;
       }
+
       .gallery-caption {
         padding: 10px 12px;
         font-size: 12px;
@@ -766,6 +861,7 @@
         min-width: 0 !important;
         box-sizing: border-box !important;
       }
+
       .spec-item {
         padding: 10px 8px !important;
         border-radius: 8px !important;
@@ -774,6 +870,7 @@
         overflow: hidden !important;
         box-sizing: border-box !important;
       }
+
       .spec-k {
         font-size: 9px !important;
         margin-bottom: 2px !important;
@@ -781,11 +878,13 @@
         overflow: hidden !important;
         text-overflow: ellipsis !important;
       }
+
       .spec-v {
         font-size: 14px !important;
         word-break: break-word !important;
         overflow-wrap: anywhere !important;
       }
+
       .spec-sub {
         font-size: 9.5px !important;
         line-height: 1.3 !important;
@@ -810,6 +909,7 @@
         width: 100%;
         max-width: 100%;
       }
+
       .section-subheading {
         font-size: 18px;
         margin-bottom: 12px;
@@ -823,47 +923,58 @@
         width: 100%;
         max-width: 100%;
       }
+
       .fee-price-tag {
         margin: 12px 0 16px;
         padding-bottom: 12px;
       }
+
       .fee-val {
         font-size: 28px;
       }
+
       .fee-amount-row {
         flex-wrap: wrap;
         gap: 4px;
       }
+
       .fee-type {
         font-size: 12px;
       }
+
       .deliverables-checklist {
         gap: 8px;
         margin-bottom: 16px;
       }
+
       .deliverables-checklist li {
         font-size: 12.5px;
         gap: 8px;
         line-height: 1.4;
       }
+
       .form-group-room {
         margin-bottom: 10px;
       }
+
       .form-group-room label {
         font-size: 11px;
         margin-bottom: 4px;
       }
+
       .form-group-room input,
       .form-group-room select {
         padding: 10px 12px;
         font-size: 14px;
         width: 100%;
       }
+
       .btn-reserve-cta {
         padding: 13px;
         font-size: 14px;
         margin-top: 14px;
       }
+
       .btn-wa-landlord {
         padding: 12px 10px;
         font-size: 13px;
@@ -871,9 +982,11 @@
         flex-direction: column;
         gap: 6px;
       }
+
       .dossier-contact-card {
         padding: 14px;
       }
+
       .dossier-v {
         font-size: 14px;
         word-break: break-word;
@@ -1010,6 +1123,7 @@
       -webkit-user-select: none !important;
       pointer-events: auto !important;
     }
+
     .mobile-bnav-btn:active {
       transform: translateY(1px);
     }
@@ -1025,7 +1139,8 @@
         margin: 10mm 12mm 10mm 12mm;
       }
 
-      html, body {
+      html,
+      body {
         background: #FFFFFF !important;
         color: #0F172A !important;
         margin: 0 !important;
@@ -1036,7 +1151,7 @@
       }
 
       /* Hide all website clutter */
-      body > *:not(#officialReservationSlip) {
+      body>*:not(#officialReservationSlip) {
         display: none !important;
       }
 
@@ -1271,13 +1386,36 @@
         box-sizing: border-box;
       }
 
-      .ps-seal-t1 { font-size: 7px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
-      .ps-seal-star { font-size: 8px; line-height: 1; margin: 1px 0; }
-      .ps-seal-t2 { font-size: 9px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
-      .ps-seal-sub { font-size: 8px; color: #64748B; margin-top: 3px; font-weight: 600; }
+      .ps-seal-t1 {
+        font-size: 7px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .ps-seal-star {
+        font-size: 8px;
+        line-height: 1;
+        margin: 1px 0;
+      }
+
+      .ps-seal-t2 {
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .ps-seal-sub {
+        font-size: 8px;
+        color: #64748B;
+        margin-top: 3px;
+        font-weight: 600;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <!-- OFFICIAL PRINTABLE RESERVATION CERTIFICATE (Hidden on screen, exclusively formatted for 1-Page A4 Print) -->
@@ -1299,7 +1437,9 @@
     </div>
 
     <div class="ps-banner">
-      <strong>Official Allocation Certificate:</strong> This document certifies that the room lead specified below has been reserved and allocated through DieFuture Relocations Desk. The scouting and exclusive lead handover fee has been verified via Razorpay. Present this confirmation when coordinating your viewing and contract handover.
+      <strong>Official Allocation Certificate:</strong> This document certifies that the room lead specified below has
+      been reserved and allocated through DieFuture Relocations Desk. The scouting and exclusive lead handover fee has
+      been verified via Razorpay. Present this confirmation when coordinating your viewing and contract handover.
     </div>
 
     <div class="ps-grid">
@@ -1371,24 +1511,30 @@
       <div class="ps-steps-grid" id="printStepsGrid">
         <div class="ps-step-item" id="printStepViewing">
           <strong>Viewing Support (Optional)</strong>
-          Our relocation desk can assist in coordinating an interactive live video or in-person walk-through with the provider if requested.
+          Our relocation desk can assist in coordinating an interactive live video or in-person walk-through with the
+          provider if requested.
         </div>
         <div class="ps-step-item" id="printStepContract">
           <strong>Contract Guidance (Optional)</strong>
-          General checklist guidance on your German tenancy contract (<em>Mietvertrag</em>) prior to signing is available upon request.
+          General checklist guidance on your German tenancy contract (<em>Mietvertrag</em>) prior to signing is
+          available upon request.
         </div>
         <div class="ps-step-item" id="printStepAnmeldung">
           <strong>Registration Support (Optional)</strong>
-          Guidance verifying the landlord's city registration confirmation (<em>Wohnungsgeberbestätigung</em>) upon request.
+          Guidance verifying the landlord's city registration confirmation (<em>Wohnungsgeberbestätigung</em>) upon
+          request.
         </div>
       </div>
     </div>
 
     <div class="ps-footer">
       <div class="ps-footer-info">
-        <div><strong>DieFuture Relocations Desk</strong> · WhatsApp: +91 95679 41647 · Email: diefutureapartments@gmail.com · Portal: www.diefuture.com</div>
+        <div><strong>DieFuture Relocations Desk</strong> · WhatsApp: +91 95679 41647 · Email:
+          diefutureapartments@gmail.com · Portal: www.diefuture.com</div>
         <div class="ps-disclaimer">
-          *Important Notice: DieFuture operates as an accommodation scouting and relocation consulting desk. Monthly rent and security deposit are paid directly to the private German landlord upon executing the tenancy contract (Mietvertrag). All bookings subject to published Terms on diefuture.com.
+          *Important Notice: DieFuture operates as an accommodation scouting and relocation consulting desk. Monthly
+          rent and security deposit are paid directly to the private German landlord upon executing the tenancy contract
+          (Mietvertrag). All bookings subject to published Terms on diefuture.com.
         </div>
         <div style="font-size: 7.5px; color: #94A3B8; line-height: 1.25; margin-top: 4px;">
           DieFuture Relocations Desk · Accommodation Advisory &amp; Lead Matching Services · Germany &amp; India
@@ -1423,7 +1569,8 @@
       </div>
       <div class="nav-right">
         <a class="nav-cta" href="/#brief">Submit brief</a>
-        <button class="nav-mobile-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+        <button class="nav-mobile-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu"
+          aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
       </div>
@@ -1463,36 +1610,40 @@
   <!-- MAIN ROOM SHOWCASE -->
   <section class="room-hero-section">
     <div class="wrap">
-      
+
       <!-- Title Block -->
       <div class="room-title-block">
         <span class="room-ref-tag" id="roomSubcategoryTag">Exclusive Direct Landlord Allocation · Room 4</span>
-        <h1 class="room-main-title" id="roomMainTitle">Stylish and High-Quality Furnished WG Room in Munich Thalkirchen</h1>
+        <h1 class="room-main-title" id="roomMainTitle">Stylish and High-Quality Furnished WG Room in Munich Thalkirchen
+        </h1>
         <div class="room-address-bar">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--electric); flex-shrink:0;"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" style="color:var(--electric); flex-shrink:0;">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
           <span id="roomAddressText">Gabriele-Münter-Straße 11, 81477 München-Thalkirchen, Bavaria, Germany</span>
         </div>
       </div>
 
       <!-- Split Layout -->
       <div class="room-layout-grid">
-        
+
         <!-- Left: Gallery & Property Dossier -->
         <div class="room-left-col">
-          
+
           <!-- Image Gallery with Multiple Photos -->
           <div class="gallery-container">
             <div class="gallery-main-image-wrap">
-              <img 
-                src="https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg" 
-                alt="Furnished Room Inspection Photos" 
-                class="gallery-main-image"
-                id="mainRoomImg"
-              />
-              
+              <img
+                src="https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg"
+                alt="Furnished Room Inspection Photos" class="gallery-main-image" id="mainRoomImg" />
+
               <!-- Gallery Navigation Arrows -->
-              <button type="button" class="gallery-nav-btn gallery-nav-prev" id="galleryPrevBtn" aria-label="Previous photo">‹</button>
-              <button type="button" class="gallery-nav-btn gallery-nav-next" id="galleryNextBtn" aria-label="Next photo">›</button>
+              <button type="button" class="gallery-nav-btn gallery-nav-prev" id="galleryPrevBtn"
+                aria-label="Previous photo">‹</button>
+              <button type="button" class="gallery-nav-btn gallery-nav-next" id="galleryNextBtn"
+                aria-label="Next photo">›</button>
 
               <!-- Photo Counter Badge -->
               <div class="gallery-counter-badge" id="galleryCounterBadge">
@@ -1510,7 +1661,8 @@
             </div>
 
             <div class="gallery-caption">
-              <div><strong id="captionCategory">Property Category:</strong> <span id="captionCategoryVal">Private Furnished Room in Shared WG</span></div>
+              <div><strong id="captionCategory">Property Category:</strong> <span id="captionCategoryVal">Private
+                  Furnished Room in Shared WG</span></div>
               <div><span class="room-badge-verified">Pre-Inspected & Anmeldung Ready</span></div>
             </div>
           </div>
@@ -1553,13 +1705,20 @@
           <div class="financial-callout" style="margin-top:16px;">
             <div style="font-weight:700; color:var(--ink); margin-bottom:4px;">💡 Direct German Landlord Tenancy</div>
             <div style="font-size:13px; color:var(--ink-2); line-height:1.5;">
-              Monthly warm rent (<strong id="calloutRentVal">€775</strong>) and Kaution deposit (<strong id="calloutDepositVal">€1,500</strong>) are paid directly to the landlord in <span id="calloutCityVal">Germany</span> pursuant to your official German tenancy agreement (<em>Mietvertrag</em>). DieFuture only collects the one-time lead coordination fee of <strong class="dynamic-lead-fee">₹1</strong>.
+              Monthly warm rent (<strong id="calloutRentVal">€775</strong>) and Kaution deposit (<strong
+                id="calloutDepositVal">€1,500</strong>) are paid directly to the landlord in <span
+                id="calloutCityVal">Germany</span> pursuant to your official German tenancy agreement
+              (<em>Mietvertrag</em>). DieFuture only collects the one-time lead coordination fee of <strong
+                class="dynamic-lead-fee">₹1</strong>.
             </div>
           </div>
 
           <!-- Room Notes (Optional: populated only if advisor entered notes) -->
-          <div id="roomNotesBlock" style="margin-top:16px; display:none; background:#F8FAFC; border:1px solid var(--rule-2); border-radius:8px; padding:14px 16px;">
-            <div style="font-size:11px; font-family:var(--f-mono); font-weight:700; color:var(--royal); text-transform:uppercase; margin-bottom:4px; letter-spacing:.03em;">Advisor Notes</div>
+          <div id="roomNotesBlock"
+            style="margin-top:16px; display:none; background:#F8FAFC; border:1px solid var(--rule-2); border-radius:8px; padding:14px 16px;">
+            <div
+              style="font-size:11px; font-family:var(--f-mono); font-weight:700; color:var(--royal); text-transform:uppercase; margin-bottom:4px; letter-spacing:.03em;">
+              Advisor Notes</div>
             <div id="roomNotesContent" style="font-size:13px; color:var(--ink-2); line-height:1.5;"></div>
           </div>
 
@@ -1567,10 +1726,10 @@
 
         <!-- Right: Lead Reservation & Razorpay Checkout Box -->
         <div class="room-right-col">
-          
+
           <!-- Checkout Card -->
           <div class="lead-checkout-card" id="checkoutCard">
-            
+
             <!-- Pre-Payment Form View -->
             <div id="prePaymentView">
               <!-- Top Banner for Special Payment Modes (e.g. Holding Collected -> Pay Remaining) -->
@@ -1579,10 +1738,14 @@
               <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div>
                   <span class="room-badge-verified" id="reserveBadgeVerified">Direct Verified Lead</span>
-                  <div style="font-family:var(--f-display); font-size:19px; font-weight:700; margin-top:6px; color:var(--ink);" id="reserveLeadCardTitle">Reserve Room 1004</div>
+                  <div
+                    style="font-family:var(--f-display); font-size:19px; font-weight:700; margin-top:6px; color:var(--ink);"
+                    id="reserveLeadCardTitle">Reserve Room 1004</div>
                 </div>
                 <div style="text-align:right;">
-                  <span style="font-size:11px; font-family:var(--f-mono); color:#EF4444; background:#FEE2E2; padding:3px 7px; border-radius:4px; font-weight:600;" id="reserveAvailabilityBadge">1 Available</span>
+                  <span
+                    style="font-size:11px; font-family:var(--f-mono); color:#EF4444; background:#FEE2E2; padding:3px 7px; border-radius:4px; font-weight:600;"
+                    id="reserveAvailabilityBadge">1 Available</span>
                 </div>
               </div>
 
@@ -1609,17 +1772,24 @@
               <!-- 1-Click Razorpay Reservation Block (Zero-Input Frictionless Checkout) -->
               <div id="checkoutActionBox" style="margin-top: 18px;">
                 <!-- Personalized Student Allocation Card (Rendered dynamically if student assigned) -->
-                <div id="studentAllocatedBanner" style="display:none; background:#EEF2FF; border:1px solid #C7D2FE; border-radius:10px; padding:12px 14px; margin-bottom:14px; text-align:left;">
+                <div id="studentAllocatedBanner"
+                  style="display:none; background:#EEF2FF; border:1px solid #C7D2FE; border-radius:10px; padding:12px 14px; margin-bottom:14px; text-align:left;">
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-                    <span style="font-size:11px; font-weight:800; font-family:var(--f-mono); text-transform:uppercase; color:#4338CA; letter-spacing:0.04em;">EXCLUSIVE ALLOCATION</span>
-                    <span style="font-size:11px; background:#DCFCE7; color:#166534; font-weight:700; padding:2px 6px; border-radius:4px; border:1px solid #86EFAC;">✓ Pre-Verified</span>
+                    <span
+                      style="font-size:11px; font-weight:800; font-family:var(--f-mono); text-transform:uppercase; color:#4338CA; letter-spacing:0.04em;">EXCLUSIVE
+                      ALLOCATION</span>
+                    <span
+                      style="font-size:11px; background:#DCFCE7; color:#166534; font-weight:700; padding:2px 6px; border-radius:4px; border:1px solid #86EFAC;">✓
+                      Pre-Verified</span>
                   </div>
-                  <div style="font-size:14px; font-weight:700; color:#1E1B4B; display:flex; align-items:center; gap:6px;">
+                  <div
+                    style="font-size:14px; font-weight:700; color:#1E1B4B; display:flex; align-items:center; gap:6px;">
                     <span>Prepared for:</span>
                     <span id="allocatedStudentName" style="color:#4338CA;">Rahul Sharma</span>
                   </div>
                   <div id="allocatedStudentContactRow" style="font-size:12px; color:#475569; margin-top:3px;">
-                    Phone: <span id="allocatedStudentPhone" style="font-weight:600; color:#1E293B;">+91 98765 43210</span>
+                    Phone: <span id="allocatedStudentPhone" style="font-weight:600; color:#1E293B;">+91 98765
+                      43210</span>
                   </div>
                 </div>
 
@@ -1629,18 +1799,74 @@
                   <span style="font-size:18px;">→</span>
                 </button>
 
-                <div style="font-size:11.5px; color:var(--ink-3); text-align:center; margin-top:12px; line-height:1.45;">
+                <div
+                  style="font-size:11.5px; color:var(--ink-3); text-align:center; margin-top:12px; line-height:1.45;">
                   🔒 <strong>Instant 1-Click Checkout:</strong> UPI, Cards, NetBanking via Razorpay.<br>
                   No forms or inputs needed · Instant booking confirmation.
                 </div>
               </div>
             </div>
 
+            <!-- Reserved Status Notice View (When room status is reserved or filled in database) -->
+            <div id="roomReservedNoticeView" style="display:none; text-align:left;">
+              <div
+                style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:12px; padding:20px; box-shadow:0 2px 10px rgba(245,158,11,0.08);">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                  <span style="font-size:26px; line-height:1;">🔒</span>
+                  <div>
+                    <div style="font-size:16px; font-weight:800; color:#92400E;" id="reservedCardHeading">Viewing Slot
+                      Reserved</div>
+                    <div style="font-size:12px; color:#B45309;" id="reservedCardSub">Candidate allocation & viewing in
+                      progress</div>
+                  </div>
+                </div>
+
+                <p style="font-size:13px; color:#78350F; line-height:1.55; margin:0 0 16px 0;" id="reservedCardMsg">
+                  A candidate has already secured the viewing reservation for this room lead. Direct online checkout is
+                  currently locked to prevent duplicate bookings.
+                </p>
+
+                <!-- If you already paid for this room -->
+                <div
+                  style="background:#FFFFFF; border:1px solid #FDE68A; border-radius:8px; padding:12px 14px; margin-bottom:14px;">
+                  <div
+                    style="font-size:11.5px; font-weight:700; color:#92400E; margin-bottom:4px; font-family:var(--f-mono); text-transform:uppercase;">
+                    Already Paid for this Room?</div>
+                  <div style="font-size:12px; color:#475569; line-height:1.45; margin-bottom:10px;">
+                    If you completed payment for this viewing slot, open your official confirmation dossier & viewing
+                    pass below:
+                  </div>
+                  <button type="button" id="btnRevealDossier"
+                    style="width:100%; background:#0055FF; color:#ffffff; font-weight:700; font-size:13px; padding:10px 14px; border-radius:6px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+                    <span>📄 Open My Booking Confirmation & Slip</span>
+                  </button>
+                </div>
+
+                <!-- Chat with Concierge -->
+                <div style="margin-bottom:8px;">
+                  <div style="font-size:11.5px; color:#92400E; font-weight:600; margin-bottom:6px;">Interested if this
+                    slot reopens?</div>
+                  <a id="reservedWaConciergeBtn" href="https://wa.me/919567941647" target="_blank" rel="noopener"
+                    style="display:flex; align-items:center; justify-content:center; gap:8px; background:#25D366; color:#ffffff; font-weight:700; font-size:13.5px; padding:12px 16px; border-radius:8px; text-decoration:none; box-shadow:0 2px 6px rgba(37,211,102,0.25);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+                    </svg>
+                    <span>Ask Concierge on WhatsApp (+91 95679 41647)</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
             <!-- Post-Payment Unlocked State View -->
             <div class="unlocked-dossier-box" id="unlockedDossierView">
-              
+
               <div class="unlocked-banner">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
                 <span>Room Lead Reserved & Confirmed!</span>
               </div>
 
@@ -1648,7 +1874,8 @@
               <div class="dossier-contact-card" style="border-color:#A7F3D0; background:#F0FDF4;">
                 <div class="dossier-row">
                   <div class="dossier-k">Booking Reference</div>
-                  <div class="dossier-v" id="unlockedRefCode" style="color:var(--royal); font-family:var(--f-mono);">DF-ROOM-1004-CONFIRMED</div>
+                  <div class="dossier-v" id="unlockedRefCode" style="color:var(--royal); font-family:var(--f-mono);">
+                    DF-ROOM-1004-CONFIRMED</div>
                 </div>
 
                 <div class="dossier-row">
@@ -1666,23 +1893,33 @@
 
                 <div class="dossier-row">
                   <div class="dossier-k">Room Allocation</div>
-                  <div class="dossier-v" id="unlockedRoomTitle" style="font-size:13.5px;">Munich Thalkirchen Furnished WG Room</div>
+                  <div class="dossier-v" id="unlockedRoomTitle" style="font-size:13.5px;">Munich Thalkirchen Furnished
+                    WG Room</div>
                 </div>
 
                 <div class="dossier-row">
                   <div class="dossier-k">City Registration (Anmeldung)</div>
-                  <div class="dossier-v" style="font-size:13px; color:#059669;">✓ Wohnungsgeberbestätigung Form Ready for Signature</div>
+                  <div class="dossier-v" style="font-size:13px; color:#059669;">✓ Wohnungsgeberbestätigung Form Ready
+                    for Signature</div>
                 </div>
               </div>
 
               <!-- Direct DieFuture Relocation Concierge Desk -->
-              <div style="background:#FFFFFF; border:1px solid var(--rule-2); border-radius:8px; padding:16px; margin-bottom:16px;">
-                <div style="font-size:12px; font-family:var(--f-mono); color:var(--electric); font-weight:700; text-transform:uppercase; margin-bottom:4px;">OPTIONAL COORDINATION · RELOCATION DESK</div>
+              <div
+                style="background:#FFFFFF; border:1px solid var(--rule-2); border-radius:8px; padding:16px; margin-bottom:16px;">
+                <div
+                  style="font-size:12px; font-family:var(--f-mono); color:var(--electric); font-weight:700; text-transform:uppercase; margin-bottom:4px;">
+                  OPTIONAL COORDINATION · RELOCATION DESK</div>
                 <p style="font-size:13px; color:var(--ink-2); line-height:1.5; margin:0 0 14px;">
-                  Our relocation desk is available on WhatsApp to assist with viewing appointment scheduling, tenancy agreement guidance, and landlord handover upon request. Tap below to connect:
+                  Our relocation desk is available on WhatsApp to assist with viewing appointment scheduling, tenancy
+                  agreement guidance, and landlord handover upon request. Tap below to connect:
                 </p>
-                <a href="https://wa.me/919567941647" target="_blank" rel="noopener" class="btn-wa-landlord" id="conciergeWaBtn" style="background:#25D366; color:#FFFFFF; margin-top:0;">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                <a href="https://wa.me/919567941647" target="_blank" rel="noopener" class="btn-wa-landlord"
+                  id="conciergeWaBtn" style="background:#25D366; color:#FFFFFF; margin-top:0;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+                  </svg>
                   <span>Chat with DieFuture Concierge (+91 95679 41647) →</span>
                 </a>
               </div>
@@ -1713,7 +1950,8 @@
         <div class="footer-brand">
           <img src="./assets/diefuture-logo.jpg" alt="DieFuture Logo" class="brand-avatar" />
           <div class="footer-brand-title">DieFuture Apartments</div>
-          <p class="footer-brand-desc">Reliable accommodation search & relocation advisory across 10+ German housing portals for international students and professionals.</p>
+          <p class="footer-brand-desc">Reliable accommodation search & relocation advisory across 10+ German housing
+            portals for international students and professionals.</p>
         </div>
 
         <div class="footer-col">
@@ -1751,7 +1989,9 @@
 
       <div class="footer-bottom">
         <div>© 2026 DieFuture Apartments. All rights reserved.</div>
-        <div>Email: <a href="mailto:diefutureapartments@gmail.com">diefutureapartments@gmail.com</a> · WhatsApp Desk: <a href="https://wa.me/919567941647" target="_blank" rel="noopener">+91 95679 41647</a> · <a href="contact" style="color:var(--electric); font-weight:600;">Contact Page →</a></div>
+        <div>Email: <a href="mailto:diefutureapartments@gmail.com">diefutureapartments@gmail.com</a> · WhatsApp Desk: <a
+            href="https://wa.me/919567941647" target="_blank" rel="noopener">+91 95679 41647</a> · <a href="contact"
+            style="color:var(--electric); font-weight:600;">Contact Page →</a></div>
       </div>
     </div>
   </footer>
@@ -1768,7 +2008,8 @@
         </div>
         <div class="mobile-bnav-rent" id="mobileBnavRent">Warm Rent: €775 /mo</div>
       </div>
-      <button type="button" class="mobile-bnav-btn" id="mobileBnavActionBtn" onclick="window.initiatePayment && window.initiatePayment()">
+      <button type="button" class="mobile-bnav-btn" id="mobileBnavActionBtn"
+        onclick="window.initiatePayment && window.initiatePayment()">
         <span id="mobileBnavBtnText">Reserve Now</span>
         <span style="font-size:16px; line-height:1;">→</span>
       </button>
@@ -1927,7 +2168,7 @@
 
         const apiBase = getApiBase();
         const endpoint = (apiBase ? apiBase : '') + `/api/rooms/${encodeURIComponent(roomIdParam)}`;
-        
+
         try {
           const res = await fetch(endpoint);
           if (res.ok) {
@@ -1952,7 +2193,7 @@
               return;
             }
           }
-        } catch (e) {}
+        } catch (e) { }
 
         showRoomNotFound('Room Lead Not Found or Allocation Expired', `The requested room lead DF-ROOM-${roomIdParam} is not available in the database. Please submit a room search brief.`);
       }
@@ -1977,15 +2218,15 @@
 
         const rent = currentRoom.rentWarmEUR || 775;
         const deposit = currentRoom.depositEUR || 1500;
-        const feeINR = currentRoom.feeINR || 12999;
-        const formattedFee = `₹${feeINR.toLocaleString('en-IN')}`;
+        const feeINR = currentRoom.feeINR !== undefined ? currentRoom.feeINR : 12999;
+        const formattedFee = `₹${Number(feeINR).toLocaleString('en-IN')}`;
 
         if (specRentVal) specRentVal.textContent = `€${rent}`;
         if (specDepositVal) specDepositVal.textContent = `€${deposit.toLocaleString()}`;
         if (specSizeVal) specSizeVal.textContent = `~${currentRoom.roomSizeM2 || 16} m²`;
         if (specTransitVal && currentRoom.transit) specTransitVal.textContent = currentRoom.transit.split('(')[0].trim();
         if (captionCategoryVal) captionCategoryVal.textContent = currentRoom.roomType || 'Private Furnished Room';
-        
+
         // Update financial clarity callout
         const calloutRent = document.getElementById('calloutRentVal');
         const calloutDep = document.getElementById('calloutDepositVal');
@@ -2024,9 +2265,119 @@
           }
         }
 
+        const isReserved = currentRoom.status === 'reserved';
+        const isFilled = currentRoom.status === 'filled';
+        const localReservation = localStorage.getItem('df_reservation_' + currentRoom.roomId);
+
+        // Update Availability Badge
+        if (reserveAvailabilityBadge) {
+          if (isReserved) {
+            reserveAvailabilityBadge.textContent = '🟡 Slot Reserved';
+            reserveAvailabilityBadge.style.color = '#B45309';
+            reserveAvailabilityBadge.style.background = '#FEF3C7';
+            reserveAvailabilityBadge.style.border = '1px solid #FDE68A';
+          } else if (isFilled) {
+            reserveAvailabilityBadge.textContent = '🔴 Leased / Closed';
+            reserveAvailabilityBadge.style.color = '#DC2626';
+            reserveAvailabilityBadge.style.background = '#FEE2E2';
+            reserveAvailabilityBadge.style.border = '1px solid #FECACA';
+          } else {
+            reserveAvailabilityBadge.textContent = '1 Available';
+            reserveAvailabilityBadge.style.color = '#EF4444';
+            reserveAvailabilityBadge.style.background = '#FEE2E2';
+            reserveAvailabilityBadge.style.border = 'none';
+          }
+        }
+
+        // 1. If this device completed reservation before, show unlocked confirmation slip
+        if (localReservation) {
+          try {
+            const savedData = JSON.parse(localReservation);
+            unlockDossier(savedData);
+            return;
+          } catch (e) { }
+        }
+
+        // 2. If room is reserved or filled in database, lock payment and display status card
+        if (isReserved || isFilled) {
+          if (prePaymentView) prePaymentView.style.display = 'none';
+          if (unlockedDossierView) unlockedDossierView.style.display = 'none';
+          const roomReservedNoticeView = document.getElementById('roomReservedNoticeView');
+          if (roomReservedNoticeView) {
+            roomReservedNoticeView.style.display = 'block';
+            const h = document.getElementById('reservedCardHeading');
+            const s = document.getElementById('reservedCardSub');
+            const m = document.getElementById('reservedCardMsg');
+            if (isFilled) {
+              if (h) h.textContent = 'Room Leased / Closed';
+              if (s) s.textContent = 'Allocation fulfilled';
+              if (m) m.textContent = `Room DF-ROOM-${currentRoom.roomId} has been successfully rented. Browse other active verified listings below.`;
+            } else {
+              if (h) h.textContent = 'Viewing Slot Reserved';
+              if (s) s.textContent = 'Candidate allocation & viewing in progress';
+              if (m) m.textContent = `A candidate has already secured the viewing reservation for Room DF-ROOM-${currentRoom.roomId}. Direct online checkout is currently locked to prevent duplicate bookings.`;
+            }
+          }
+
+          // Disable sticky mobile bottom bar
+          const mobileBnavBtnText = document.getElementById('mobileBnavBtnText');
+          const mobileBnavTag = document.getElementById('mobileBnavTag');
+          const mobileBnavAmount = document.getElementById('mobileBnavAmount');
+          const mobileBnavBtn = document.getElementById('mobileBnavBtn');
+          const mobileBnavActionBtn = document.getElementById('mobileBnavActionBtn');
+          if (mobileBnavBtnText) mobileBnavBtnText.textContent = isFilled ? '🔴 Room Leased' : '🔒 Slot Reserved';
+          if (mobileBnavTag) mobileBnavTag.textContent = isFilled ? 'Closed' : 'Viewing Reserved';
+          if (mobileBnavAmount) mobileBnavAmount.textContent = isFilled ? 'Leased' : 'Reserved';
+          if (mobileBnavBtn) {
+            mobileBnavBtn.style.opacity = '0.55';
+            mobileBnavBtn.style.pointerEvents = 'none';
+            mobileBnavBtn.style.cursor = 'not-allowed';
+            mobileBnavBtn.disabled = true;
+          }
+          if (mobileBnavActionBtn) {
+            mobileBnavActionBtn.style.opacity = '0.55';
+            mobileBnavActionBtn.style.pointerEvents = 'none';
+            mobileBnavActionBtn.style.cursor = 'not-allowed';
+            mobileBnavActionBtn.disabled = true;
+          }
+
+          // Wire up the button for the candidate who paid
+          const btnRevealDossier = document.getElementById('btnRevealDossier');
+          if (btnRevealDossier) {
+            btnRevealDossier.onclick = () => {
+              const bookingData = {
+                reference: currentRoom.bookingRef || `DF-ROOM-${currentRoom.roomId}-CONFIRMED`,
+                paymentId: currentRoom.paymentId || currentRoom.reservedPaymentId || 'Verified via Razorpay',
+                seekerName: currentRoom.studentName || currentRoom.reservedBy || 'Verified Seeker',
+                amountPaid: currentRoom.feeINR || 1
+              };
+              try {
+                localStorage.setItem('df_reservation_' + currentRoom.roomId, JSON.stringify(bookingData));
+              } catch (e) { }
+              unlockDossier(bookingData);
+            };
+          }
+
+          // Configure WhatsApp concierge link
+          const reservedWaBtn = document.getElementById('reservedWaConciergeBtn');
+          if (reservedWaBtn) {
+            const queryMsg = encodeURIComponent(
+              `Hello DieFuture Team,\n\nI am inquiring about Room DF-ROOM-${currentRoom.roomId} (${currentRoom.city}):\n- Status: ${isFilled ? 'Leased' : 'Viewing Slot Reserved'}\n\nPlease notify me if this slot becomes available, or let me know what other verified options you have in ${currentRoom.city}!`
+            );
+            reservedWaBtn.href = `https://wa.me/919567941647?text=${queryMsg}`;
+          }
+
+          return;
+        }
+
+        // Room is available: ensure prePaymentView is visible
+        if (prePaymentView) prePaymentView.style.display = 'block';
+        const roomReservedNoticeView = document.getElementById('roomReservedNoticeView');
+        if (roomReservedNoticeView) roomReservedNoticeView.style.display = 'none';
+
         const paymentMode = currentRoom.paymentMode || 'full';
-        const totalFeeINR = currentRoom.feeINR || 12999;
-        const holdingFeeINR = currentRoom.holdingFeeINR || 2999;
+        const totalFeeINR = currentRoom.feeINR !== undefined ? currentRoom.feeINR : 12999;
+        const holdingFeeINR = currentRoom.holdingFeeINR !== undefined ? currentRoom.holdingFeeINR : 2999;
         const remainingFeeINR = currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(0, totalFeeINR - holdingFeeINR);
 
         let payableAmountINR = totalFeeINR;
@@ -2035,7 +2386,7 @@
         } else if (paymentMode === 'holding_paid') {
           payableAmountINR = remainingFeeINR;
         }
-        const formattedPayable = `₹${payableAmountINR.toLocaleString('en-IN')}`;
+        const formattedPayable = `₹${Number(payableAmountINR).toLocaleString('en-IN')}`;
 
         // Configure UI for Payment Modes
         if (paymentMode === 'holding_initial') {
@@ -2275,14 +2626,16 @@
         const finalEmail = (currentRoom.studentEmail && currentRoom.studentEmail.trim()) ? currentRoom.studentEmail.trim() : 'student@diefuture.com';
 
         const paymentMode = currentRoom.paymentMode || 'full';
-        let payableINR = currentRoom.feeINR || 12999;
+        const totalFeeINR = currentRoom.feeINR !== undefined ? currentRoom.feeINR : 12999;
+        const holdingFeeINR = currentRoom.holdingFeeINR !== undefined ? currentRoom.holdingFeeINR : 2999;
+        let payableINR = totalFeeINR;
         let orderDesc = `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation & Concierge Handover`;
 
         if (paymentMode === 'holding_initial') {
-          payableINR = currentRoom.holdingFeeINR || 2999;
+          payableINR = holdingFeeINR;
           orderDesc = `Room ${currentRoom.roomId} Viewing Slot Holding Deposit (100% Refundable)`;
         } else if (paymentMode === 'holding_paid') {
-          payableINR = currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(1, (currentRoom.feeINR || 12999) - (currentRoom.holdingFeeINR || 2999));
+          payableINR = currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(1, totalFeeINR - holdingFeeINR);
           orderDesc = `Room ${currentRoom.roomId} Remaining Balance for Final Lease Handover`;
         }
 
@@ -2443,12 +2796,21 @@
       async function handlePaymentSuccess(payData) {
         const refCode = `DF-ROOM-${currentRoom.roomId}-` + Math.floor(100 + Math.random() * 900);
         const paymentMode = currentRoom.paymentMode || 'full';
-        let payableINR = currentRoom.feeINR || 12999;
+        const totalFeeINR = currentRoom.feeINR !== undefined ? currentRoom.feeINR : 12999;
+        const holdingFeeINR = currentRoom.holdingFeeINR !== undefined ? currentRoom.holdingFeeINR : 2999;
+        let payableINR = totalFeeINR;
         if (paymentMode === 'holding_initial') {
-          payableINR = currentRoom.holdingFeeINR || 2999;
+          payableINR = holdingFeeINR;
         } else if (paymentMode === 'holding_paid') {
-          payableINR = currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(1, (currentRoom.feeINR || 12999) - (currentRoom.holdingFeeINR || 2999));
+          payableINR = currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(1, totalFeeINR - holdingFeeINR);
         }
+
+        const savedReservation = {
+          reference: refCode,
+          paymentId: payData.razorpay_payment_id,
+          seekerName: payData.name,
+          amountPaid: payableINR
+        };
 
         // Send to backend MongoDB /api/reserve-room
         try {
@@ -2465,33 +2827,25 @@
               paymentId: payData.razorpay_payment_id,
               amount: payableINR,
               paymentMode: paymentMode,
-              totalFeeINR: currentRoom.feeINR || 12999,
-              holdingFeeINR: currentRoom.holdingFeeINR || 2999,
-              remainingFeeINR: currentRoom.remainingFeeINR || 10000
+              totalFeeINR: currentRoom.feeINR || '',
+              holdingFeeINR: currentRoom.holdingFeeINR || '',
+              remainingFeeINR: currentRoom.remainingFeeINR || ''
             })
           });
 
           if (resp.ok) {
             const result = await resp.json();
-            unlockDossier({
-              reference: result.reference || refCode,
-              paymentId: payData.razorpay_payment_id,
-              seekerName: payData.name,
-              amountPaid: payableINR
-            });
-            return;
+            savedReservation.reference = result.reference || refCode;
           }
         } catch (err) {
           console.warn('Backend sync failed, proceeding with client unlock:', err);
         }
 
-        // Client unlock fallback
-        unlockDossier({
-          reference: refCode,
-          paymentId: payData.razorpay_payment_id,
-          seekerName: payData.name,
-          amountPaid: payableINR
-        });
+        try {
+          localStorage.setItem('df_reservation_' + currentRoom.roomId, JSON.stringify(savedReservation));
+        } catch (e) { }
+
+        unlockDossier(savedReservation);
       }
 
       // Saved unlocked state for printing
@@ -2504,8 +2858,16 @@
           phone: data.phone || currentRoom?.studentPhone || ''
         };
 
+        try {
+          if (currentRoom?.roomId) {
+            localStorage.setItem('df_reservation_' + currentRoom.roomId, JSON.stringify(lastUnlockedReservation));
+          }
+        } catch (e) { }
+
         checkoutCard.classList.add('unlocked');
-        prePaymentView.style.display = 'none';
+        if (prePaymentView) prePaymentView.style.display = 'none';
+        const roomReservedNoticeView = document.getElementById('roomReservedNoticeView');
+        if (roomReservedNoticeView) roomReservedNoticeView.style.display = 'none';
         unlockedDossierView.style.display = 'block';
 
         const mobileBottomNav = document.getElementById('mobileBottomNav');
@@ -2520,11 +2882,13 @@
         if (unlockedRoomTitle) unlockedRoomTitle.textContent = currentRoom.title;
 
         const paymentMode = currentRoom.paymentMode || 'full';
-        let payableINR = data.amountPaid || (currentRoom.feeINR || 12999);
+        const totalFeeINR = currentRoom.feeINR !== undefined ? currentRoom.feeINR : 12999;
+        const holdingFeeINR = currentRoom.holdingFeeINR !== undefined ? currentRoom.holdingFeeINR : 2999;
+        let payableINR = data.amountPaid || totalFeeINR;
         if (paymentMode === 'holding_initial') {
-          payableINR = currentRoom.holdingFeeINR || 2999;
+          payableINR = data.amountPaid || holdingFeeINR;
         } else if (paymentMode === 'holding_paid') {
-          payableINR = currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(1, (currentRoom.feeINR || 12999) - (currentRoom.holdingFeeINR || 2999));
+          payableINR = data.amountPaid || (currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(1, totalFeeINR - holdingFeeINR));
         }
 
         const bannerTextEl = document.querySelector('.unlocked-banner span');
@@ -2562,7 +2926,7 @@
       }
 
       // Print clean 1-page official reservation certificate
-      window.printOfficialReservationSlip = function() {
+      window.printOfficialReservationSlip = function () {
         const ref = (lastUnlockedReservation && lastUnlockedReservation.reference) || (document.getElementById('unlockedRefCode')?.textContent) || ('DF-RES-' + (currentRoom.roomId || '1004'));
         const payId = (lastUnlockedReservation && lastUnlockedReservation.paymentId) || (document.getElementById('unlockedPaymentId')?.textContent) || 'pay_live_confirmed';
         const name = (lastUnlockedReservation && lastUnlockedReservation.seekerName) || (document.getElementById('unlockedSeekerName')?.textContent) || (document.getElementById('seekerName')?.value) || 'Reserved Seeker';
@@ -2570,7 +2934,7 @@
 
         const now = new Date();
         const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' +
-                        now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+          now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
 
         const pRef = document.getElementById('printRef');
         const pDate = document.getElementById('printDate');
@@ -2591,15 +2955,17 @@
         if (pPayId) pPayId.textContent = payId;
 
         const paymentMode = currentRoom.paymentMode || 'full';
-        let payableINR = (lastUnlockedReservation && lastUnlockedReservation.amountPaid) || (currentRoom.feeINR || 12999);
+        const totalFeeINR = currentRoom.feeINR !== undefined ? currentRoom.feeINR : 12999;
+        const holdingFeeINR = currentRoom.holdingFeeINR !== undefined ? currentRoom.holdingFeeINR : 2999;
+        let payableINR = (lastUnlockedReservation && lastUnlockedReservation.amountPaid) || totalFeeINR;
         if (paymentMode === 'holding_initial') {
-          payableINR = currentRoom.holdingFeeINR || 2999;
-          if (pFee) pFee.textContent = `₹${payableINR.toLocaleString('en-IN')} (Refundable Viewing Deposit Paid — Balance ₹${(currentRoom.remainingFeeINR || 10000).toLocaleString('en-IN')} due after viewing approval)`;
+          payableINR = (lastUnlockedReservation && lastUnlockedReservation.amountPaid) || holdingFeeINR;
+          if (pFee) pFee.textContent = `₹${payableINR.toLocaleString('en-IN')} (Refundable Viewing Deposit Paid — Balance ₹${(currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : 10000).toLocaleString('en-IN')} due after viewing approval)`;
         } else if (paymentMode === 'holding_paid') {
-          payableINR = currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(1, (currentRoom.feeINR || 12999) - (currentRoom.holdingFeeINR || 2999));
-          if (pFee) pFee.textContent = `₹${payableINR.toLocaleString('en-IN')} Remaining Balance Paid (₹${(currentRoom.feeINR || 12999).toLocaleString('en-IN')} Total Fee Settled)`;
+          payableINR = (lastUnlockedReservation && lastUnlockedReservation.amountPaid) || (currentRoom.remainingFeeINR !== undefined ? currentRoom.remainingFeeINR : Math.max(1, totalFeeINR - holdingFeeINR));
+          if (pFee) pFee.textContent = `₹${payableINR.toLocaleString('en-IN')} Remaining Balance Paid (₹${totalFeeINR.toLocaleString('en-IN')} Total Fee Settled)`;
         } else {
-          if (pFee) pFee.textContent = `₹${(currentRoom.feeINR || 12999).toLocaleString('en-IN')} (Paid in Full)`;
+          if (pFee) pFee.textContent = `₹${payableINR.toLocaleString('en-IN')} (Paid in Full)`;
         }
 
         if (pTitle) pTitle.textContent = currentRoom.title || 'Munich Furnished WG Room';
@@ -2648,37 +3014,38 @@
         })[m]);
       }
 
-        const mobileToggle = document.getElementById('mobileNavToggle');
-        const mobileDrawer = document.getElementById('mobileDrawer');
-        if (mobileToggle && mobileDrawer) {
-          mobileToggle.addEventListener('click', () => {
-            const isOpen = mobileDrawer.classList.toggle('open');
-            mobileToggle.classList.toggle('active');
-            mobileToggle.setAttribute('aria-expanded', isOpen);
-          });
-        }
+      const mobileToggle = document.getElementById('mobileNavToggle');
+      const mobileDrawer = document.getElementById('mobileDrawer');
+      if (mobileToggle && mobileDrawer) {
+        mobileToggle.addEventListener('click', () => {
+          const isOpen = mobileDrawer.classList.toggle('open');
+          mobileToggle.classList.toggle('active');
+          mobileToggle.setAttribute('aria-expanded', isOpen);
+        });
+      }
 
-        // Mobile Sticky Bottom Nav Action Listener -> 1-Click Pay directly
-        const mobileBnavActionBtn = document.getElementById('mobileBnavActionBtn');
-        if (mobileBnavActionBtn) {
-          let lastTap = 0;
-          const handleMobilePayTap = (e) => {
-            const now = Date.now();
-            if (now - lastTap < 800) return;
-            lastTap = now;
-            if (unlockedDossierView && unlockedDossierView.style.display !== 'none') {
-              unlockedDossierView.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              return;
-            }
-            initiatePayment();
-          };
+      // Mobile Sticky Bottom Nav Action Listener -> 1-Click Pay directly
+      const mobileBnavActionBtn = document.getElementById('mobileBnavActionBtn');
+      if (mobileBnavActionBtn) {
+        let lastTap = 0;
+        const handleMobilePayTap = (e) => {
+          const now = Date.now();
+          if (now - lastTap < 800) return;
+          lastTap = now;
+          if (unlockedDossierView && unlockedDossierView.style.display !== 'none') {
+            unlockedDossierView.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+          }
+          initiatePayment();
+        };
 
-          mobileBnavActionBtn.addEventListener('click', handleMobilePayTap);
-          mobileBnavActionBtn.addEventListener('touchend', handleMobilePayTap, { passive: true });
-        }
+        mobileBnavActionBtn.addEventListener('click', handleMobilePayTap);
+        mobileBnavActionBtn.addEventListener('touchend', handleMobilePayTap, { passive: true });
+      }
 
-        loadRoomDetails();
+      loadRoomDetails();
     });
   </script>
 </body>
+
 </html>
