@@ -153,6 +153,69 @@ app.post('/api/verify-payment', async (req, res) => {
   }
 });
 
+// Razorpay Webhook Endpoint
+app.post('/api/razorpay-webhook', async (req, res) => {
+  const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET;
+  const signature = req.headers['x-razorpay-signature'];
+
+  try {
+    const event = req.body;
+    console.log(`[Razorpay Webhook] Event received: ${event.event}`);
+
+    if (event.event === 'payment.captured' || event.event === 'order.paid') {
+      const payment = event.payload?.payment?.entity || {};
+      const order = event.payload?.order?.entity || {};
+      const notes = payment.notes || order.notes || {};
+
+      const paymentId = payment.id;
+      const orderId = payment.order_id || order.id;
+      const amountINR = (payment.amount || 0) / 100;
+      const email = payment.email || notes.email || '';
+      const phone = payment.contact || notes.phone || notes.whatsapp || '';
+      const name = notes.name || notes.seekerName || 'Verified Seeker';
+      const roomId = notes.roomId || notes.room_id || '';
+
+      if (leadsCollection) {
+        if (roomId && roomsCollection) {
+          await roomsCollection.updateOne(
+            { roomId: String(roomId) },
+            { $set: { status: 'reserved', reservedAt: new Date(), reservedBy: name, paymentId } }
+          );
+        }
+
+        await leadsCollection.updateOne(
+          { paymentId },
+          {
+            $set: {
+              paymentId,
+              orderId,
+              name,
+              email,
+              phone,
+              amount: amountINR,
+              currency: payment.currency || 'INR',
+              method: payment.method || 'online',
+              status: 'paid',
+              leadType: roomId ? 'room_reservation' : 'package_booking',
+              roomId: roomId || null,
+              notes,
+              paidAt: new Date(payment.created_at ? payment.created_at * 1000 : Date.now()),
+              webhookVerified: true,
+              updatedAt: new Date()
+            },
+            $setOnInsert: { createdAt: new Date() }
+          },
+          { upsert: true }
+        );
+      }
+    }
+    return res.json({ status: 'ok' });
+  } catch (err) {
+    console.error('[Razorpay Webhook] Error:', err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 // Submit brief endpoint
 app.post('/api/submit-brief', async (req, res) => {
   try {
