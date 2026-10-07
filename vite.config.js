@@ -2,7 +2,7 @@ import { resolve } from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: './',
+  base: '/',
   build: {
     rollupOptions: {
       input: {
@@ -18,6 +18,22 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    {
+      name: 'clean-urls-dev',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const host = req.headers.host || 'localhost:5173';
+          const url = new URL(req.url, `http://${host}`);
+          const pathname = url.pathname;
+          if (pathname !== '/' && !pathname.includes('.')) {
+            req.url = `${pathname}.html${url.search}`;
+          }
+          next();
+        });
+      }
+    }
+  ],
   server: {
     proxy: {
       '/api': {

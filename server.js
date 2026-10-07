@@ -22,8 +22,8 @@ const COLLECTION_NAME = process.env.COLLECTION_NAME || 'leads';
 app.use(cors());
 app.use(express.json());
 
-// Serve static frontend files (Vite production build)
-app.use(express.static(path.join(__dirname, 'dist')));
+// Serve static frontend files (Vite production build with clean URLs)
+app.use(express.static(path.join(__dirname, 'dist'), { extensions: ['html'] }));
 
 // MongoDB Client
 let cachedClient = null;

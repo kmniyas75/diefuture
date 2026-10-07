@@ -544,7 +544,7 @@
   <header class="admin-header">
     <div class="admin-nav">
       <div class="admin-brand">
-        <a href="index.html" style="display:flex; align-items:center; gap:10px;">
+        <a href="/" style="display:flex; align-items:center; gap:10px;">
           <img src="./assets/diefuture-logo.jpg" alt="Logo" style="width:28px; height:28px; border-radius:6px;" />
           <span style="font-family:var(--f-display); font-weight:800; font-size:18px;">DieFuture</span>
         </a>
@@ -556,7 +556,7 @@
           <span class="db-dot"></span>
           <span>MongoDB Atlas: Connected</span>
         </div>
-        <a href="index.html" class="btn-line" style="padding:7px 14px; font-size:13px;">View Website ↗</a>
+        <a href="/" class="btn-line" style="padding:7px 14px; font-size:13px;">View Website ↗</a>
         <button id="logoutBtn" class="btn-line" style="padding:7px 14px; font-size:13px; display:none;">Sign Out</button>
       </div>
     </div>
@@ -724,7 +724,7 @@
                 <input type="text" id="roomFieldId" required placeholder="e.g. 1004" style="flex:1;" />
                 <button type="button" id="btnGenUniqueId" class="btn-line" style="padding:0 10px; font-size:11.5px; white-space:nowrap; background:#FFFFFF;" title="Generate new unique URL slug">🔄 New ID</button>
               </div>
-              <small style="font-size:11px; color:#64748B; margin-top:4px; display:block;">Share Link: <code style="font-size:11px; color:var(--royal);">/room.html?id=<span id="slugPreview">1004</span></code></small>
+              <small style="font-size:11px; color:#64748B; margin-top:4px; display:block;">Share Link: <code style="font-size:11px; color:var(--royal);">/room?id=<span id="slugPreview">1004</span></code></small>
             </div>
 
             <div class="room-input-group" style="grid-column: span 2;">
@@ -1261,7 +1261,7 @@
         const newSlug = `${base}-${suffix}`;
         roomFieldId.value = newSlug;
         if (slugPreview) slugPreview.textContent = encodeURIComponent(newSlug);
-        showNotice(`✓ Generated unique link ID "${newSlug}" (preview: /room.html?id=${newSlug})`, 'info');
+        showNotice(`✓ Generated unique link ID "${newSlug}" (preview: /room?id=${newSlug})`, 'info');
       });
     }
 
@@ -1568,7 +1568,7 @@
           <td>
             <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
               <button type="button" class="btn-electric btn-copy-link" data-id="${room.roomId || room._id}" style="padding:4px 9px; font-size:11.5px; border-radius:4px; cursor:pointer;" title="Copy private payment link to share with student">📋 Copy Link</button>
-              <a href="room.html?id=${encodeURIComponent(room.roomId || room._id)}" target="_blank" class="btn-line" style="padding:4px 8px; font-size:11.5px;" title="Preview payment page">↗ View</a>
+              <a href="room?id=${encodeURIComponent(room.roomId || room._id)}" target="_blank" class="btn-line" style="padding:4px 8px; font-size:11.5px;" title="Preview payment page">↗ View</a>
               <button type="button" class="btn-action-del btn-del-room" data-id="${room.roomId || room._id}" title="Delete room">🗑️</button>
             </div>
           </td>
@@ -1581,7 +1581,7 @@
       document.querySelectorAll('.btn-copy-link').forEach(btn => {
         btn.addEventListener('click', () => {
           const roomId = btn.dataset.id;
-          const url = `${window.location.origin}/room.html?id=${encodeURIComponent(roomId)}`;
+          const url = `${window.location.origin}/room?id=${encodeURIComponent(roomId)}`;
           navigator.clipboard.writeText(url).then(() => {
             const originalText = btn.textContent;
             btn.textContent = '✓ Copied!';
