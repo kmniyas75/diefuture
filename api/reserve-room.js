@@ -92,14 +92,14 @@ export default async function handler(req, res) {
     } = req.body;
 
     let packageLabel = `Direct Verified Room Lead (${amount ? '₹' + amount : 'Variable Fee'})`;
-    let emailSubject = `💰 Room Lead Reserved: ${bookingRef} — ${seekerNameResolved} (₹${amount || 12999})`;
+    let emailSubject = `💰 Room Lead Reserved: ${bookingRef} — ${seekerNameResolved}${amount ? ' (₹' + amount + ')' : ''}`;
 
     if (paymentMode === 'holding_initial') {
-      packageLabel = `Viewing Holding Fee (₹${amount || 2999} Paid - Refundable Deposit)`;
-      emailSubject = `🛡️ Viewing Holding Fee Paid: ${bookingRef} — ${seekerNameResolved} (₹${amount || 2999})`;
+      packageLabel = `Viewing Holding Fee (₹${amount || 0} Paid - Refundable Deposit)`;
+      emailSubject = `🛡️ Viewing Holding Fee Paid: ${bookingRef} — ${seekerNameResolved}${amount ? ' (₹' + amount + ')' : ''}`;
     } else if (paymentMode === 'holding_paid') {
-      packageLabel = `Lease Handover Remaining Balance (₹${amount || 10000} Paid - Settled in Full)`;
-      emailSubject = `🎉 Remaining Balance Paid: ${bookingRef} — ${seekerNameResolved} (₹${amount || 10000})`;
+      packageLabel = `Lease Handover Remaining Balance (₹${amount || 0} Paid - Settled in Full)`;
+      emailSubject = `🎉 Remaining Balance Paid: ${bookingRef} — ${seekerNameResolved}${amount ? ' (₹' + amount + ')' : ''}`;
     }
 
     const reservationDoc = {
@@ -115,12 +115,12 @@ export default async function handler(req, res) {
       roomType: 'WG Room (Single Private)',
       package: packageLabel,
       paymentMode,
-      totalFeeINR: Number(totalFeeINR) || 12999,
-      holdingFeeINR: Number(holdingFeeINR) || 2999,
-      remainingFeeINR: Number(remainingFeeINR) || 10000,
+      totalFeeINR: totalFeeINR !== undefined ? Number(totalFeeINR) : (amount || 0),
+      holdingFeeINR: holdingFeeINR !== undefined ? Number(holdingFeeINR) : 0,
+      remainingFeeINR: remainingFeeINR !== undefined ? Number(remainingFeeINR) : 0,
       leadStatus: 'paid_confirmed',
       paymentId: paymentId || 'manual_or_simulated',
-      amountPaidINR: amount || 12999,
+      amountPaidINR: amount || 0,
       notes: notes || (paymentMode === 'holding_initial' 
         ? 'Viewing slot holding fee paid. 100% refundable if seeker attends viewing and dislikes room.' 
         : paymentMode === 'holding_paid' 

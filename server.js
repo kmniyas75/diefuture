@@ -356,9 +356,9 @@ app.post('/api/reserve-room', async (req, res) => {
 
     let packageLabel = `Direct Verified Room Lead (${amount ? '₹' + amount : 'Variable Fee'})`;
     if (paymentMode === 'holding_initial') {
-      packageLabel = `Viewing Holding Fee (₹${amount || 2999} Paid - Refundable Deposit)`;
+      packageLabel = `Viewing Holding Fee (₹${amount || 0} Paid - Refundable Deposit)`;
     } else if (paymentMode === 'holding_paid') {
-      packageLabel = `Lease Handover Remaining Balance (₹${amount || 10000} Paid - Settled in Full)`;
+      packageLabel = `Lease Handover Remaining Balance (₹${amount || 0} Paid - Settled in Full)`;
     }
 
     const reservationDoc = {
@@ -374,12 +374,12 @@ app.post('/api/reserve-room', async (req, res) => {
       roomType: 'WG Room (Single Private)',
       package: packageLabel,
       paymentMode,
-      totalFeeINR: Number(totalFeeINR) || 12999,
-      holdingFeeINR: Number(holdingFeeINR) || 2999,
-      remainingFeeINR: Number(remainingFeeINR) || 10000,
+      totalFeeINR: totalFeeINR !== undefined ? Number(totalFeeINR) : (amount || 0),
+      holdingFeeINR: holdingFeeINR !== undefined ? Number(holdingFeeINR) : 0,
+      remainingFeeINR: remainingFeeINR !== undefined ? Number(remainingFeeINR) : 0,
       leadStatus: 'paid_confirmed',
       paymentId: paymentId || 'manual_or_simulated',
-      amountPaidINR: amount || 12999,
+      amountPaidINR: amount || 0,
       notes: notes || (paymentMode === 'holding_initial' 
         ? 'Viewing slot holding fee paid. 100% refundable if seeker attends viewing and dislikes room.' 
         : paymentMode === 'holding_paid' 
@@ -585,9 +585,9 @@ app.post('/api/rooms', async (req, res) => {
       rentWarmEUR: Number(rentWarmEUR),
       depositEUR: Number(depositEUR) || Number(rentWarmEUR) * 2,
       paymentMode: req.body.paymentMode || 'full',
-      feeINR: Number(feeINR) || 12999,
-      holdingFeeINR: Number(req.body.holdingFeeINR) || 2999,
-      remainingFeeINR: Number(req.body.remainingFeeINR) || Math.max(0, (Number(feeINR) || 12999) - (Number(req.body.holdingFeeINR) || 2999)),
+      feeINR: feeINR !== undefined ? Number(feeINR) : 0,
+      holdingFeeINR: req.body.holdingFeeINR !== undefined ? Number(req.body.holdingFeeINR) : 0,
+      remainingFeeINR: req.body.remainingFeeINR !== undefined ? Number(req.body.remainingFeeINR) : Math.max(0, (feeINR !== undefined ? Number(feeINR) : 0) - (req.body.holdingFeeINR !== undefined ? Number(req.body.holdingFeeINR) : 0)),
       roomSizeM2: Number(roomSizeM2) || 16,
       roomType: roomType || 'WG Room (Single Private)',
       imageUrl: imageList[0],

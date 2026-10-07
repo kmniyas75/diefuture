@@ -535,12 +535,12 @@
                     </div>
                     <div class="price-box-col">
                       <span class="price-k">Lead Fee</span>
-                      <span class="price-v" style="color:var(--electric);">₹${(room.feeINR || 12999).toLocaleString('en-IN')}</span>
+                      <span class="price-v" style="color:var(--electric);">₹${Number(room.feeINR !== undefined ? room.feeINR : 0).toLocaleString('en-IN')}</span>
                     </div>
                   </div>
 
                   <div class="btn-view-room">
-                    <span>View Room & Reserve (₹${(room.feeINR || 12999).toLocaleString('en-IN')})</span>
+                    <span>View Room & Reserve ${room.feeINR !== undefined ? '(₹' + Number(room.feeINR).toLocaleString('en-IN') + ')' : ''}</span>
                     <span>→</span>
                   </div>
                 </div>
