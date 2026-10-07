@@ -94,13 +94,34 @@
     /* Rooms Grid */
     .rooms-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-      gap: 28px;
-      padding: 48px 0 80px;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+      padding: 36px 0 64px;
     }
-    @media (max-width: 480px) {
+    @media (max-width: 640px) {
       .rooms-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 20px 0 48px;
+      }
+      .directory-hero {
+        padding: 28px 0 20px;
+      }
+      .directory-h {
+        font-size: 26px;
+        line-height: 1.2;
+        margin-bottom: 8px;
+      }
+      .directory-sub {
+        font-size: 13.5px;
+        margin-bottom: 16px;
+      }
+      .filter-bar {
+        padding: 10px 12px;
+        gap: 8px;
+      }
+      .room-thumb-wrap {
+        height: 190px;
       }
     }
 

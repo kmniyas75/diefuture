@@ -569,10 +569,203 @@
       text-align: center;
       transition: all .2s;
     }
-    .btn-print-receipt:hover {
-      background: #FFFFFF;
-      border-color: var(--ink-2);
-      color: var(--ink);
+    @media (max-width: 1024px) {
+      .room-layout-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+      .lead-checkout-card {
+        position: static !important;
+        top: auto;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .room-hero-section {
+        padding: 16px 0 40px;
+      }
+      .room-header-band {
+        padding: 10px 0;
+        font-size: 11px;
+      }
+      .room-header-flex {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .room-title-block {
+        margin-bottom: 18px;
+      }
+      .room-ref-tag {
+        font-size: 11px;
+        letter-spacing: .04em;
+        margin-bottom: 6px;
+      }
+      .room-main-title {
+        font-size: 22px;
+        line-height: 1.25;
+        letter-spacing: -.01em;
+        margin-bottom: 10px;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+      .room-address-bar {
+        font-size: 12.5px;
+        line-height: 1.4;
+        align-items: flex-start;
+        gap: 6px;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+
+      /* Gallery */
+      .gallery-container {
+        border-radius: 10px;
+        margin-bottom: 18px;
+      }
+      .gallery-main-image {
+        max-height: 280px;
+      }
+      .gallery-nav-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 18px;
+      }
+      .gallery-nav-prev { left: 8px; }
+      .gallery-nav-next { right: 8px; }
+      .gallery-counter-badge {
+        top: 8px;
+        right: 8px;
+        font-size: 10.5px;
+        padding: 3px 8px;
+      }
+      .gallery-badge-overlay {
+        bottom: 8px;
+        left: 8px;
+        font-size: 11px;
+        padding: 4px 8px;
+      }
+      .gallery-thumbs {
+        padding: 8px 10px;
+        gap: 8px;
+      }
+      .gallery-thumb-item {
+        width: 60px;
+        height: 44px;
+      }
+      .gallery-caption {
+        padding: 10px 12px;
+        font-size: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+
+      /* Specs */
+      .specs-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+      .spec-item {
+        padding: 10px 10px;
+        border-radius: 8px;
+      }
+      .spec-k {
+        font-size: 9.5px;
+        margin-bottom: 2px;
+      }
+      .spec-v {
+        font-size: 14.5px;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+      .spec-sub {
+        font-size: 10px;
+        line-height: 1.35;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+
+      /* Financial Callout */
+      .financial-callout {
+        padding: 12px 14px;
+        font-size: 12.5px;
+        margin-bottom: 20px;
+      }
+
+      /* Amenities */
+      .amenities-list {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 24px;
+      }
+      .section-subheading {
+        font-size: 18px;
+        margin-bottom: 12px;
+      }
+
+      /* Checkout Card */
+      .lead-checkout-card {
+        padding: 18px 14px;
+        border-radius: 12px;
+        position: static !important;
+      }
+      .fee-price-tag {
+        margin: 12px 0 16px;
+        padding-bottom: 12px;
+      }
+      .fee-val {
+        font-size: 28px;
+      }
+      .fee-amount-row {
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .fee-type {
+        font-size: 12px;
+      }
+      .deliverables-checklist {
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .deliverables-checklist li {
+        font-size: 12.5px;
+        gap: 8px;
+        line-height: 1.4;
+      }
+      .form-group-room {
+        margin-bottom: 10px;
+      }
+      .form-group-room label {
+        font-size: 11px;
+        margin-bottom: 4px;
+      }
+      .form-group-room input,
+      .form-group-room select {
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+      .btn-reserve-cta {
+        padding: 13px;
+        font-size: 14px;
+        margin-top: 14px;
+      }
+      .btn-wa-landlord {
+        padding: 12px 10px;
+        font-size: 13px;
+        text-align: center;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .dossier-contact-card {
+        padding: 14px;
+      }
+      .dossier-v {
+        font-size: 14px;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
     }
 
     /* OFFICIAL RESERVATION SLIP (Hidden on Screen, Exclusively Displayed on Print) */
