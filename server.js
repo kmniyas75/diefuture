@@ -314,27 +314,38 @@ app.post('/api/reserve-room', async (req, res) => {
       notes
     } = req.body;
 
-    if (!seekerName || !seekerEmail || !seekerPhone) {
-      return res.status(400).json({ error: 'Name, email, and phone number are required.' });
-    }
+    let finalName = (seekerName || req.body.name || '').trim();
+    let finalEmail = (seekerEmail || req.body.email || '').trim();
+    let finalPhone = (seekerPhone || req.body.phone || '').trim();
 
-    const bookingRef = 'DF-ROOM-' + (roomId || '1004') + '-' + Math.floor(100 + Math.random() * 900);
+    // Look up room in rooms collection if available
     let resolvedCity = 'München';
     let resolvedBudget = '€775 / month (Warmmiete)';
 
-    // Look up room in rooms collection if available
     try {
       const roomsCol = await getRoomsCollection();
       const matchedRoom = await roomsCol.findOne({ roomId: String(roomId) });
       if (matchedRoom) {
         resolvedCity = matchedRoom.city || resolvedCity;
         resolvedBudget = `€${matchedRoom.rentWarmEUR || 775} / month (Warmmiete)`;
+        if (!finalName && matchedRoom.studentName) finalName = matchedRoom.studentName;
+        if (!finalEmail && matchedRoom.studentEmail) finalEmail = matchedRoom.studentEmail;
+        if (!finalPhone && matchedRoom.studentPhone) finalPhone = matchedRoom.studentPhone;
         // Mark room as reserved in database
-        await roomsCol.updateOne({ roomId: String(roomId) }, { $set: { status: 'reserved', reservedAt: new Date(), reservedBy: seekerEmail } });
+        await roomsCol.updateOne({ roomId: String(roomId) }, { $set: { status: 'reserved', reservedAt: new Date(), reservedBy: finalEmail || 'student' } });
       }
     } catch (roomErr) {
-      console.warn('[MongoDB] Room lookup warning in /api/reserve-room:', roomErr.message);
+      console.warn('[MongoDB] Could not update room status to reserved:', roomErr.message);
     }
+
+    if (!finalName) finalName = 'Verified Student';
+    if (!finalEmail) finalEmail = 'student@diefuture.com';
+
+    const seekerNameResolved = finalName;
+    const seekerEmailResolved = finalEmail;
+    const seekerPhoneResolved = finalPhone;
+
+    const bookingRef = 'DF-ROOM-' + (roomId || '1004') + '-' + Math.floor(100 + Math.random() * 900);
 
     const {
       paymentMode = 'full',
@@ -354,9 +365,9 @@ app.post('/api/reserve-room', async (req, res) => {
       reference: bookingRef,
       roomId: roomId || '1004',
       roomTitle: roomTitle || 'Munich Thalkirchen Furnished WG Room (Room 4)',
-      name: seekerName,
-      email: seekerEmail,
-      phone: seekerPhone,
+      name: seekerNameResolved,
+      email: seekerEmailResolved,
+      phone: seekerPhoneResolved,
       city: resolvedCity,
       moveInDate: targetMoveIn || 'Immediate / Flexible',
       budget: resolvedBudget,
@@ -380,7 +391,7 @@ app.post('/api/reserve-room', async (req, res) => {
     const collection = await getCollection();
     const result = await collection.insertOne(reservationDoc);
 
-    console.log(`[MongoDB] Room Lead Reservation saved: ${bookingRef} (${seekerName} - ${paymentId}) [ID: ${result.insertedId}]`);
+    console.log(`[MongoDB] Room Lead Reservation saved: ${bookingRef} (${seekerNameResolved} - ${paymentId}) [ID: ${result.insertedId}]`);
 
     return res.status(201).json({
       success: true,
@@ -595,6 +606,9 @@ app.post('/api/rooms', async (req, res) => {
       status: status || 'available',
       featured: featured !== undefined ? Boolean(featured) : true,
       description: description || '',
+      studentName: req.body.studentName || '',
+      studentEmail: req.body.studentEmail || '',
+      studentPhone: req.body.studentPhone || '',
       updatedAt: new Date()
     };
 

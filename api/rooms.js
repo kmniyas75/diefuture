@@ -130,6 +130,9 @@ export default async function handler(req, res) {
         status: roomStatus || 'available',
         featured: featured !== undefined ? Boolean(featured) : true,
         description: description || '',
+        studentName: req.body.studentName || '',
+        studentEmail: req.body.studentEmail || '',
+        studentPhone: req.body.studentPhone || '',
         updatedAt: new Date()
       };
 

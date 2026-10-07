@@ -1273,6 +1273,42 @@
             </div>
           </div>
 
+          <!-- SECTION 2.5: STUDENT ALLOCATION (1-CLICK CHECKOUT PREFILL) -->
+          <div class="form-section-card" style="border: 1.5px solid #C7D2FE; background: #F8FAFC;">
+            <div class="form-section-header">
+              <div>
+                <div class="form-section-title" style="color: #3730A3;">
+                  <span>👤 Student Allocation &amp; 1-Click Checkout Setup</span>
+                </div>
+                <div class="form-section-sub">
+                  Add the student's details before sharing the link. The student just clicks and pays instantly via Razorpay without filling forms or dates!
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-top:12px;">
+              <div class="room-input-group">
+                <label style="color:#1E293B; font-weight:700;">Assigned Student Name</label>
+                <input type="text" id="roomFieldStudentName" placeholder="e.g. Rahul Sharma" style="background:#FFFFFF; font-weight:600;" />
+              </div>
+              <div class="room-input-group">
+                <label style="color:#1E293B; font-weight:700;">Student Email</label>
+                <input type="email" id="roomFieldStudentEmail" placeholder="e.g. rahul@example.com" style="background:#FFFFFF;" />
+              </div>
+              <div class="room-input-group">
+                <label style="color:#1E293B; font-weight:700;">Student Phone / WhatsApp</label>
+                <input type="tel" id="roomFieldStudentPhone" placeholder="e.g. +91 98765 43210" style="background:#FFFFFF;" />
+              </div>
+            </div>
+
+            <div style="margin-top:12px; font-size:12px; line-height:1.45; background:#EEF2FF; border:1px solid #C7D2FE; border-radius:8px; padding:10px 14px; color:#3730A3; display:flex; align-items:center; gap:8px;">
+              <span style="font-size:18px;">⚡</span>
+              <div>
+                <strong>Zero-Input 1-Click Pay:</strong> When the student opens this room link, they will see their name pre-verified and can pay directly via Razorpay in 1 tap. No tedious intake form, no move-in date needed!
+              </div>
+            </div>
+          </div>
+
           <!-- SECTION 3: SPECS & PHOTOS -->
           <div class="form-section-card">
             <div class="form-section-header">
@@ -1838,6 +1874,9 @@
     const roomFieldTitle = document.getElementById('roomFieldTitle');
     const roomFieldCity = document.getElementById('roomFieldCity');
     const roomFieldAddress = document.getElementById('roomFieldAddress');
+    const roomFieldStudentName = document.getElementById('roomFieldStudentName');
+    const roomFieldStudentEmail = document.getElementById('roomFieldStudentEmail');
+    const roomFieldStudentPhone = document.getElementById('roomFieldStudentPhone');
     const roomFieldRent = document.getElementById('roomFieldRent');
     const roomFieldDeposit = document.getElementById('roomFieldDeposit');
     const roomFieldFee = document.getElementById('roomFieldFee');
@@ -2160,6 +2199,9 @@
       if (roomFieldRemainingFee) roomFieldRemainingFee.value = '10000';
       updateHoldingModeUI();
       autoAssignRoomId();
+      if (roomFieldStudentName) roomFieldStudentName.value = '';
+      if (roomFieldStudentEmail) roomFieldStudentEmail.value = '';
+      if (roomFieldStudentPhone) roomFieldStudentPhone.value = '';
       if (roomFieldDescription) roomFieldDescription.value = '';
       if (roomFieldShowGuarantees) roomFieldShowGuarantees.checked = true;
       if (roomFieldGuaranteeConcierge) roomFieldGuaranteeConcierge.checked = true;
@@ -2197,6 +2239,9 @@
         feeINR: Number(roomFieldFee.value) || 12999,
         holdingFeeINR: Number(roomFieldHoldingFee ? roomFieldHoldingFee.value : 2999) || 2999,
         remainingFeeINR: Number(roomFieldRemainingFee ? roomFieldRemainingFee.value : 10000) || 10000,
+        studentName: roomFieldStudentName ? roomFieldStudentName.value.trim() : '',
+        studentEmail: roomFieldStudentEmail ? roomFieldStudentEmail.value.trim() : '',
+        studentPhone: roomFieldStudentPhone ? roomFieldStudentPhone.value.trim() : '',
         roomType: roomFieldType.value,
         roomSizeM2: Number(roomFieldSize.value) || 16,
         transit: roomFieldTransit.value.trim(),
@@ -2306,6 +2351,13 @@
           <td>
             <strong>${escapeHtml(room.title)}</strong><br>
             <span style="font-size:12px; color:var(--ink-2);">${escapeHtml(room.address || room.city)}</span>
+            ${room.studentName ? `
+              <div style="margin-top:4px;">
+                <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700; background:#EEF2FF; color:#4338CA; border:1px solid #C7D2FE; border-radius:4px; padding:2px 7px;">
+                  👤 Assigned: ${escapeHtml(room.studentName)}${room.studentPhone ? ` · ${escapeHtml(room.studentPhone)}` : ''}
+                </span>
+              </div>
+            ` : ''}
           </td>
           <td>
             <strong style="color:var(--royal); font-size:15px;">€${room.rentWarmEUR || 775}</strong> /mo<br>
@@ -2379,6 +2431,9 @@
           roomFieldTitle.value = room.title || '';
           roomFieldCity.value = room.city || '';
           roomFieldAddress.value = room.address || '';
+          if (roomFieldStudentName) roomFieldStudentName.value = room.studentName || '';
+          if (roomFieldStudentEmail) roomFieldStudentEmail.value = room.studentEmail || '';
+          if (roomFieldStudentPhone) roomFieldStudentPhone.value = room.studentPhone || '';
           roomFieldRent.value = room.rentWarmEUR || '';
           roomFieldDeposit.value = room.depositEUR || '';
           roomFieldFee.value = room.feeINR !== undefined ? room.feeINR : 12999;

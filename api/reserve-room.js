@@ -46,24 +46,43 @@ export default async function handler(req, res) {
       notes
     } = req.body;
 
-    if (!seekerName || !seekerEmail || !seekerPhone) {
-      return res.status(400).json({ error: 'Seeker name, email, and phone are required.' });
-    }
+    let finalName = (seekerName || req.body.name || '').trim();
+    let finalEmail = (seekerEmail || req.body.email || '').trim();
+    let finalPhone = (seekerPhone || req.body.phone || '').trim();
 
-    const bookingRef = `DF-ROOM-${roomId || '1004'}-` + Math.floor(100 + Math.random() * 900);
     const db = await getDb();
+    let resolvedCity = 'Germany';
+    let resolvedBudget = '€775 / month (Warmmiete)';
 
-    // Mark room as reserved if roomId provided
+    // Look up room in rooms collection if available
     if (roomId) {
       try {
-        await db.collection(ROOMS_COLLECTION).updateOne(
-          { roomId: String(roomId) },
-          { $set: { status: 'reserved', reservedAt: new Date(), reservedBy: seekerEmail } }
-        );
+        const matchedRoom = await db.collection(ROOMS_COLLECTION).findOne({ roomId: String(roomId) });
+        if (matchedRoom) {
+          resolvedCity = matchedRoom.city || resolvedCity;
+          resolvedBudget = `€${matchedRoom.rentWarmEUR || 775} / month (Warmmiete)`;
+          if (!finalName && matchedRoom.studentName) finalName = matchedRoom.studentName;
+          if (!finalEmail && matchedRoom.studentEmail) finalEmail = matchedRoom.studentEmail;
+          if (!finalPhone && matchedRoom.studentPhone) finalPhone = matchedRoom.studentPhone;
+          // Mark room as reserved in database
+          await db.collection(ROOMS_COLLECTION).updateOne(
+            { roomId: String(roomId) },
+            { $set: { status: 'reserved', reservedAt: new Date(), reservedBy: finalEmail || 'student' } }
+          );
+        }
       } catch (e) {
         console.warn('Room status update notice:', e.message);
       }
     }
+
+    if (!finalName) finalName = 'Verified Student';
+    if (!finalEmail) finalEmail = 'student@diefuture.com';
+
+    const seekerNameResolved = finalName;
+    const seekerEmailResolved = finalEmail;
+    const seekerPhoneResolved = finalPhone;
+
+    const bookingRef = `DF-ROOM-${roomId || '1004'}-` + Math.floor(100 + Math.random() * 900);
 
     const {
       paymentMode = 'full',
@@ -73,26 +92,26 @@ export default async function handler(req, res) {
     } = req.body;
 
     let packageLabel = `Direct Verified Room Lead (${amount ? '₹' + amount : 'Variable Fee'})`;
-    let emailSubject = `💰 Room Lead Reserved: ${bookingRef} — ${seekerName} (₹${amount || 12999})`;
+    let emailSubject = `💰 Room Lead Reserved: ${bookingRef} — ${seekerNameResolved} (₹${amount || 12999})`;
 
     if (paymentMode === 'holding_initial') {
       packageLabel = `Viewing Holding Fee (₹${amount || 2999} Paid - Refundable Deposit)`;
-      emailSubject = `🛡️ Viewing Holding Fee Paid: ${bookingRef} — ${seekerName} (₹${amount || 2999})`;
+      emailSubject = `🛡️ Viewing Holding Fee Paid: ${bookingRef} — ${seekerNameResolved} (₹${amount || 2999})`;
     } else if (paymentMode === 'holding_paid') {
       packageLabel = `Lease Handover Remaining Balance (₹${amount || 10000} Paid - Settled in Full)`;
-      emailSubject = `🎉 Remaining Balance Paid: ${bookingRef} — ${seekerName} (₹${amount || 10000})`;
+      emailSubject = `🎉 Remaining Balance Paid: ${bookingRef} — ${seekerNameResolved} (₹${amount || 10000})`;
     }
 
     const reservationDoc = {
       reference: bookingRef,
       roomId: roomId || '1004',
       roomTitle: roomTitle || 'Munich Thalkirchen Furnished WG Room (Room 4)',
-      name: seekerName,
-      email: seekerEmail,
-      phone: seekerPhone,
-      city: 'Germany',
+      name: seekerNameResolved,
+      email: seekerEmailResolved,
+      phone: seekerPhoneResolved,
+      city: resolvedCity,
       moveInDate: targetMoveIn || 'Immediate / Flexible',
-      budget: '€775 / month (Warmmiete)',
+      budget: resolvedBudget,
       roomType: 'WG Room (Single Private)',
       package: packageLabel,
       paymentMode,
@@ -139,14 +158,14 @@ export default async function handler(req, res) {
                   <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Property Title:</td><td style="font-weight:600;">${roomTitle}</td></tr>
                   <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Payment Type:</td><td style="font-weight:600; color:#0F766E;">${packageLabel}</td></tr>
                   <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Amount Collected:</td><td style="font-weight:bold; font-size:16px; color:#0055FF;">₹${amount ? Number(amount).toLocaleString('en-IN') : '12,999'}</td></tr>
-                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Seeker Name:</td><td style="font-weight:bold; color:#1e293b;">${seekerName}</td></tr>
-                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Email Address:</td><td><a href="mailto:${seekerEmail}" style="color:#0055FF;">${seekerEmail}</a></td></tr>
-                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Phone / WhatsApp:</td><td><strong><a href="https://wa.me/${seekerPhone.replace(/[^0-9]/g, '')}" style="color:#16a34a;">${seekerPhone}</a></strong></td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Seeker Name:</td><td style="font-weight:bold; color:#1e293b;">${seekerNameResolved}</td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Email Address:</td><td><a href="mailto:${seekerEmailResolved}" style="color:#0055FF;">${seekerEmailResolved}</a></td></tr>
+                  <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 0; color:#64748B;">Phone / WhatsApp:</td><td><strong><a href="https://wa.me/${seekerPhoneResolved.replace(/[^0-9]/g, '')}" style="color:#16a34a;">${seekerPhoneResolved || 'N/A'}</a></strong></td></tr>
                   <tr><td style="padding:8px 0; color:#64748B;">Target Move-in:</td><td>${targetMoveIn || 'Immediate / Flexible'}</td></tr>
                 </table>
 
                 <div style="margin-top:24px; padding-top:16px; border-top:1px solid #e2e8f0; display:flex; gap:10px;">
-                  <a href="https://wa.me/${seekerPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hi ' + seekerName + ', this is DieFuture Concierge Desk confirming your reservation ' + bookingRef + ' for ' + roomTitle + '.')}" style="background:#25D366; color:#ffffff; padding:12px 20px; text-decoration:none; border-radius:6px; font-weight:bold; font-size:13px; display:inline-block;">💬 Chat on WhatsApp →</a>
+                  <a href="https://wa.me/${seekerPhoneResolved.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hi ' + seekerNameResolved + ', this is DieFuture Concierge Desk confirming your reservation ' + bookingRef + ' for ' + roomTitle + '.')}" style="background:#25D366; color:#ffffff; padding:12px 20px; text-decoration:none; border-radius:6px; font-weight:bold; font-size:13px; display:inline-block;">💬 Chat on WhatsApp →</a>
                   <a href="https://www.diefuture.com/admin.html" style="background:#0055FF; color:#ffffff; padding:12px 20px; text-decoration:none; border-radius:6px; font-weight:bold; font-size:13px; display:inline-block; margin-left:8px;">Open Admin Dashboard →</a>
                 </div>
               </div>

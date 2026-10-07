@@ -1599,37 +1599,33 @@
                 <!-- Rendered dynamically by applyRoomData() -->
               </ul>
 
-              <!-- Customer Intake Form -->
-              <form id="reserveLeadForm">
-                <div class="form-group-room">
-                  <label for="seekerName">Your Full Name *</label>
-                  <input type="text" id="seekerName" required placeholder="e.g. Rahul Sharma" />
+              <!-- 1-Click Razorpay Reservation Block (Zero-Input Frictionless Checkout) -->
+              <div id="checkoutActionBox" style="margin-top: 18px;">
+                <!-- Personalized Student Allocation Card (Rendered dynamically if student assigned) -->
+                <div id="studentAllocatedBanner" style="display:none; background:#EEF2FF; border:1px solid #C7D2FE; border-radius:10px; padding:12px 14px; margin-bottom:14px; text-align:left;">
+                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+                    <span style="font-size:11px; font-weight:800; font-family:var(--f-mono); text-transform:uppercase; color:#4338CA; letter-spacing:0.04em;">EXCLUSIVE ALLOCATION</span>
+                    <span style="font-size:11px; background:#DCFCE7; color:#166534; font-weight:700; padding:2px 6px; border-radius:4px; border:1px solid #86EFAC;">✓ Pre-Verified</span>
+                  </div>
+                  <div style="font-size:14px; font-weight:700; color:#1E1B4B; display:flex; align-items:center; gap:6px;">
+                    <span>Prepared for:</span>
+                    <span id="allocatedStudentName" style="color:#4338CA;">Rahul Sharma</span>
+                  </div>
+                  <div id="allocatedStudentContactRow" style="font-size:12px; color:#475569; margin-top:3px;">
+                    Phone: <span id="allocatedStudentPhone" style="font-weight:600; color:#1E293B;">+91 98765 43210</span>
+                  </div>
                 </div>
 
-                <div class="form-group-room">
-                  <label for="seekerEmail">Email Address *</label>
-                  <input type="email" id="seekerEmail" required placeholder="rahul@example.com" />
-                </div>
-
-                <div class="form-group-room">
-                  <label for="seekerPhone">Phone / WhatsApp Number *</label>
-                  <input type="tel" id="seekerPhone" required placeholder="+91 98765 43210" />
-                </div>
-
-                <div class="form-group-room">
-                  <label for="seekerMoveIn">Target Move-in Date</label>
-                  <input type="date" id="seekerMoveIn" />
-                </div>
-
-                <button type="submit" class="btn-reserve-cta" id="payRazorpayBtn">
-                  <span id="payBtnLabel">Pay ₹12,999 & Reserve Room Lead</span>
+                <!-- Instant 1-Click Pay CTA Button -->
+                <button type="button" class="btn-reserve-cta" id="payRazorpayBtn" style="cursor:pointer; width:100%;">
+                  <span id="payBtnLabel">Pay ₹12,999 &amp; Reserve Room Lead</span>
                   <span style="font-size:18px;">→</span>
                 </button>
-              </form>
 
-              <div style="font-size:11.5px; color:var(--ink-3); text-align:center; margin-top:14px; line-height:1.4;">
-                🔒 256-bit Encrypted Checkout via Razorpay.<br>
-                Verified &amp; Protected by DieFuture Relocations.
+                <div style="font-size:11.5px; color:var(--ink-3); text-align:center; margin-top:12px; line-height:1.45;">
+                  🔒 <strong>Instant 1-Click Checkout:</strong> UPI, Cards, NetBanking via Razorpay.<br>
+                  No forms or inputs needed · Instant booking confirmation.
+                </div>
               </div>
             </div>
 
@@ -1804,9 +1800,12 @@
       const paymentBreakdownBox = document.getElementById('paymentBreakdownBox');
       const paymentModeTopBanner = document.getElementById('paymentModeTopBanner');
       const payBtnLabel = document.getElementById('payBtnLabel');
-      const captionCategoryVal = document.getElementById('captionCategoryVal');
+      const studentAllocatedBanner = document.getElementById('studentAllocatedBanner');
+      const allocatedStudentName = document.getElementById('allocatedStudentName');
+      const allocatedStudentContactRow = document.getElementById('allocatedStudentContactRow');
+      const allocatedStudentPhone = document.getElementById('allocatedStudentPhone');
+      const payRazorpayBtn = document.getElementById('payRazorpayBtn');
 
-      const form = document.getElementById('reserveLeadForm');
       const checkoutCard = document.getElementById('checkoutCard');
       const prePaymentView = document.getElementById('prePaymentView');
       const unlockedDossierView = document.getElementById('unlockedDossierView');
@@ -1818,15 +1817,6 @@
 
       let currentPhotoIndex = 0;
       let roomPhotos = [];
-
-      // Set default move-in date
-      const moveInInput = document.getElementById('seekerMoveIn');
-      if (moveInInput) {
-        const d = new Date();
-        d.setDate(d.getDate() + 7);
-        moveInInput.value = d.toISOString().split('T')[0];
-        moveInInput.min = new Date().toISOString().split('T')[0];
-      }
 
       function getApiBase() {
         const stored = localStorage.getItem('df_api_endpoint');
@@ -2006,6 +1996,24 @@
             notesBlock.style.display = 'block';
           } else {
             notesBlock.style.display = 'none';
+          }
+        }
+
+        // Render Allocated Student Banner (if assigned by admin before sharing link)
+        if (studentAllocatedBanner && allocatedStudentName) {
+          if (currentRoom.studentName && currentRoom.studentName.trim()) {
+            allocatedStudentName.textContent = currentRoom.studentName.trim();
+            if (allocatedStudentPhone) {
+              if (currentRoom.studentPhone && currentRoom.studentPhone.trim()) {
+                allocatedStudentPhone.textContent = currentRoom.studentPhone.trim();
+                if (allocatedStudentContactRow) allocatedStudentContactRow.style.display = 'block';
+              } else {
+                if (allocatedStudentContactRow) allocatedStudentContactRow.style.display = 'none';
+              }
+            }
+            studentAllocatedBanner.style.display = 'block';
+          } else {
+            studentAllocatedBanner.style.display = 'none';
           }
         }
 
@@ -2236,19 +2244,16 @@
         });
       }
 
-      // Handle Form Submit -> Launch Razorpay Standard Checkout
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const name = document.getElementById('seekerName').value.trim();
-        const email = document.getElementById('seekerEmail').value.trim();
-        const phone = document.getElementById('seekerPhone').value.trim();
-        const moveIn = document.getElementById('seekerMoveIn').value;
-
-        if (!name || !email || !phone) {
-          alert('Please fill out your name, email, and phone number.');
+      // Direct 1-Click Razorpay Checkout Handler (Zero-Input Frictionless Payment)
+      async function initiatePayment() {
+        if (!currentRoom) {
+          alert('Room details are loading. Please wait a moment.');
           return;
         }
+
+        const name = (currentRoom.studentName || 'Verified Student').trim();
+        const email = (currentRoom.studentEmail || 'student@diefuture.com').trim();
+        const phone = (currentRoom.studentPhone || '').trim();
 
         const paymentMode = currentRoom.paymentMode || 'full';
         let payableINR = currentRoom.feeINR || 12999;
@@ -2266,18 +2271,32 @@
         const origBtnHtml = payBtn ? payBtn.innerHTML : '';
         if (payBtn) {
           payBtn.disabled = true;
-          payBtn.innerHTML = '<span>Creating Secure Order...</span>';
+          payBtn.innerHTML = '<span>Opening Secure Razorpay...</span>';
         }
 
-        if (typeof Razorpay === 'undefined') {
-          console.warn('Razorpay script not loaded, using simulation fallback.');
+        const mobileBnavActionBtn = document.getElementById('mobileBnavActionBtn');
+        const origMobileHtml = mobileBnavActionBtn ? mobileBnavActionBtn.innerHTML : '';
+        if (mobileBnavActionBtn) {
+          mobileBnavActionBtn.disabled = true;
+        }
+
+        function restoreButtons() {
           if (payBtn) {
             payBtn.disabled = false;
             payBtn.innerHTML = origBtnHtml;
           }
+          if (mobileBnavActionBtn) {
+            mobileBnavActionBtn.disabled = false;
+            mobileBnavActionBtn.innerHTML = origMobileHtml;
+          }
+        }
+
+        if (typeof Razorpay === 'undefined') {
+          console.warn('Razorpay script not loaded, using simulation fallback.');
+          restoreButtons();
           handlePaymentSuccess({
             razorpay_payment_id: 'pay_test_' + Math.random().toString(36).substring(2, 10),
-            name, email, phone, moveIn
+            name, email, phone
           });
           return;
         }
@@ -2298,6 +2317,7 @@
                 city: currentRoom.city,
                 seekerName: name,
                 seekerEmail: email,
+                seekerPhone: phone,
                 paymentMode: paymentMode,
                 payableINR: payableINR
               }
@@ -2322,9 +2342,9 @@
             image: "./assets/diefuture-logo.jpg",
             order_id: orderData.order_id,
             prefill: {
-              name: name,
-              email: email,
-              contact: phone
+              name: (name !== 'Verified Student') ? name : '',
+              email: (email !== 'student@diefuture.com') ? email : '',
+              contact: phone || ''
             },
             theme: {
               color: "#084BE0"
@@ -2348,10 +2368,7 @@
 
                 if (!verifyData.verified) {
                   alert('Payment verification failed: ' + (verifyData.error || 'Invalid payment signature.'));
-                  if (payBtn) {
-                    payBtn.disabled = false;
-                    payBtn.innerHTML = origBtnHtml;
-                  }
+                  restoreButtons();
                   return;
                 }
 
@@ -2359,24 +2376,18 @@
                 handlePaymentSuccess({
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_order_id: response.razorpay_order_id,
-                  name, email, phone, moveIn
+                  name, email, phone
                 });
               } catch (verifyErr) {
                 console.error('Payment verification failed:', verifyErr);
                 alert('Payment was captured, but signature verification timed out. Please contact our WhatsApp desk with payment ID: ' + response.razorpay_payment_id);
-                if (payBtn) {
-                  payBtn.disabled = false;
-                  payBtn.innerHTML = origBtnHtml;
-                }
+                restoreButtons();
               }
             },
             modal: {
               ondismiss: function () {
                 console.log('Razorpay modal closed by user.');
-                if (payBtn) {
-                  payBtn.disabled = false;
-                  payBtn.innerHTML = origBtnHtml;
-                }
+                restoreButtons();
               }
             }
           };
@@ -2385,21 +2396,19 @@
           rzp.on('payment.failed', function (resp) {
             console.error('Razorpay payment failed:', resp.error);
             alert(`Payment failed: ${resp.error.description || resp.error.reason || 'Transaction could not be completed.'}`);
-            if (payBtn) {
-              payBtn.disabled = false;
-              payBtn.innerHTML = origBtnHtml;
-            }
+            restoreButtons();
           });
           rzp.open();
         } catch (err) {
           console.error('Razorpay checkout error:', err);
           alert(`Unable to initialize payment gateway: ${err.message}. Please try again or contact our WhatsApp desk.`);
-          if (payBtn) {
-            payBtn.disabled = false;
-            payBtn.innerHTML = origBtnHtml;
-          }
+          restoreButtons();
         }
-      });
+      }
+
+      if (payRazorpayBtn) {
+        payRazorpayBtn.addEventListener('click', initiatePayment);
+      }
 
       // Handle successful payment
       async function handlePaymentSuccess(payData) {
@@ -2423,7 +2432,7 @@
               seekerName: payData.name,
               seekerEmail: payData.email,
               seekerPhone: payData.phone,
-              targetMoveIn: payData.moveIn,
+              targetMoveIn: payData.moveIn || 'Immediate / Flexible',
               paymentId: payData.razorpay_payment_id,
               amount: payableINR,
               paymentMode: paymentMode,
@@ -2463,7 +2472,7 @@
       function unlockDossier(data) {
         lastUnlockedReservation = {
           ...data,
-          phone: (document.getElementById('seekerPhone')?.value) || ''
+          phone: data.phone || currentRoom?.studentPhone || ''
         };
 
         checkoutCard.classList.add('unlocked');
@@ -2620,7 +2629,7 @@
           });
         }
 
-        // Mobile Sticky Bottom Nav Action Listener
+        // Mobile Sticky Bottom Nav Action Listener -> 1-Click Pay directly
         const mobileBnavActionBtn = document.getElementById('mobileBnavActionBtn');
         if (mobileBnavActionBtn) {
           mobileBnavActionBtn.addEventListener('click', () => {
@@ -2628,14 +2637,7 @@
               unlockedDossierView.scrollIntoView({ behavior: 'smooth', block: 'center' });
               return;
             }
-            const targetForm = document.getElementById('reserveLeadForm');
-            if (targetForm) {
-              targetForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              setTimeout(() => {
-                const seekerNameInput = document.getElementById('seekerName');
-                if (seekerNameInput) seekerNameInput.focus();
-              }, 300);
-            }
+            initiatePayment();
           });
         }
 
