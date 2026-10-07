@@ -719,12 +719,15 @@
         <form id="roomUpsertForm">
           <div class="room-form-grid">
             <div class="room-input-group">
-              <label>Room ID / URL Slug *</label>
-              <div style="display:flex; gap:6px;">
-                <input type="text" id="roomFieldId" required placeholder="e.g. 1004" style="flex:1;" />
-                <button type="button" id="btnGenUniqueId" class="btn-line" style="padding:0 10px; font-size:11.5px; white-space:nowrap; background:#FFFFFF;" title="Generate new unique URL slug">🔄 New ID</button>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <label style="margin-bottom:0;">Room ID / URL Slug *</label>
+                <span style="font-size:10.5px; font-weight:700; color:#059669; background:#ECFDF5; padding:2px 7px; border-radius:4px; font-family:var(--f-mono);">✓ Auto-Generated</span>
               </div>
-              <small style="font-size:11px; color:#64748B; margin-top:4px; display:block;">Share Link: <code style="font-size:11px; color:var(--royal);">/room?id=<span id="slugPreview">1004</span></code></small>
+              <div style="display:flex; gap:6px;">
+                <input type="text" id="roomFieldId" required placeholder="e.g. 1005" style="flex:1; font-weight:600; font-family:var(--f-mono);" />
+                <button type="button" id="btnGenUniqueId" class="btn-line" style="padding:0 10px; font-size:11.5px; white-space:nowrap; background:#FFFFFF;" title="Generate another new unique URL slug">🔄 New ID</button>
+              </div>
+              <small style="font-size:11px; color:#64748B; margin-top:4px; display:block;">Private Share Link: <code style="font-size:11px; color:var(--royal); font-weight:600;">/room?id=<span id="slugPreview">1005</span></code></small>
             </div>
 
             <div class="room-input-group" style="grid-column: span 2;">
@@ -1345,6 +1348,43 @@
       });
     }
 
+    // --- Automatic Room ID & Slug Generation ---
+    function getNextUniqueRoomId(preferredBase) {
+      if (preferredBase) {
+        const raw = String(preferredBase).trim().replace(/^DF-ROOM-/i, '');
+        const exists = allAdminRooms.some(r => String(r.roomId).toLowerCase() === raw.toLowerCase());
+        if (!exists) return raw;
+
+        // If preferred ID already exists in catalog, auto-generate next letter suffix: 1004-B, 1004-C, etc.
+        const base = raw.split('-')[0];
+        const letters = 'BCDEFGHIJKLMNOPQRSTUVWXYZ';
+        for (let char of letters) {
+          const candidate = `${base}-${char}`;
+          if (!allAdminRooms.some(r => String(r.roomId).toLowerCase() === candidate.toLowerCase())) {
+            return candidate;
+          }
+        }
+        return `${base}-${Date.now().toString().slice(-4)}`;
+      }
+
+      // No preferred base: find highest numeric ID across active rooms + 1
+      const numericIds = allAdminRooms
+        .map(r => parseInt(String(r.roomId).replace(/\D+/g, ''), 10))
+        .filter(n => !isNaN(n) && n >= 1000 && n < 900000);
+
+      if (numericIds.length > 0) {
+        return String(Math.max(...numericIds) + 1);
+      }
+      return '1005';
+    }
+
+    function autoAssignRoomId(preferredBase) {
+      const nextId = getNextUniqueRoomId(preferredBase);
+      roomFieldId.value = nextId;
+      if (slugPreview) slugPreview.textContent = encodeURIComponent(nextId);
+      return nextId;
+    }
+
     if (roomFieldId && slugPreview) {
       roomFieldId.addEventListener('input', () => {
         slugPreview.textContent = encodeURIComponent(roomFieldId.value.trim() || 'xxxx');
@@ -1353,13 +1393,19 @@
 
     if (btnGenUniqueId && roomFieldId) {
       btnGenUniqueId.addEventListener('click', () => {
-        const raw = roomFieldId.value.trim();
-        const base = raw ? raw.split('-')[0] : '1004';
-        const suffix = String.fromCharCode(65 + Math.floor(Math.random() * 26)); // A-Z
-        const newSlug = `${base}-${suffix}`;
-        roomFieldId.value = newSlug;
-        if (slugPreview) slugPreview.textContent = encodeURIComponent(newSlug);
-        showNotice(`✓ Generated unique link ID "${newSlug}" (preview: /room?id=${newSlug})`, 'info');
+        const current = roomFieldId.value.trim();
+        const nextId = autoAssignRoomId(current ? `${current.split('-')[0]}-B` : null);
+        showNotice(`✓ Auto-generated next unique link ID "${nextId}" (share link: /room?id=${nextId})`, 'info');
+      });
+    }
+
+    if (stayforallUrlInput) {
+      stayforallUrlInput.addEventListener('input', () => {
+        const val = stayforallUrlInput.value.trim();
+        const m = val.match(/rooms\/(\d+)/i) || val.match(/^(\d{3,6})$/);
+        if (m && m[1] && !roomUpsertForm.dataset.editing) {
+          autoAssignRoomId(m[1]);
+        }
       });
     }
 
@@ -1471,16 +1517,13 @@
           const r = data.room;
 
           // Populate form fields
-          if (r.roomId) {
-            roomFieldId.value = r.roomId;
-            if (slugPreview) slugPreview.textContent = encodeURIComponent(r.roomId);
-
-            const existing = allAdminRooms.find(rm => String(rm.roomId) === String(r.roomId));
-            if (existing) {
-              showNotice(`ℹ️ Note: Room ID "${r.roomId}" already exists in your catalog (current fee: ₹${(existing.feeINR || 12999).toLocaleString('en-IN')}). Saving will update it. If you want a separate link with a different fee (e.g. ₹19,000), tap "🔄 New ID" to generate a unique URL slug (e.g. ${r.roomId}-B).`, 'info');
-            } else {
-              showNotice(`✓ Successfully imported StayforAll room "${r.title || r.roomId}" with ${imgs.length} photo(s)! Configure your DieFuture fee and hit publish.`, 'success');
-            }
+          // Populate form fields with automatic unique ID
+          const rawId = r.roomId || (inputVal.match(/rooms\/(\d+)/i)?.[1]) || '';
+          const assignedId = autoAssignRoomId(rawId);
+          if (assignedId !== rawId) {
+            showNotice(`✓ Auto-assigned unique Room ID "${assignedId}" (Room "${rawId}" is already active with another fee). Share link: /room?id=${assignedId}`, 'info');
+          } else {
+            showNotice(`✓ Successfully imported StayforAll room "${assignedId}"! Share link: /room?id=${assignedId}`, 'success');
           }
           if (r.title) roomFieldTitle.value = r.title;
           if (r.city) roomFieldCity.value = r.city;
@@ -1528,10 +1571,11 @@
     // Reset Form
     btnResetRoomForm.addEventListener('click', () => {
       roomUpsertForm.reset();
+      delete roomUpsertForm.dataset.editing;
       setAdminImages([]);
       fetchNotice.style.display = 'none';
       roomFieldFee.value = '12999';
-      if (slugPreview) slugPreview.textContent = '1004';
+      autoAssignRoomId();
       if (roomFieldDescription) roomFieldDescription.value = '';
       if (roomFieldShowGuarantees) roomFieldShowGuarantees.checked = true;
       if (roomFieldGuaranteeConcierge) roomFieldGuaranteeConcierge.checked = true;
@@ -1594,6 +1638,7 @@
         });
 
         if (res.ok) {
+          delete roomUpsertForm.dataset.editing;
           showNotice(`✓ Room "${payload.title}" (${adminImages.length} photos) saved successfully to MongoDB!`, 'success');
           fetchAdminRooms();
         } else {
@@ -1619,6 +1664,9 @@
           const data = await res.json();
           allAdminRooms = data.rooms || [];
           renderAdminRoomsTable();
+          if (!roomUpsertForm.dataset.editing && (!roomFieldId.value || roomFieldId.value === '1004')) {
+            autoAssignRoomId();
+          }
           return;
         }
       } catch (err) {
@@ -1631,6 +1679,9 @@
           const data = await res.json();
           allAdminRooms = data.rooms || [];
           renderAdminRoomsTable();
+          if (!roomUpsertForm.dataset.editing && (!roomFieldId.value || roomFieldId.value === '1004')) {
+            autoAssignRoomId();
+          }
         }
       } catch (e) {}
     }
@@ -1704,6 +1755,7 @@
           const room = allAdminRooms.find(r => r.roomId === roomId || r._id === roomId);
           if (!room) return;
 
+          roomUpsertForm.dataset.editing = room.roomId;
           roomFieldId.value = room.roomId || '';
           if (slugPreview) slugPreview.textContent = room.roomId || '';
           roomFieldTitle.value = room.title || '';
