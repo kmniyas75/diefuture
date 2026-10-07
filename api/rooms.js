@@ -39,7 +39,7 @@ export default async function handler(req, res) {
         if (ObjectId.isValid(id) && id.length === 24) {
           query = { $or: [{ roomId: String(id) }, { _id: new ObjectId(id) }] };
         }
-        const room = await col.findOne(query);
+        const room = await col.find(query).sort({ updatedAt: -1, createdAt: -1 }).limit(1).next();
         if (!room) {
           return res.status(404).json({ success: false, error: 'Room not found' });
         }
@@ -119,12 +119,20 @@ export default async function handler(req, res) {
         status: roomStatus || 'available',
         featured: featured !== undefined ? Boolean(featured) : true,
         description: description || '',
-        createdAt: new Date(),
         updatedAt: new Date()
       };
 
-      const result = await col.insertOne(newRoom);
-      return res.status(201).json({ success: true, id: result.insertedId, room: newRoom });
+      const result = await col.findOneAndUpdate(
+        { roomId: String(roomId) },
+        {
+          $set: newRoom,
+          $setOnInsert: { createdAt: new Date() }
+        },
+        { upsert: true, returnDocument: 'after' }
+      );
+
+      const savedRoom = result.value || result || newRoom;
+      return res.status(200).json({ success: true, id: savedRoom._id, roomId, room: savedRoom });
     }
 
     // 3. PATCH (Update Room)

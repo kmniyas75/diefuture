@@ -719,8 +719,12 @@
         <form id="roomUpsertForm">
           <div class="room-form-grid">
             <div class="room-input-group">
-              <label>Room ID *</label>
-              <input type="text" id="roomFieldId" required placeholder="e.g. 1004" />
+              <label>Room ID / URL Slug *</label>
+              <div style="display:flex; gap:6px;">
+                <input type="text" id="roomFieldId" required placeholder="e.g. 1004" style="flex:1;" />
+                <button type="button" id="btnGenUniqueId" class="btn-line" style="padding:0 10px; font-size:11.5px; white-space:nowrap; background:#FFFFFF;" title="Generate new unique URL slug">🔄 New ID</button>
+              </div>
+              <small style="font-size:11px; color:#64748B; margin-top:4px; display:block;">Share Link: <code style="font-size:11px; color:var(--royal);">/room.html?id=<span id="slugPreview">1004</span></code></small>
             </div>
 
             <div class="room-input-group" style="grid-column: span 2;">
@@ -1233,6 +1237,8 @@
     const roomFieldAnmeldung = document.getElementById('roomFieldAnmeldung');
     const btnResetRoomForm = document.getElementById('btnResetRoomForm');
     const btnSubmitRoom = document.getElementById('btnSubmitRoom');
+    const btnGenUniqueId = document.getElementById('btnGenUniqueId');
+    const slugPreview = document.getElementById('slugPreview');
 
     const roomsTbody = document.getElementById('roomsTbody');
     const emptyRoomsState = document.getElementById('emptyRoomsState');
@@ -1240,6 +1246,24 @@
 
     let allAdminRooms = [];
     let adminImages = [];
+
+    if (roomFieldId && slugPreview) {
+      roomFieldId.addEventListener('input', () => {
+        slugPreview.textContent = encodeURIComponent(roomFieldId.value.trim() || 'xxxx');
+      });
+    }
+
+    if (btnGenUniqueId && roomFieldId) {
+      btnGenUniqueId.addEventListener('click', () => {
+        const raw = roomFieldId.value.trim();
+        const base = raw ? raw.split('-')[0] : '1004';
+        const suffix = String.fromCharCode(65 + Math.floor(Math.random() * 26)); // A-Z
+        const newSlug = `${base}-${suffix}`;
+        roomFieldId.value = newSlug;
+        if (slugPreview) slugPreview.textContent = encodeURIComponent(newSlug);
+        showNotice(`✓ Generated unique link ID "${newSlug}" (preview: /room.html?id=${newSlug})`, 'info');
+      });
+    }
 
     // Tab Switcher
     function switchAdminTab(tab) {
@@ -1349,7 +1373,17 @@
           const r = data.room;
 
           // Populate form fields
-          if (r.roomId) roomFieldId.value = r.roomId;
+          if (r.roomId) {
+            roomFieldId.value = r.roomId;
+            if (slugPreview) slugPreview.textContent = encodeURIComponent(r.roomId);
+
+            const existing = allAdminRooms.find(rm => String(rm.roomId) === String(r.roomId));
+            if (existing) {
+              showNotice(`ℹ️ Note: Room ID "${r.roomId}" already exists in your catalog (current fee: ₹${(existing.feeINR || 12999).toLocaleString('en-IN')}). Saving will update it. If you want a separate link with a different fee (e.g. ₹19,000), tap "🔄 New ID" to generate a unique URL slug (e.g. ${r.roomId}-B).`, 'info');
+            } else {
+              showNotice(`✓ Successfully imported StayforAll room "${r.title || r.roomId}" with ${imgs.length} photo(s)! Configure your DieFuture fee and hit publish.`, 'success');
+            }
+          }
           if (r.title) roomFieldTitle.value = r.title;
           if (r.city) roomFieldCity.value = r.city;
           if (r.address) roomFieldAddress.value = r.address;
@@ -1363,8 +1397,6 @@
           // Photos
           const imgs = (r.images && r.images.length > 0) ? r.images : (r.imageUrl ? [r.imageUrl] : []);
           setAdminImages(imgs);
-
-          showNotice(`✓ Successfully imported StayforAll room "${r.title || r.roomId}" with ${imgs.length} photo(s)! Configure your DieFuture fee and hit publish.`, 'success');
         } else {
           const err = await res.json();
           showNotice(`Failed to fetch room: ${err.error || 'Server error'}`, 'error');
@@ -1401,6 +1433,7 @@
       setAdminImages([]);
       fetchNotice.style.display = 'none';
       roomFieldFee.value = '12999';
+      if (slugPreview) slugPreview.textContent = '1004';
     });
 
     // Save / Publish Room

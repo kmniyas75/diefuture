@@ -476,12 +476,12 @@ app.get('/api/rooms/:id', async (req, res) => {
     const { id } = req.params;
     const col = await getRoomsCollection();
 
-    let query = { roomId: id };
+    let query = { roomId: String(id) };
     if (ObjectId.isValid(id) && id.length === 24) {
-      query = { $or: [{ roomId: id }, { _id: new ObjectId(id) }] };
+      query = { $or: [{ roomId: String(id) }, { _id: new ObjectId(id) }] };
     }
 
-    const room = await col.findOne(query);
+    const room = await col.find(query).sort({ updatedAt: -1, createdAt: -1 }).limit(1).next();
 
     if (!room) {
       return res.status(404).json({ error: 'Room not found' });
@@ -562,15 +562,22 @@ app.post('/api/rooms', async (req, res) => {
       status: status || 'available',
       featured: featured !== undefined ? Boolean(featured) : true,
       description: description || '',
-      createdAt: new Date(),
       updatedAt: new Date()
     };
 
     const col = await getRoomsCollection();
-    const result = await col.insertOne(newRoom);
+    const result = await col.findOneAndUpdate(
+      { roomId: String(roomId) },
+      {
+        $set: newRoom,
+        $setOnInsert: { createdAt: new Date() }
+      },
+      { upsert: true, returnDocument: 'after' }
+    );
 
-    console.log(`[MongoDB] New Room created: ${roomId} - ${title} [ID: ${result.insertedId}]`);
-    res.status(201).json({ success: true, id: result.insertedId, roomId, room: newRoom });
+    const savedRoom = result.value || result || newRoom;
+    console.log(`[MongoDB] Room saved/upserted: ${roomId} - ${title} (Fee: ₹${newRoom.feeINR})`);
+    res.status(201).json({ success: true, id: savedRoom._id, roomId, room: savedRoom });
   } catch (error) {
     console.error('Failed to create room:', error);
     res.status(500).json({ error: 'Failed to create room', details: error.message });

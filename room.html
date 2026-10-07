@@ -1113,8 +1113,8 @@
           <!-- Financial Clarity Callout -->
           <div class="financial-callout">
             <strong>Clear Distinction on Payments:</strong><br>
-            • The monthly warm rent (<strong>€775</strong>) and rental deposit (<strong>€1,500</strong>) are paid directly to the private German landlord in Munich pursuant to your signed tenancy agreement (<em>Mietvertrag</em>).<br>
-            • DieFuture collects a <strong>one-time lead handover fee of ₹12,999</strong> for locating, inspecting, confirming landlord acceptance, and coordinating your contract and viewing appointment. We do NOT collect room rent or security deposit.
+            • The monthly warm rent (<strong id="calloutRentVal">€775</strong>) and rental deposit (<strong id="calloutDepositVal">€1,500</strong>) are paid directly to the private German landlord in <span id="calloutCityVal">Munich</span> pursuant to your signed tenancy agreement (<em>Mietvertrag</em>).<br>
+            • DieFuture collects a <strong>one-time lead handover fee of <span class="dynamic-lead-fee" style="font-weight:700;">₹12,999</span></strong> for locating, inspecting, confirming landlord acceptance, and coordinating your contract and viewing appointment. We do NOT collect room rent or security deposit.
           </div>
 
           <!-- Room Amenities -->
@@ -1295,7 +1295,7 @@
 
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:24px; margin-top:32px;">
         <div class="card" style="background:#FFFFFF; padding:24px; border:1px solid var(--rule); border-radius:8px;">
-          <h4 style="font-size:16px; font-weight:700; margin-bottom:8px; color:var(--ink);">What does the ₹12,999 lead fee cover?</h4>
+          <h4 style="font-size:16px; font-weight:700; margin-bottom:8px; color:var(--ink);">What does the <span class="dynamic-lead-fee">₹12,999</span> lead fee cover?</h4>
           <p style="font-size:13.5px; color:var(--ink-2); line-height:1.6;">
             It covers our scouting fee, personal landlord liaison, verification of legal <em>Anmeldung</em> status, reservation of your exclusive viewing appointment, and tenancy contract audit.
           </p>
@@ -1304,7 +1304,7 @@
         <div class="card" style="background:#FFFFFF; padding:24px; border:1px solid var(--rule); border-radius:8px;">
           <h4 style="font-size:16px; font-weight:700; margin-bottom:8px; color:var(--ink);">How and when do I pay the room rent?</h4>
           <p style="font-size:13.5px; color:var(--ink-2); line-height:1.6;">
-            The monthly rent (€775) and deposit (€1,500) are paid directly to the landlord in Germany after you inspect the room and execute the German tenancy contract (<em>Mietvertrag</em>). DieFuture never collects rent or damage deposits.
+            The monthly rent (<span id="faqRentVal">€775</span>) and deposit (<span id="faqDepositVal">€1,500</span>) are paid directly to the landlord in Germany after you inspect the room and execute the German tenancy contract (<em>Mietvertrag</em>). DieFuture never collects rent or damage deposits.
           </p>
         </div>
 
@@ -1316,7 +1316,7 @@
         </div>
 
         <div class="card" style="background:#FFFFFF; padding:24px; border:1px solid var(--rule); border-radius:8px;">
-          <h4 style="font-size:16px; font-weight:700; margin-bottom:8px; color:var(--ink);">Is the ₹12,999 lead fee refundable?</h4>
+          <h4 style="font-size:16px; font-weight:700; margin-bottom:8px; color:var(--ink);">Is the <span class="dynamic-lead-fee">₹12,999</span> lead fee refundable?</h4>
           <p style="font-size:13.5px; color:var(--ink-2); line-height:1.6;">
             Yes. If the landlord chooses another applicant prior to your scheduled viewing or if the room becomes unavailable through no fault of your own, we either issue a 100% money-back refund or reassign you to an equivalent pre-vetted room without extra charge.
           </p>
@@ -1580,16 +1580,37 @@
         currentPhotoIndex = 0;
         renderGallery();
 
-        if (specRentVal) specRentVal.textContent = `€${currentRoom.rentWarmEUR || 775}`;
-        if (specDepositVal) specDepositVal.textContent = `€${(currentRoom.depositEUR || 1500).toLocaleString()}`;
+        const rent = currentRoom.rentWarmEUR || 775;
+        const deposit = currentRoom.depositEUR || 1500;
+        const feeINR = currentRoom.feeINR || 12999;
+        const formattedFee = `₹${feeINR.toLocaleString('en-IN')}`;
+
+        if (specRentVal) specRentVal.textContent = `€${rent}`;
+        if (specDepositVal) specDepositVal.textContent = `€${deposit.toLocaleString()}`;
         if (specSizeVal) specSizeVal.textContent = `~${currentRoom.roomSizeM2 || 16} m²`;
         if (specTransitVal && currentRoom.transit) specTransitVal.textContent = currentRoom.transit.split('(')[0].trim();
         if (captionCategoryVal) captionCategoryVal.textContent = currentRoom.roomType || 'Private Furnished Room';
         
+        // Update financial clarity callout
+        const calloutRent = document.getElementById('calloutRentVal');
+        const calloutDep = document.getElementById('calloutDepositVal');
+        const calloutCity = document.getElementById('calloutCityVal');
+        if (calloutRent) calloutRent.textContent = `€${rent}`;
+        if (calloutDep) calloutDep.textContent = `€${deposit.toLocaleString()}`;
+        if (calloutCity) calloutCity.textContent = currentRoom.city || 'Germany';
+
+        // Update FAQ values
+        const faqRent = document.getElementById('faqRentVal');
+        const faqDep = document.getElementById('faqDepositVal');
+        if (faqRent) faqRent.textContent = `€${rent}`;
+        if (faqDep) faqDep.textContent = `€${deposit.toLocaleString()}`;
+
+        // Update all dynamic fee mentions across the page
+        document.querySelectorAll('.dynamic-lead-fee').forEach(el => el.textContent = formattedFee);
+
         if (reserveLeadCardTitle) reserveLeadCardTitle.textContent = `Reserve Room ${currentRoom.roomId}`;
-        const feeINR = currentRoom.feeINR || 12999;
         if (feeAmountDisplay) feeAmountDisplay.textContent = feeINR.toLocaleString('en-IN');
-        if (payBtnLabel) payBtnLabel.textContent = `Pay ₹${feeINR.toLocaleString('en-IN')} & Reserve Room Lead`;
+        if (payBtnLabel) payBtnLabel.textContent = `Pay ${formattedFee} & Reserve Room Lead`;
       }
 
       // Check if URL has ?unlocked=1
