@@ -2208,33 +2208,42 @@
         const apiBase = getApiBase();
         const endpoint = (apiBase ? apiBase : '') + `/api/rooms/${encodeURIComponent(roomIdParam)}`;
 
+        let fetchedRoom = null;
         try {
           const res = await fetch(endpoint);
           if (res.ok) {
             const data = await res.json();
-            if (data.room) {
-              currentRoom = data.room;
-              applyRoomData();
-              return;
+            if (data && data.room) {
+              fetchedRoom = data.room;
             }
           }
         } catch (err) {
-          console.warn('Rooms API fetch failed, trying direct 3001:', err);
+          console.warn('Rooms API fetch failed:', err);
         }
 
-        try {
-          const res = await fetch(`http://localhost:3001/api/rooms/${encodeURIComponent(roomIdParam)}`);
-          if (res.ok) {
-            const data = await res.json();
-            if (data.room) {
-              currentRoom = data.room;
-              applyRoomData();
-              return;
+        if (!fetchedRoom) {
+          try {
+            const res = await fetch(`http://localhost:3001/api/rooms/${encodeURIComponent(roomIdParam)}`);
+            if (res.ok) {
+              const data = await res.json();
+              if (data && data.room) {
+                fetchedRoom = data.room;
+              }
             }
-          }
-        } catch (e) { }
+          } catch (e) { }
+        }
 
-        showRoomNotFound('Room Lead Not Found or Allocation Expired', `The requested room lead DF-ROOM-${roomIdParam} is not available in the database. Please submit a room search brief.`);
+        if (!fetchedRoom) {
+          showRoomNotFound('Room Lead Not Found or Allocation Expired', `The requested room lead DF-ROOM-${roomIdParam} is not available in the database. Please submit a room search brief.`);
+          return;
+        }
+
+        currentRoom = fetchedRoom;
+        try {
+          applyRoomData();
+        } catch (renderErr) {
+          console.error('Error rendering room UI details:', renderErr);
+        }
       }
 
       function applyRoomData() {
@@ -2449,6 +2458,10 @@
           payableAmountEUR = remainingFeeEUR;
           payableAmountINR = remainingFeeINR;
         }
+
+        const formattedPayable = isEUR
+          ? `€${payableAmountEUR.toLocaleString()} (~₹${payableAmountINR.toLocaleString('en-IN')})`
+          : `₹${payableAmountINR.toLocaleString('en-IN')}`;
 
         // Store resolved values on currentRoom for checkout
         currentRoom._resolvedPayableINR = payableAmountINR;
