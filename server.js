@@ -640,7 +640,64 @@ app.post('/api/rooms/fetch-stayforall', async (req, res) => {
     let { url } = req.body;
     if (!url) return res.status(400).json({ error: 'StayforAll URL or Room ID is required.' });
 
-    url = url.trim();
+    url = String(url).trim();
+    const roomIdMatch = url.match(/rooms\/(\d+)/i) || url.match(/^(\d+)$/);
+
+    if (roomIdMatch) {
+      const sfaRoomId = roomIdMatch[1];
+      try {
+        const sfaRes = await fetch(`https://api.stayforall.com/api/v1/rooms/${sfaRoomId}`, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'application/json'
+          }
+        });
+        if (sfaRes.ok) {
+          const sfaJson = await sfaRes.json();
+          const d = sfaJson.data || sfaJson;
+          if (d) {
+            let imageList = [];
+            if (Array.isArray(d.images)) {
+              imageList = d.images.map(img => img.image_url || img.media_url || (typeof img === 'string' ? img : '')).filter(Boolean);
+            }
+            if (Array.isArray(d.media)) {
+              const mediaImgs = d.media.map(m => m.media_url || m.url).filter(Boolean);
+              imageList = [...imageList, ...mediaImgs];
+            }
+            if (d.primaryImage || d.primary_image) {
+              imageList.unshift(d.primaryImage || d.primary_image);
+            }
+            imageList = [...new Set(imageList)].filter(u => typeof u === 'string' && u.startsWith('http'));
+
+            const rent = Number(d.monthly_rent || d.price || d.warm_rent || 775);
+            const deposit = Number(d.deposit || rent * 2);
+
+            const roomObj = {
+              sourceUrl: `https://stayforall.com/rooms/${sfaRoomId}`,
+              roomId: String(d.id || sfaRoomId),
+              title: d.title ? d.title.replace(/ - Zimmer \d+/i, '').replace(/ - Room \d+/i, '').trim() : `Room in ${d.city || 'Germany'}`,
+              city: d.city || 'München',
+              address: d.address || `${d.city || 'München'}, Germany`,
+              rentWarmEUR: rent,
+              depositEUR: deposit,
+              feeINR: 12999,
+              roomSizeM2: Number(d.size_sqm || 16),
+              roomType: d.room_type ? (d.room_type.toLowerCase().includes('wg') || d.room_type.toLowerCase().includes('single') ? 'WG Room (Single Private)' : d.room_type) : 'WG Room (Single Private)',
+              imageUrl: imageList[0] || '',
+              images: imageList,
+              anmeldung: d.registration_support === true || (Array.isArray(d.amenities) && d.amenities.some(a => String(a).toLowerCase().includes('anmeldung'))),
+              transit: d.transit || 'Walking distance to public transit & metro station',
+              description: d.description || ''
+            };
+
+            return res.json({ success: true, room: roomObj });
+          }
+        }
+      } catch (apiErr) {
+        console.warn('StayforAll v1 API fetch error, falling back to HTML:', apiErr.message);
+      }
+    }
+
     if (/^\d+$/.test(url)) {
       url = `https://stayforall.com/rooms/${url}`;
     }
@@ -657,10 +714,10 @@ app.post('/api/rooms/fetch-stayforall', async (req, res) => {
 
     const html = await response.text();
 
-    const roomIdMatch = url.match(/rooms\/(\d+)/i);
+    const fallbackRoomIdMatch = url.match(/rooms\/(\d+)/i);
     const extracted = {
       sourceUrl: url,
-      roomId: roomIdMatch ? roomIdMatch[1] : String(Math.floor(1000 + Math.random() * 9000)),
+      roomId: fallbackRoomIdMatch ? fallbackRoomIdMatch[1] : String(Math.floor(1000 + Math.random() * 9000)),
       title: '',
       city: 'München',
       address: '',
