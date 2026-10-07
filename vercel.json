@@ -1,5 +1,17 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/rooms",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/rooms.html",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/rooms/:id",
@@ -12,10 +24,6 @@
     {
       "source": "/room",
       "destination": "/room.html"
-    },
-    {
-      "source": "/rooms",
-      "destination": "/rooms.html"
     },
     {
       "source": "/admin",
