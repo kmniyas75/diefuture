@@ -1,6 +1,5 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/rooms/:id",
@@ -9,6 +8,38 @@
     {
       "source": "/api/leads/:id",
       "destination": "/api/leads?id=:id"
+    },
+    {
+      "source": "/room",
+      "destination": "/room.html"
+    },
+    {
+      "source": "/rooms",
+      "destination": "/rooms.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/refund",
+      "destination": "/refund.html"
+    },
+    {
+      "source": "/shipping-policy",
+      "destination": "/shipping-policy.html"
     }
   ]
 }
