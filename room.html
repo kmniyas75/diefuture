@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Private Room Lead Allocation | DieFuture Apartments</title>
 
@@ -33,6 +33,9 @@
       font-family: var(--f-mono);
       font-size: 12px;
       color: var(--ink-2);
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
     .room-header-flex {
       display: flex;
@@ -40,6 +43,19 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .room-header-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px 14px;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
     }
     .room-badge-verified {
       display: inline-flex;
@@ -52,6 +68,7 @@
       border-radius: 999px;
       font-weight: 600;
       font-size: 11.5px;
+      box-sizing: border-box;
     }
     .room-badge-anmeldung {
       display: inline-flex;
@@ -64,17 +81,22 @@
       border-radius: 999px;
       font-weight: 600;
       font-size: 11.5px;
+      box-sizing: border-box;
     }
 
     .room-hero-section {
-      padding: 40px 0 60px;
-      overflow-x: clip;
+      padding: 36px 0 60px;
       width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
     }
     .room-title-block {
-      margin-bottom: 28px;
+      margin-bottom: 24px;
       width: 100%;
+      max-width: 100%;
       min-width: 0;
+      box-sizing: border-box;
     }
     .room-ref-tag {
       font-family: var(--f-mono);
@@ -86,28 +108,33 @@
       margin-bottom: 8px;
       display: block;
       word-break: break-word;
+      overflow-wrap: break-word;
     }
     .room-main-title {
       font-family: var(--f-display);
-      font-size: clamp(28px, 4vw, 42px);
+      font-size: clamp(24px, 4.5vw, 40px);
       font-weight: 800;
-      line-height: 1.15;
+      line-height: 1.18;
       color: var(--ink);
       letter-spacing: -0.02em;
       margin-bottom: 12px;
       word-break: break-word;
       overflow-wrap: break-word;
       min-width: 0;
+      max-width: 100%;
     }
     .room-address-bar {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
-      font-size: 15px;
+      font-size: 14.5px;
       color: var(--ink-2);
+      line-height: 1.45;
       word-break: break-word;
-      overflow-wrap: break-word;
+      overflow-wrap: anywhere;
       min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     /* Main Showcase Grid */
@@ -119,16 +146,21 @@
       width: 100%;
       min-width: 0;
       max-width: 100%;
+      box-sizing: border-box;
     }
     .room-left-col,
     .room-right-col {
       min-width: 0;
       max-width: 100%;
       width: 100%;
+      box-sizing: border-box;
     }
     @media (max-width: 1024px) {
       .room-layout-grid {
         grid-template-columns: minmax(0, 1fr) !important;
+        gap: 28px !important;
+        width: 100% !important;
+        max-width: 100% !important;
       }
     }
 
@@ -616,39 +648,74 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
+        width: 100%;
+      }
+      .room-header-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 8px;
+        width: 100%;
+        max-width: 100%;
+        font-size: 11px;
+        line-height: 1.4;
+      }
+      .room-header-meta .meta-sep {
+        display: none;
+      }
+      .room-header-meta > span {
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+      .room-badge-verified,
+      .room-badge-anmeldung {
+        font-size: 10.5px !important;
+        padding: 3px 8px !important;
+        white-space: normal !important;
+        text-align: left !important;
+        max-width: 100% !important;
+        line-height: 1.3 !important;
+        box-sizing: border-box !important;
       }
       .room-title-block {
-        margin-bottom: 18px;
+        margin-bottom: 16px;
+        width: 100%;
+        max-width: 100%;
       }
       .room-ref-tag {
-        font-size: 11px;
+        font-size: 10.5px;
         letter-spacing: .04em;
-        margin-bottom: 6px;
+        margin-bottom: 5px;
       }
       .room-main-title {
-        font-size: 22px;
-        line-height: 1.25;
-        letter-spacing: -.01em;
-        margin-bottom: 10px;
-        word-break: break-word;
-        overflow-wrap: break-word;
+        font-size: clamp(20px, 5.5vw, 24px) !important;
+        line-height: 1.25 !important;
+        letter-spacing: -.01em !important;
+        margin-bottom: 8px !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        max-width: 100% !important;
       }
       .room-address-bar {
-        font-size: 12.5px;
-        line-height: 1.4;
-        align-items: flex-start;
-        gap: 6px;
-        word-break: break-word;
-        overflow-wrap: break-word;
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+        word-break: break-word !important;
+        overflow-wrap: anywhere !important;
+        max-width: 100% !important;
       }
 
       /* Gallery */
       .gallery-container {
         border-radius: 10px;
         margin-bottom: 18px;
+        width: 100%;
+        max-width: 100%;
       }
       .gallery-main-image {
         max-height: 280px;
+        width: 100%;
       }
       .gallery-nav-btn {
         width: 34px;
@@ -672,6 +739,8 @@
       .gallery-thumbs {
         padding: 8px 10px;
         gap: 8px;
+        width: 100%;
+        max-width: 100%;
       }
       .gallery-thumb-item {
         width: 60px;
@@ -683,20 +752,25 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 6px;
+        width: 100%;
+        max-width: 100%;
       }
 
       /* Specs */
       .specs-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
         gap: 8px !important;
         margin-bottom: 18px !important;
         width: 100% !important;
+        max-width: 100% !important;
         min-width: 0 !important;
+        box-sizing: border-box !important;
       }
       .spec-item {
         padding: 10px 8px !important;
         border-radius: 8px !important;
         min-width: 0 !important;
+        max-width: 100% !important;
         overflow: hidden !important;
         box-sizing: border-box !important;
       }
@@ -710,13 +784,13 @@
       .spec-v {
         font-size: 14px !important;
         word-break: break-word !important;
-        overflow-wrap: break-word !important;
+        overflow-wrap: anywhere !important;
       }
       .spec-sub {
         font-size: 9.5px !important;
         line-height: 1.3 !important;
         word-break: break-word !important;
-        overflow-wrap: break-word !important;
+        overflow-wrap: anywhere !important;
       }
 
       /* Financial Callout */
@@ -724,6 +798,8 @@
         padding: 12px 14px;
         font-size: 12.5px;
         margin-bottom: 20px;
+        width: 100%;
+        max-width: 100%;
       }
 
       /* Amenities */
@@ -731,6 +807,8 @@
         grid-template-columns: 1fr;
         gap: 10px;
         margin-bottom: 24px;
+        width: 100%;
+        max-width: 100%;
       }
       .section-subheading {
         font-size: 18px;
@@ -742,6 +820,8 @@
         padding: 18px 14px;
         border-radius: 12px;
         position: static !important;
+        width: 100%;
+        max-width: 100%;
       }
       .fee-price-tag {
         margin: 12px 0 16px;
@@ -777,6 +857,7 @@
       .form-group-room select {
         padding: 10px 12px;
         font-size: 14px;
+        width: 100%;
       }
       .btn-reserve-cta {
         padding: 13px;
@@ -802,28 +883,42 @@
 
     /* Mobile Sticky Bottom Bar (Rate & Pay CTA) */
     .mobile-bottom-nav {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-top: 1px solid var(--rule);
-      box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08);
-      z-index: 999;
-      padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
-      box-sizing: border-box;
+      position: fixed !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      margin: 0 !important;
+      background: rgba(255, 255, 255, 0.98) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      border-top: 1px solid var(--rule) !important;
+      box-shadow: 0 -6px 24px rgba(15, 23, 42, 0.12) !important;
+      z-index: 999999 !important;
+      padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+      box-sizing: border-box !important;
+      -webkit-transform: translate3d(0, 0, 0) !important;
+      transform: translate3d(0, 0, 0) !important;
+      -webkit-backface-visibility: hidden !important;
+      backface-visibility: hidden !important;
+      will-change: transform !important;
+      display: block;
+    }
+
+    .mobile-bottom-nav.hidden-unlocked {
+      display: none !important;
+    }
+
+    @media (min-width: 1025px) {
+      .mobile-bottom-nav {
+        display: none !important;
+      }
     }
 
     @media (max-width: 1024px) {
-      .mobile-bottom-nav {
-        display: block;
-      }
       body {
-        padding-bottom: 80px;
+        padding-bottom: 86px !important;
       }
     }
 
@@ -1343,11 +1438,11 @@
   <div class="room-header-band">
     <div class="wrap">
       <div class="room-header-flex">
-        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <div class="room-header-meta">
           <span>LEAD ID: <strong id="leadIdBadge">DF-ROOM-1004</strong></span>
-          <span>·</span>
-          <span>LOCATION: <strong id="locationBadge">MÜNCHEN-THALKIRCHEN, GERMANY</strong></span>
-          <span>·</span>
+          <span class="meta-sep">·</span>
+          <span>LOCATION: <strong id="locationBadge">MÜNCHEN, GERMANY</strong></span>
+          <span class="meta-sep">·</span>
           <span class="room-badge-verified">✓ Landlord Pre-Vetted</span>
           <span class="room-badge-anmeldung">🏛️ Anmeldung Guaranteed</span>
         </div>
@@ -2377,6 +2472,7 @@
 
         const mobileBottomNav = document.getElementById('mobileBottomNav');
         if (mobileBottomNav) {
+          mobileBottomNav.classList.add('hidden-unlocked');
           mobileBottomNav.style.display = 'none';
         }
 

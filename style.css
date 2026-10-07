@@ -34,8 +34,10 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: clip;
+  overflow-x: hidden;
+  width: 100%;
   max-width: 100%;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -45,9 +47,10 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   line-height: 1.5;
-  overflow-x: clip;
+  overflow-x: hidden;
   max-width: 100%;
   width: 100%;
+  position: relative;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -59,13 +62,16 @@ a {
 
 img {
   max-width: 100%;
+  height: auto;
   display: block;
 }
 
 .wrap {
+  width: 100%;
   max-width: var(--max);
   margin: 0 auto;
   padding: 0 var(--pad);
+  box-sizing: border-box;
 }
 
 section {
@@ -1475,15 +1481,27 @@ h2.sec-h .dim {
   }
 }
 
+@media (max-width: 640px) {
+  :root {
+    --pad: 16px;
+  }
+  .wrap {
+    padding: 0 16px;
+  }
+}
+
 @media (max-width: 480px) {
   :root {
-    --pad: 14px;
+    --pad: 12px;
+  }
+  .wrap {
+    padding: 0 12px;
   }
   .nav-inner {
-    padding: 12px 14px;
+    padding: 12px;
   }
   .logo-text {
-    font-size: 18px;
+    font-size: 17px;
   }
   .brand-avatar {
     width: 28px;
@@ -1508,7 +1526,7 @@ h2.sec-h .dim {
     padding: 8px 10px;
   }
   h1.hero-h {
-    font-size: clamp(32px, 9vw, 44px);
+    font-size: clamp(30px, 8.5vw, 40px);
   }
 }
 
