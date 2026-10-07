@@ -567,14 +567,403 @@
       cursor: pointer;
       margin-top: 10px;
       text-align: center;
+      transition: all .2s;
     }
     .btn-print-receipt:hover {
       background: #FFFFFF;
       border-color: var(--ink-2);
+      color: var(--ink);
+    }
+
+    /* OFFICIAL RESERVATION SLIP (Hidden on Screen, Exclusively Displayed on Print) */
+    #officialReservationSlip {
+      display: none;
+    }
+
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm 12mm 10mm 12mm;
+      }
+
+      html, body {
+        background: #FFFFFF !important;
+        color: #0F172A !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* Hide all website clutter */
+      body > *:not(#officialReservationSlip) {
+        display: none !important;
+      }
+
+      #officialReservationSlip {
+        display: block !important;
+        position: relative !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 16px 20px !important;
+        box-sizing: border-box !important;
+        border: 2px solid #0B1528 !important;
+        border-radius: 8px !important;
+        background: #FFFFFF !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+      }
+
+      .ps-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #0B1528;
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+      }
+
+      .ps-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .ps-brand img {
+        width: 52px;
+        height: 52px;
+        border-radius: 6px;
+        border: 1px solid #E2E8F0;
+      }
+
+      .ps-company-title {
+        font-size: 19px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        color: #0B1528;
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      .ps-company-sub {
+        font-size: 11px;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 3px;
+      }
+
+      .ps-meta-badge {
+        text-align: right;
+      }
+
+      .ps-badge-title {
+        font-size: 13px;
+        font-weight: 800;
+        color: #0055FF;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .ps-ref-pill {
+        font-family: monospace;
+        font-size: 14px;
+        font-weight: 700;
+        color: #0B1528;
+        background: #F1F5F9;
+        padding: 2px 8px;
+        border-radius: 4px;
+        display: inline-block;
+        margin-top: 3px;
+      }
+
+      .ps-date-row {
+        font-size: 10.5px;
+        color: #64748B;
+        margin-top: 3px;
+      }
+
+      .ps-status-pill {
+        display: inline-block;
+        background: #DCFCE7;
+        color: #166534;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid #86EFAC;
+        margin-top: 4px;
+        text-transform: uppercase;
+      }
+
+      .ps-banner {
+        background: #F8FAFC;
+        border: 1px solid #CBD5E1;
+        border-radius: 6px;
+        padding: 9px 12px;
+        font-size: 11px;
+        line-height: 1.45;
+        color: #334155;
+        margin-bottom: 14px;
+      }
+
+      .ps-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+
+      .ps-card {
+        border: 1px solid #CBD5E1;
+        border-radius: 6px;
+        padding: 10px 12px;
+        background: #FFFFFF;
+      }
+
+      .ps-card-h {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #0055FF;
+        border-bottom: 1px solid #E2E8F0;
+        padding-bottom: 5px;
+        margin-bottom: 8px;
+      }
+
+      .ps-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+      }
+
+      .ps-table td {
+        padding: 4px 0;
+        vertical-align: top;
+      }
+
+      .ps-table td:first-child {
+        color: #64748B;
+        width: 44%;
+      }
+
+      .ps-table td:last-child {
+        color: #0F172A;
+        font-weight: 600;
+        text-align: right;
+      }
+
+      .ps-protocol {
+        border: 1px solid #E2E8F0;
+        background: #F8FAFC;
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin-bottom: 12px;
+      }
+
+      .ps-protocol-h {
+        font-size: 10.5px;
+        font-weight: 800;
+        color: #0B1528;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+
+      .ps-steps-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        font-size: 10px;
+        line-height: 1.35;
+        color: #475569;
+      }
+
+      .ps-step-item strong {
+        display: block;
+        color: #0F172A;
+        font-size: 10.5px;
+        margin-bottom: 2px;
+      }
+
+      .ps-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #CBD5E1;
+        padding-top: 10px;
+        margin-top: 4px;
+      }
+
+      .ps-footer-info {
+        font-size: 10px;
+        line-height: 1.4;
+        color: #475569;
+        max-width: 72%;
+      }
+
+      .ps-disclaimer {
+        font-size: 8.5px;
+        color: #94A3B8;
+        line-height: 1.3;
+        margin-top: 4px;
+      }
+
+      .ps-seal {
+        text-align: center;
+        width: 105px;
+      }
+
+      .ps-seal-badge {
+        width: 76px;
+        height: 76px;
+        border: 2px dashed #059669;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        color: #059669;
+        padding: 4px;
+        box-sizing: border-box;
+      }
+
+      .ps-seal-t1 { font-size: 7px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+      .ps-seal-star { font-size: 8px; line-height: 1; margin: 1px 0; }
+      .ps-seal-t2 { font-size: 9px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
+      .ps-seal-sub { font-size: 8px; color: #64748B; margin-top: 3px; font-weight: 600; }
     }
   </style>
 </head>
 <body>
+
+  <!-- OFFICIAL PRINTABLE RESERVATION CERTIFICATE (Hidden on screen, exclusively formatted for 1-Page A4 Print) -->
+  <div id="officialReservationSlip" aria-hidden="true">
+    <div class="ps-header">
+      <div class="ps-brand">
+        <img src="./assets/diefuture-logo.jpg" alt="DieFuture Logo" />
+        <div>
+          <h1 class="ps-company-title">DIE FUTURE APARTMENTS</h1>
+          <div class="ps-company-sub">Student Relocation &amp; Housing Advisory Services · Germany</div>
+        </div>
+      </div>
+      <div class="ps-meta-badge">
+        <div class="ps-badge-title">Official Lead Reservation Slip</div>
+        <div><span class="ps-ref-pill" id="printRef">DF-RES-1004</span></div>
+        <div class="ps-date-row">Issued: <span id="printDate">—</span></div>
+        <div><span class="ps-status-pill">✓ Payment Verified &amp; Allocated</span></div>
+      </div>
+    </div>
+
+    <div class="ps-banner">
+      <strong>Official Allocation Certificate:</strong> This document certifies that the room lead specified below has been reserved and allocated through DieFuture Relocations Desk. The scouting and exclusive lead handover fee has been verified via Razorpay. Present this confirmation when coordinating your viewing and contract handover.
+    </div>
+
+    <div class="ps-grid">
+      <!-- Seeker & Payment Column -->
+      <div class="ps-card">
+        <div class="ps-card-h">1. Seeker &amp; Payment Record</div>
+        <table class="ps-table">
+          <tr>
+            <td>Payer / Student:</td>
+            <td><strong id="printSeekerName">Reserved Seeker</strong></td>
+          </tr>
+          <tr>
+            <td>Phone / WhatsApp:</td>
+            <td><strong id="printSeekerPhone">+91 —</strong></td>
+          </tr>
+          <tr>
+            <td>Razorpay Payment ID:</td>
+            <td><code id="printPaymentId" style="font-family:monospace; font-size:10.5px;">pay_confirmed</code></td>
+          </tr>
+          <tr>
+            <td>Lead Handover Fee:</td>
+            <td><strong id="printFeeINR" style="color:#059669;">₹12,999 (Paid in Full)</strong></td>
+          </tr>
+          <tr>
+            <td>Payment Gateway:</td>
+            <td>Razorpay Live (PCI-DSS Level 1)</td>
+          </tr>
+          <tr>
+            <td>Allocation Status:</td>
+            <td>Guaranteed 1st Priority Allocation</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Allocated Property Column -->
+      <div class="ps-card">
+        <div class="ps-card-h">2. Allocated Property Specifications</div>
+        <table class="ps-table">
+          <tr>
+            <td>Room Allocation:</td>
+            <td><strong id="printRoomTitle">Munich Thalkirchen Furnished WG Room</strong></td>
+          </tr>
+          <tr>
+            <td>Address / City:</td>
+            <td><span id="printRoomAddress">Munich, Germany</span></td>
+          </tr>
+          <tr>
+            <td>Property Category:</td>
+            <td><span id="printRoomType">WG Room (Single Private)</span></td>
+          </tr>
+          <tr>
+            <td>Monthly Rent (Warm):</td>
+            <td><strong id="printWarmRent">€775 / month</strong></td>
+          </tr>
+          <tr>
+            <td>Security Deposit:</td>
+            <td><strong id="printDeposit">€1,550</strong> (Direct to Landlord)</td>
+          </tr>
+          <tr>
+            <td>City Registration:</td>
+            <td><strong style="color:#059669;">✓ 100% Anmeldung Guaranteed</strong></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="ps-protocol">
+      <div class="ps-protocol-h">Official Handover Protocol &amp; Next Steps</div>
+      <div class="ps-steps-grid">
+        <div class="ps-step-item">
+          <strong>Step 1: Viewing Appointment</strong>
+          Concierge desk coordinates interactive live video or in-person walk-through with the property provider.
+        </div>
+        <div class="ps-step-item">
+          <strong>Step 2: Tenancy Agreement</strong>
+          Our legal desk audits your German tenancy agreement (<em>Mietvertrag</em>) prior to signing to protect your deposit.
+        </div>
+        <div class="ps-step-item">
+          <strong>Step 3: City Registration</strong>
+          We ensure the landlord executes your official municipal certificate (<em>Wohnungsgeberbestätigung</em>).
+        </div>
+      </div>
+    </div>
+
+    <div class="ps-footer">
+      <div class="ps-footer-info">
+        <div><strong>DieFuture Relocations Concierge Desk</strong></div>
+        <div>WhatsApp Desk: +91 95679 41647 · Email: diefutureapartments@gmail.com · Portal: www.diefuture.com</div>
+        <div class="ps-disclaimer">
+          *Important Statutory Notice: DieFuture operates as an accommodation scouting and relocation consulting desk. Monthly rent and security deposit are paid directly to the private German landlord upon signing the tenancy contract (Mietvertrag). All services subject to Terms &amp; Conditions on diefuture.com.
+        </div>
+      </div>
+      <div class="ps-seal">
+        <div class="ps-seal-badge">
+          <span class="ps-seal-t1">DIEFUTURE</span>
+          <span class="ps-seal-star">★ ★ ★</span>
+          <span class="ps-seal-t2">VERIFIED</span>
+          <span class="ps-seal-t1">GERMANY</span>
+        </div>
+        <div class="ps-seal-sub">Digitally Authorized</div>
+      </div>
+    </div>
+  </div>
 
   <!-- NAVIGATION -->
   <nav class="nav" id="mainNav">
@@ -880,7 +1269,7 @@
                 </a>
               </div>
 
-              <button type="button" class="btn-print-receipt" onclick="window.print()">
+              <button type="button" class="btn-print-receipt" onclick="printOfficialReservationSlip()">
                 🖨️ Print / Save Official Lead Reservation Slip
               </button>
 
@@ -1424,8 +1813,16 @@
         });
       }
 
+      // Saved unlocked state for printing
+      let lastUnlockedReservation = null;
+
       // Unlock UI
       function unlockDossier(data) {
+        lastUnlockedReservation = {
+          ...data,
+          phone: (document.getElementById('seekerPhone')?.value) || ''
+        };
+
         checkoutCard.classList.add('unlocked');
         prePaymentView.style.display = 'none';
         unlockedDossierView.style.display = 'block';
@@ -1446,6 +1843,44 @@
 
         checkoutCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
+
+      // Print clean 1-page official reservation certificate
+      window.printOfficialReservationSlip = function() {
+        const ref = (lastUnlockedReservation && lastUnlockedReservation.reference) || (document.getElementById('unlockedRefCode')?.textContent) || ('DF-RES-' + (currentRoom.roomId || '1004'));
+        const payId = (lastUnlockedReservation && lastUnlockedReservation.paymentId) || (document.getElementById('unlockedPaymentId')?.textContent) || 'pay_live_confirmed';
+        const name = (lastUnlockedReservation && lastUnlockedReservation.seekerName) || (document.getElementById('unlockedSeekerName')?.textContent) || (document.getElementById('seekerName')?.value) || 'Reserved Seeker';
+        const phone = (lastUnlockedReservation && lastUnlockedReservation.phone) || (document.getElementById('seekerPhone')?.value) || '+91 95679 41647';
+
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' +
+                        now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+        const pRef = document.getElementById('printRef');
+        const pDate = document.getElementById('printDate');
+        const pName = document.getElementById('printSeekerName');
+        const pPhone = document.getElementById('printSeekerPhone');
+        const pPayId = document.getElementById('printPaymentId');
+        const pFee = document.getElementById('printFeeINR');
+        const pTitle = document.getElementById('printRoomTitle');
+        const pAddr = document.getElementById('printRoomAddress');
+        const pType = document.getElementById('printRoomType');
+        const pRent = document.getElementById('printWarmRent');
+        const pDep = document.getElementById('printDeposit');
+
+        if (pRef) pRef.textContent = ref;
+        if (pDate) pDate.textContent = dateStr;
+        if (pName) pName.textContent = name;
+        if (pPhone) pPhone.textContent = phone;
+        if (pPayId) pPayId.textContent = payId;
+        if (pFee) pFee.textContent = `₹${(currentRoom.feeINR || 12999).toLocaleString('en-IN')} (Paid in Full)`;
+        if (pTitle) pTitle.textContent = currentRoom.title || 'Munich Furnished WG Room';
+        if (pAddr) pAddr.textContent = currentRoom.address || `${currentRoom.city}, Germany`;
+        if (pType) pType.textContent = currentRoom.roomType || 'WG Room (Single Private)';
+        if (pRent) pRent.textContent = `€${currentRoom.rentWarmEUR || 775} / month`;
+        if (pDep) pDep.textContent = `€${(currentRoom.depositEUR || 1550).toLocaleString()} (To Landlord)`;
+
+        window.print();
+      };
 
       function escapeHtml(str) {
         if (!str) return '';
