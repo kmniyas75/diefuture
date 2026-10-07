@@ -1,6 +1,5 @@
 import crypto from 'crypto';
 import { MongoClient } from 'mongodb';
-import { Resend } from 'resend';
 
 export const config = {
   api: {
@@ -56,7 +55,7 @@ export default async function handler(req, res) {
       }
     }
 
-    const event = JSON.parse(rawBody);
+    const event = JSON.parse(rawBody || '{}');
     console.log(`[Razorpay Webhook] Event received: ${event.event} [ID: ${event.payload?.payment?.entity?.id || 'N/A'}]`);
 
     // Handle payment.captured or order.paid
@@ -117,30 +116,36 @@ export default async function handler(req, res) {
         console.error('[Razorpay Webhook] DB write error:', dbErr.message);
       }
 
-      // 2. Send Email Alert via Resend
+      // 2. Send Email Alert via native fetch to Resend
       if (RESEND_API_KEY && RESEND_API_KEY !== 'placeholder_resend_api_key') {
         try {
-          const resend = new Resend(RESEND_API_KEY);
-          await resend.emails.send({
-            from: 'DieFuture Relocations <onboarding@resend.dev>',
-            to: ['diefutureapartments@gmail.com'],
-            subject: `🎉 Payment Confirmed: ₹${amountINR.toLocaleString('en-IN')} - ${name}`,
-            html: `
-              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-                <h2 style="color: #0b1528;">Payment Confirmed via Razorpay</h2>
-                <p>A new payment has been successfully captured:</p>
-                <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-                  <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Amount:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee; color: #16a34a; font-weight: bold;">₹${amountINR.toLocaleString('en-IN')}</td></tr>
-                  <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Payer Name:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${name}</td></tr>
-                  <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Phone / WhatsApp:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${phone}</td></tr>
-                  <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Email:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${email}</td></tr>
-                  <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Payment ID:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;"><code>${paymentId}</code></td></tr>
-                  <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Order ID:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;"><code>${orderId}</code></td></tr>
-                  ${roomId ? `<tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Room Lead ID:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">DF-ROOM-${roomId}</td></tr>` : ''}
-                </table>
-                <p style="margin-top: 20px; font-size: 13px; color: #666;">This webhook was processed securely by DieFuture Automation.</p>
-              </div>
-            `
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${RESEND_API_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              from: 'DieFuture Relocations <onboarding@resend.dev>',
+              to: ['diefutureapartments@gmail.com'],
+              subject: `🎉 Payment Confirmed: ₹${amountINR.toLocaleString('en-IN')} - ${name}`,
+              html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                  <h2 style="color: #0b1528;">Payment Confirmed via Razorpay</h2>
+                  <p>A new payment has been successfully captured:</p>
+                  <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Amount:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee; color: #16a34a; font-weight: bold;">₹${amountINR.toLocaleString('en-IN')}</td></tr>
+                    <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Payer Name:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${name}</td></tr>
+                    <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Phone / WhatsApp:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${phone}</td></tr>
+                    <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Email:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${email}</td></tr>
+                    <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Payment ID:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;"><code>${paymentId}</code></td></tr>
+                    <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Order ID:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;"><code>${orderId}</code></td></tr>
+                    ${roomId ? `<tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Room Lead ID:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">DF-ROOM-${roomId}</td></tr>` : ''}
+                  </table>
+                  <p style="margin-top: 20px; font-size: 13px; color: #666;">This webhook was processed securely by DieFuture Automation.</p>
+                </div>
+              `
+            })
           });
         } catch (mailErr) {
           console.error('[Razorpay Webhook] Email error:', mailErr.message);
