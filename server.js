@@ -797,7 +797,6 @@ app.post('/api/rooms/fetch-stayforall', async (req, res) => {
               address: d.address || `${d.city || 'München'}, Germany`,
               rentWarmEUR: rent,
               depositEUR: deposit,
-              feeINR: 12999,
               roomSizeM2: Number(d.size_sqm || 16),
               roomType: d.room_type ? (d.room_type.toLowerCase().includes('wg') || d.room_type.toLowerCase().includes('single') ? 'WG Room (Single Private)' : d.room_type) : 'WG Room (Single Private)',
               imageUrl: imageList[0] || '',
@@ -840,7 +839,6 @@ app.post('/api/rooms/fetch-stayforall', async (req, res) => {
       address: '',
       rentWarmEUR: 775,
       depositEUR: 1500,
-      feeINR: 12999, // default DieFuture service fee
       roomSizeM2: 16,
       roomType: 'WG Room (Single Private)',
       imageUrl: '',

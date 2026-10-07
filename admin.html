@@ -1717,10 +1717,10 @@
         let pkgLabel = '₹17,999 Guaranteed';
         if (lead.paymentMode === 'holding_initial' || (lead.package && lead.package.toLowerCase().includes('holding'))) {
           pkgClass = 'starter';
-          pkgLabel = `🛡️ Holding Fee: ₹${(lead.amountPaidINR || 2999).toLocaleString('en-IN')}`;
+          pkgLabel = lead.amountPaidINR ? `🛡️ Holding Fee: ₹${lead.amountPaidINR.toLocaleString('en-IN')}` : '🛡️ Holding Deposit';
         } else if (lead.paymentMode === 'holding_paid' || (lead.package && lead.package.toLowerCase().includes('balance'))) {
           pkgClass = 'guaranteed';
-          pkgLabel = `🎉 Balance Paid: ₹${(lead.amountPaidINR || 10000).toLocaleString('en-IN')}`;
+          pkgLabel = lead.amountPaidINR ? `🎉 Balance Paid: ₹${lead.amountPaidINR.toLocaleString('en-IN')}` : '🎉 Balance Paid';
         } else if (lead.package === 'starter' || (lead.package && (lead.package.includes('99') || lead.package.includes('8,999')))) {
           pkgClass = 'starter';
           pkgLabel = '₹8,999 Starter';
@@ -1735,9 +1735,11 @@
         // WhatsApp prefilled message
         let waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Apartments regarding your accommodation brief (${lead.reference}) for ${lead.city}. We have found verified room matches!`);
         if (lead.paymentMode === 'holding_initial') {
-          waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Concierge confirming your holding deposit (₹${lead.amountPaidINR || 2999}) for Room ${lead.roomId || 'DF-ROOM'} (${lead.reference}). Let's schedule your viewing slot!`);
+          const paidStr = lead.amountPaidINR ? ` (₹${lead.amountPaidINR.toLocaleString('en-IN')})` : '';
+          waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Concierge confirming your holding deposit${paidStr} for Room ${lead.roomId || 'DF-ROOM'} (${lead.reference}). Let's schedule your viewing slot!`);
         } else if (lead.paymentMode === 'holding_paid') {
-          waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Concierge confirming your remaining balance (₹${lead.amountPaidINR || 10000}) for Room ${lead.roomId || 'DF-ROOM'} (${lead.reference}). We are initiating the lease contract audit!`);
+          const paidStr = lead.amountPaidINR ? ` (₹${lead.amountPaidINR.toLocaleString('en-IN')})` : '';
+          waMsg = encodeURIComponent(`Hello ${lead.name}, this is DieFuture Concierge confirming your remaining balance${paidStr} for Room ${lead.roomId || 'DF-ROOM'} (${lead.reference}). We are initiating the lease contract audit!`);
         }
         const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
 
@@ -2040,8 +2042,30 @@
       }
     }
 
+    let currentAdminFeeCurrency = 'EUR';
     if (roomFieldFeeCurrency) {
-      roomFieldFeeCurrency.addEventListener('change', updateHoldingModeUI);
+      roomFieldFeeCurrency.addEventListener('change', () => {
+        const nextCurrency = roomFieldFeeCurrency.value;
+        if (nextCurrency !== currentAdminFeeCurrency) {
+          if (nextCurrency === 'INR' && currentAdminFeeCurrency === 'EUR') {
+            if (roomFieldFee && roomFieldFee.value !== '') {
+              roomFieldFee.value = Math.round(Number(roomFieldFee.value) * adminEurRate);
+            }
+            if (roomFieldHoldingFee && roomFieldHoldingFee.value !== '') {
+              roomFieldHoldingFee.value = Math.round(Number(roomFieldHoldingFee.value) * adminEurRate);
+            }
+          } else if (nextCurrency === 'EUR' && currentAdminFeeCurrency === 'INR') {
+            if (roomFieldFee && roomFieldFee.value !== '') {
+              roomFieldFee.value = Math.round((Number(roomFieldFee.value) / adminEurRate) * 10) / 10;
+            }
+            if (roomFieldHoldingFee && roomFieldHoldingFee.value !== '') {
+              roomFieldHoldingFee.value = Math.round((Number(roomFieldHoldingFee.value) / adminEurRate) * 10) / 10;
+            }
+          }
+          currentAdminFeeCurrency = nextCurrency;
+        }
+        updateHoldingModeUI();
+      });
     }
     if (roomFieldPaymentMode) {
       roomFieldPaymentMode.addEventListener('change', updateHoldingModeUI);
@@ -2252,7 +2276,11 @@
           if (r.address) roomFieldAddress.value = r.address;
           if (r.rentWarmEUR) roomFieldRent.value = r.rentWarmEUR;
           if (r.depositEUR) roomFieldDeposit.value = r.depositEUR;
-          if (r.feeINR) roomFieldFee.value = r.feeINR;
+          // Never default to 12999 or 2999 for fetched rooms - leave empty for admin entry
+          roomFieldFee.value = '';
+          if (roomFieldHoldingFee) roomFieldHoldingFee.value = '';
+          if (roomFieldRemainingFee) roomFieldRemainingFee.value = '';
+          updateHoldingModeUI();
           if (r.roomSizeM2) roomFieldSize.value = r.roomSizeM2;
           if (r.roomType) roomFieldType.value = r.roomType;
           if (r.transit) roomFieldTransit.value = r.transit;
@@ -2296,6 +2324,8 @@
       delete roomUpsertForm.dataset.editing;
       setAdminImages([]);
       roomFieldFee.value = '';
+      if (roomFieldFeeCurrency) roomFieldFeeCurrency.value = 'EUR';
+      currentAdminFeeCurrency = 'EUR';
       if (roomFieldPaymentMode) roomFieldPaymentMode.value = 'full';
       if (roomFieldHoldingFee) roomFieldHoldingFee.value = '';
       if (roomFieldRemainingFee) roomFieldRemainingFee.value = '';
@@ -2575,6 +2605,7 @@
           
           const isEUR = room.feeCurrency !== 'INR';
           if (roomFieldFeeCurrency) roomFieldFeeCurrency.value = isEUR ? 'EUR' : 'INR';
+          currentAdminFeeCurrency = isEUR ? 'EUR' : 'INR';
           if (isEUR) {
             roomFieldFee.value = room.feeEUR !== undefined ? room.feeEUR : (room.feeINR ? Math.round(room.feeINR / adminEurRate) : '');
             if (roomFieldHoldingFee) {
@@ -2666,6 +2697,7 @@
           roomFieldDeposit.value = room.depositEUR || '';
           const isEUR = room.feeCurrency !== 'INR';
           if (roomFieldFeeCurrency) roomFieldFeeCurrency.value = isEUR ? 'EUR' : 'INR';
+          currentAdminFeeCurrency = isEUR ? 'EUR' : 'INR';
           if (isEUR) {
             roomFieldFee.value = room.feeEUR !== undefined ? room.feeEUR : (room.feeINR ? Math.round(room.feeINR / adminEurRate) : '');
             if (roomFieldHoldingFee) {
