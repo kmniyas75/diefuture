@@ -927,18 +927,18 @@
       </div>
     </div>
 
-    <div class="ps-protocol">
-      <div class="ps-protocol-h">Optional Relocation Guidance &amp; Handover Support (Available on Request)</div>
-      <div class="ps-steps-grid">
-        <div class="ps-step-item">
+    <div class="ps-protocol" id="printProtocolBox">
+      <div class="ps-protocol-h">Relocation Guidance &amp; Handover Support</div>
+      <div class="ps-steps-grid" id="printStepsGrid">
+        <div class="ps-step-item" id="printStepViewing">
           <strong>Viewing Support (Optional)</strong>
           Our relocation desk can assist in coordinating an interactive live video or in-person walk-through with the provider if requested.
         </div>
-        <div class="ps-step-item">
+        <div class="ps-step-item" id="printStepContract">
           <strong>Contract Guidance (Optional)</strong>
           General checklist guidance on your German tenancy contract (<em>Mietvertrag</em>) prior to signing is available upon request.
         </div>
-        <div class="ps-step-item">
+        <div class="ps-step-item" id="printStepAnmeldung">
           <strong>Registration Support (Optional)</strong>
           Guidance verifying the landlord's city registration confirmation (<em>Wohnungsgeberbestätigung</em>) upon request.
         </div>
@@ -952,7 +952,7 @@
           *Important Notice: DieFuture operates as an accommodation scouting and relocation consulting desk. Monthly rent and security deposit are paid directly to the private German landlord upon executing the tenancy contract (Mietvertrag). All bookings subject to published Terms on diefuture.com.
         </div>
         <div style="font-size: 7.5px; color: #94A3B8; line-height: 1.25; margin-top: 4px;">
-          Operating Entity: Stayforall Plus Services Private Limited · Regd. Office: Bldg 1/185J, 2nd Fl, Puthuvana, Thottumugham, Aluva, Ernakulam, Kerala 683108, India.
+          DieFuture Relocations Desk · Accommodation Advisory &amp; Lead Matching Services · Germany &amp; India
         </div>
       </div>
       <div class="ps-seal">
@@ -1111,33 +1111,18 @@
           </div>
 
           <!-- Financial Clarity Callout -->
-          <div class="financial-callout">
-            <strong>Clear Distinction on Payments:</strong><br>
-            • The monthly warm rent (<strong id="calloutRentVal">€775</strong>) and rental deposit (<strong id="calloutDepositVal">€1,500</strong>) are paid directly to the private German landlord in <span id="calloutCityVal">Munich</span> pursuant to your signed tenancy agreement (<em>Mietvertrag</em>).<br>
-            • DieFuture collects a <strong>one-time lead handover fee of <span class="dynamic-lead-fee" style="font-weight:700;">₹12,999</span></strong> for locating, inspecting, confirming landlord acceptance, and coordinating your contract and viewing appointment. We do NOT collect room rent or security deposit.
+          <div class="financial-callout" style="margin-top:16px;">
+            <div style="font-weight:700; color:var(--ink); margin-bottom:4px;">💡 Direct German Landlord Tenancy</div>
+            <div style="font-size:13px; color:var(--ink-2); line-height:1.5;">
+              Monthly warm rent (<strong id="calloutRentVal">€775</strong>) and Kaution deposit (<strong id="calloutDepositVal">€1,500</strong>) are paid directly to the landlord in <span id="calloutCityVal">Germany</span> pursuant to your official German tenancy agreement (<em>Mietvertrag</em>). DieFuture only collects the one-time lead coordination fee of <strong class="dynamic-lead-fee">₹1</strong>.
+            </div>
           </div>
 
-          <!-- Room Amenities -->
-          <h3 class="section-subheading">Room & Apartment Amenities</h3>
-          <div class="amenities-list">
-            <div class="amenity-item"><span class="amenity-icon">✓</span> Double bed with premium mattress & linens</div>
-            <div class="amenity-item"><span class="amenity-icon">✓</span> Study desk with ergonomic chair & lamp</div>
-            <div class="amenity-item"><span class="amenity-icon">✓</span> Wardrobe, bookshelf & spacious storage</div>
-            <div class="amenity-item"><span class="amenity-icon">✓</span> Sunny private balcony with courtyard view</div>
-            <div class="amenity-item"><span class="amenity-icon">✓</span> Modern fully fitted kitchen with oven & induction hob</div>
-            <div class="amenity-item"><span class="amenity-icon">✓</span> In-unit washing machine & dryer rack</div>
-            <div class="amenity-item"><span class="amenity-icon">✓</span> Modern tiled bathroom with glass shower</div>
-            <div class="amenity-item"><span class="amenity-icon">✓</span> High-speed 250 Mbps fiber WiFi included</div>
-            <div class="amenity-item"><span class="amenity-icon">✓</span> Secure basement bicycle parking cellar</div>
-            <div class="amenity-item"><span class="amenity-icon">✓</span> Supermarkets (Edeka, Rewe, Lidl) within 350m</div>
+          <!-- Room Notes (Optional: populated only if advisor entered notes) -->
+          <div id="roomNotesBlock" style="margin-top:16px; display:none; background:#F8FAFC; border:1px solid var(--rule-2); border-radius:8px; padding:14px 16px;">
+            <div style="font-size:11px; font-family:var(--f-mono); font-weight:700; color:var(--royal); text-transform:uppercase; margin-bottom:4px; letter-spacing:.03em;">Advisor Notes</div>
+            <div id="roomNotesContent" style="font-size:13px; color:var(--ink-2); line-height:1.5;"></div>
           </div>
-
-          <!-- Neighborhood Description -->
-          <h3 class="section-subheading">Location & Neighborhood (Munich Thalkirchen)</h3>
-          <p style="font-size:14.5px; color:var(--ink-2); line-height:1.6; margin-bottom:16px;">
-            Located in the idyllic, safe, and green residential district of <strong>München-Thalkirchen (Obersendling)</strong>. Only a short walk to the famous Isar river trails, Flaucher beer gardens, and outdoor parks. 
-            The <strong>U-Bahn station U3 (Obersendling / Thalkirchen)</strong> connects you directly to Sendlinger Tor, Marienplatz, and the main campuses of Ludwig Maximilian University (LMU) and Technical University of Munich (TUM) in under 15 minutes.
-          </p>
 
         </div>
 
@@ -1168,17 +1153,13 @@
                   <span class="fee-type">/ one-time service fee</span>
                 </div>
                 <div style="font-size:12px; color:var(--ink-3); margin-top:3px;">
-                  Collected via Razorpay (Stayforall Plus Services Pvt Ltd)
+                  Collected securely via Razorpay
                 </div>
               </div>
 
-              <!-- Deliverables Checklist -->
-              <ul class="deliverables-checklist">
-                <li><span class="check">✓</span> <span><strong>Dedicated Relocation Concierge:</strong> 1-on-1 WhatsApp assistance for viewing coordination, contract review & landlord communication.</span></li>
-                <li><span class="check">✓</span> <span><strong>Guaranteed Viewing Slot:</strong> In-person or live WhatsApp video tour coordinated for you.</span></li>
-                <li><span class="check">✓</span> <span><strong>Anmeldung Commitment:</strong> Signed German Wohnungsgeberbestätigung upon lease.</span></li>
-                <li><span class="check">✓</span> <span><strong>Tenancy Agreement Audit:</strong> DieFuture team checks lease terms & clauses before you sign.</span></li>
-                <li><span class="check">✓</span> <span><strong>100% Protection:</strong> Full refund if the room is taken before your scheduled viewing.</span></li>
+              <!-- Deliverables Checklist (Dynamically rendered based on admin settings) -->
+              <ul class="deliverables-checklist" id="deliverablesChecklist">
+                <!-- Rendered dynamically by applyRoomData() -->
               </ul>
 
               <!-- Customer Intake Form -->
@@ -1285,46 +1266,6 @@
     </div>
   </section>
 
-  <!-- FAQ SECTION FOR ROOM LEADS -->
-  <section class="sec sec-paper" style="border-top:1px solid var(--rule); padding: 60px 0;">
-    <div class="wrap">
-      <div class="sec-head">
-        <div class="sec-eyebrow">Questions & Answers</div>
-        <h2 class="sec-h">Frequently asked questions about <span class="dim">Direct Room Leads</span></h2>
-      </div>
-
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:24px; margin-top:32px;">
-        <div class="card" style="background:#FFFFFF; padding:24px; border:1px solid var(--rule); border-radius:8px;">
-          <h4 style="font-size:16px; font-weight:700; margin-bottom:8px; color:var(--ink);">What does the <span class="dynamic-lead-fee">₹12,999</span> lead fee cover?</h4>
-          <p style="font-size:13.5px; color:var(--ink-2); line-height:1.6;">
-            It covers our scouting fee, personal landlord liaison, verification of legal <em>Anmeldung</em> status, reservation of your exclusive viewing appointment, and tenancy contract audit.
-          </p>
-        </div>
-
-        <div class="card" style="background:#FFFFFF; padding:24px; border:1px solid var(--rule); border-radius:8px;">
-          <h4 style="font-size:16px; font-weight:700; margin-bottom:8px; color:var(--ink);">How and when do I pay the room rent?</h4>
-          <p style="font-size:13.5px; color:var(--ink-2); line-height:1.6;">
-            The monthly rent (<span id="faqRentVal">€775</span>) and deposit (<span id="faqDepositVal">€1,500</span>) are paid directly to the landlord in Germany after you inspect the room and execute the German tenancy contract (<em>Mietvertrag</em>). DieFuture never collects rent or damage deposits.
-          </p>
-        </div>
-
-        <div class="card" style="background:#FFFFFF; padding:24px; border:1px solid var(--rule); border-radius:8px;">
-          <h4 style="font-size:16px; font-weight:700; margin-bottom:8px; color:var(--ink);">What if I cannot attend an in-person viewing?</h4>
-          <p style="font-size:13.5px; color:var(--ink-2); line-height:1.6;">
-            The landlord accommodates live interactive WhatsApp video calls for international students who are still in India or outside Munich, showing the bedroom, bathroom, kitchen, and balcony in real time.
-          </p>
-        </div>
-
-        <div class="card" style="background:#FFFFFF; padding:24px; border:1px solid var(--rule); border-radius:8px;">
-          <h4 style="font-size:16px; font-weight:700; margin-bottom:8px; color:var(--ink);">Is the <span class="dynamic-lead-fee">₹12,999</span> lead fee refundable?</h4>
-          <p style="font-size:13.5px; color:var(--ink-2); line-height:1.6;">
-            Yes. If the landlord chooses another applicant prior to your scheduled viewing or if the room becomes unavailable through no fault of your own, we either issue a 100% money-back refund or reassign you to an equivalent pre-vetted room without extra charge.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- SITE FOOTER -->
   <footer class="site-footer">
     <div class="wrap">
@@ -1333,10 +1274,6 @@
           <img src="./assets/diefuture-logo.jpg" alt="DieFuture Logo" class="brand-avatar" />
           <div class="footer-brand-title">DieFuture Apartments</div>
           <p class="footer-brand-desc">Reliable accommodation search & relocation advisory across 10+ German housing portals for international students and professionals.</p>
-          <div class="footer-sponsored" style="font-size:12.5px; color:#94A3B8; font-weight:500; border-left:2px solid var(--electric); padding-left:12px; margin-top:16px; line-height:1.5;">
-            <div style="color:#FFFFFF; font-weight:600; margin-bottom:2px;">Sponsored by Stayforall Plus Services Private Limited</div>
-            <div style="font-size:11.5px; color:#64748B;">Registered Office: BUILDING NO. 1/185J, SECOND FLOOR, PUTHUVANA, THOTTUMUGHAM, ELOOKKARA, Thottakkattukara, Aluva, Ernakulam, Kerala, India - 683108</div>
-          </div>
         </div>
 
         <div class="footer-col">
@@ -1373,7 +1310,7 @@
       </div>
 
       <div class="footer-bottom">
-        <div>© 2026 DieFuture Apartments · Sponsored by Stayforall Plus Services Private Limited. All rights reserved.</div>
+        <div>© 2026 DieFuture Apartments. All rights reserved.</div>
         <div>Email: <a href="mailto:diefutureapartments@gmail.com">diefutureapartments@gmail.com</a> · WhatsApp Desk: <a href="https://wa.me/919567941647" target="_blank" rel="noopener">+91 95679 41647</a> · <a href="contact" style="color:var(--electric); font-weight:600;">Contact Page →</a></div>
       </div>
     </div>
@@ -1599,11 +1536,68 @@
         if (calloutDep) calloutDep.textContent = `€${deposit.toLocaleString()}`;
         if (calloutCity) calloutCity.textContent = currentRoom.city || 'Germany';
 
-        // Update FAQ values
-        const faqRent = document.getElementById('faqRentVal');
-        const faqDep = document.getElementById('faqDepositVal');
-        if (faqRent) faqRent.textContent = `€${rent}`;
-        if (faqDep) faqDep.textContent = `€${deposit.toLocaleString()}`;
+        // Render Advisor Notes (if provided by advisor)
+        const notesBlock = document.getElementById('roomNotesBlock');
+        const notesContent = document.getElementById('roomNotesContent');
+        if (notesBlock && notesContent) {
+          if (currentRoom.description && currentRoom.description.trim()) {
+            notesContent.textContent = currentRoom.description.trim();
+            notesBlock.style.display = 'block';
+          } else {
+            notesBlock.style.display = 'none';
+          }
+        }
+
+        // Render Guarantees & Deliverables Checklist dynamically
+        const g = currentRoom.guarantees || {
+          showGuarantees: true,
+          concierge: true,
+          viewingType: 'viewing',
+          anmeldung: true,
+          contractAudit: true,
+          refundPolicy: 'none'
+        };
+
+        const deliverablesEl = document.getElementById('deliverablesChecklist');
+        if (deliverablesEl) {
+          if (g.showGuarantees === false) {
+            deliverablesEl.style.display = 'none';
+            deliverablesEl.innerHTML = '';
+          } else {
+            deliverablesEl.style.display = 'flex';
+            const items = [];
+
+            if (g.concierge !== false) {
+              items.push(`<li><span class="check">✓</span> <span><strong>Dedicated Relocation Concierge:</strong> 1-on-1 WhatsApp assistance for viewing coordination, contract review & landlord communication.</span></li>`);
+            }
+
+            if (g.viewingType === 'viewing') {
+              items.push(`<li><span class="check">✓</span> <span><strong>Guaranteed Viewing Slot:</strong> In-person or live WhatsApp video tour coordinated for you.</span></li>`);
+            } else if (g.viewingType === 'direct') {
+              items.push(`<li><span class="check">✓</span> <span><strong>Direct Booking Allocation:</strong> Fast-track priority lease allocation directly coordinated with the landlord.</span></li>`);
+            }
+
+            if (g.anmeldung !== false) {
+              items.push(`<li><span class="check">✓</span> <span><strong>Anmeldung Commitment:</strong> Signed German Wohnungsgeberbestätigung upon lease.</span></li>`);
+            }
+
+            if (g.contractAudit !== false) {
+              items.push(`<li><span class="check">✓</span> <span><strong>Tenancy Agreement Audit:</strong> DieFuture team checks lease terms & clauses before you sign.</span></li>`);
+            }
+
+            if (g.refundPolicy === 'visit') {
+              items.push(`<li><span class="check">✓</span> <span><strong>Visit Satisfaction Refund:</strong> Full refund of your lead fee if you attend the scheduled viewing and do not like the room.</span></li>`);
+            } else if (g.refundPolicy === 'slot') {
+              items.push(`<li><span class="check">✓</span> <span><strong>100% Protection:</strong> Full refund if the room is taken before your scheduled viewing.</span></li>`);
+            }
+
+            if (items.length === 0) {
+              deliverablesEl.style.display = 'none';
+            } else {
+              deliverablesEl.innerHTML = items.join('');
+            }
+          }
+        }
 
         // Update all dynamic fee mentions across the page
         document.querySelectorAll('.dynamic-lead-fee').forEach(el => el.textContent = formattedFee);
@@ -1882,6 +1876,36 @@
         if (pType) pType.textContent = currentRoom.roomType || 'WG Room (Single Private)';
         if (pRent) pRent.textContent = `€${currentRoom.rentWarmEUR || 775} / month`;
         if (pDep) pDep.textContent = `€${(currentRoom.depositEUR || 1550).toLocaleString()} (To Landlord)`;
+
+        // Adjust protocol steps dynamically
+        const g = (currentRoom && currentRoom.guarantees) || {};
+        const stepViewing = document.getElementById('printStepViewing');
+        const stepContract = document.getElementById('printStepContract');
+        const stepAnmeldung = document.getElementById('printStepAnmeldung');
+        const printProtocolBox = document.getElementById('printProtocolBox');
+
+        if (g.showGuarantees === false) {
+          if (printProtocolBox) printProtocolBox.style.display = 'none';
+        } else {
+          if (printProtocolBox) printProtocolBox.style.display = 'block';
+          if (stepViewing) {
+            if (g.viewingType === 'none') {
+              stepViewing.style.display = 'none';
+            } else if (g.viewingType === 'direct') {
+              stepViewing.style.display = 'block';
+              stepViewing.innerHTML = '<strong>Direct Allocation Support</strong>Direct priority lease and move-in coordination with the accommodation provider.';
+            } else {
+              stepViewing.style.display = 'block';
+              stepViewing.innerHTML = '<strong>Viewing Support (Optional)</strong>Interactive live video or in-person walk-through coordination with the provider upon request.';
+            }
+          }
+          if (stepContract) {
+            stepContract.style.display = (g.contractAudit !== false) ? 'block' : 'none';
+          }
+          if (stepAnmeldung) {
+            stepAnmeldung.style.display = (g.anmeldung !== false) ? 'block' : 'none';
+          }
+        }
 
         window.print();
       };

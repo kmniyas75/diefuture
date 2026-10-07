@@ -114,7 +114,15 @@ export default async function handler(req, res) {
         imageUrl: imageList[0],
         images: imageList,
         stayforallUrl: stayforallUrl || '',
-        anmeldung: true,
+        anmeldung: req.body.anmeldung !== undefined ? Boolean(req.body.anmeldung) : true,
+        guarantees: req.body.guarantees || {
+          showGuarantees: req.body.showGuarantees !== false,
+          concierge: req.body.guaranteeConcierge !== false,
+          viewingType: req.body.guaranteeViewing || 'viewing',
+          anmeldung: req.body.guaranteeAnmeldung !== false,
+          contractAudit: req.body.guaranteeContractAudit !== false,
+          refundPolicy: req.body.guaranteeRefund || 'none'
+        },
         transit: transit || 'Convenient transit nearby',
         status: roomStatus || 'available',
         featured: featured !== undefined ? Boolean(featured) : true,
