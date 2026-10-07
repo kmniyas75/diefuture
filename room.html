@@ -903,6 +903,7 @@
       -webkit-backface-visibility: hidden !important;
       backface-visibility: hidden !important;
       will-change: transform !important;
+      pointer-events: auto !important;
       display: block;
     }
 
@@ -929,6 +930,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
+      pointer-events: auto !important;
     }
 
     .mobile-bnav-price-block {
@@ -1002,6 +1004,11 @@
       background: var(--electric);
       color: #FFFFFF;
       transition: background 0.2s, transform 0.1s;
+      touch-action: manipulation !important;
+      -webkit-tap-highlight-color: transparent !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      pointer-events: auto !important;
     }
     .mobile-bnav-btn:active {
       transform: translateY(1px);
@@ -1761,7 +1768,7 @@
         </div>
         <div class="mobile-bnav-rent" id="mobileBnavRent">Warm Rent: €775 /mo</div>
       </div>
-      <button type="button" class="mobile-bnav-btn" id="mobileBnavActionBtn">
+      <button type="button" class="mobile-bnav-btn" id="mobileBnavActionBtn" onclick="window.initiatePayment && window.initiatePayment()">
         <span id="mobileBnavBtnText">Reserve Now</span>
         <span style="font-size:16px; line-height:1;">→</span>
       </button>
@@ -2251,9 +2258,21 @@
           return;
         }
 
-        const name = (currentRoom.studentName || 'Verified Student').trim();
-        const email = (currentRoom.studentEmail || 'student@diefuture.com').trim();
-        const phone = (currentRoom.studentPhone || '').trim();
+        // Clean phone number: Extract 10 digits
+        let rawPhone = (currentRoom.studentPhone || '').trim();
+        let cleanDigits = rawPhone.replace(/\D/g, '');
+        if (cleanDigits.length > 10 && cleanDigits.startsWith('91')) {
+          cleanDigits = cleanDigits.slice(2);
+        } else if (cleanDigits.length > 10) {
+          cleanDigits = cleanDigits.slice(-10);
+        }
+
+        // Razorpay REQUIRES a 10-digit number. If phone is missing or incomplete,
+        // fallback to DieFuture Concierge Desk (+91 95679 41647)
+        // so Razorpay NEVER pauses on "Enter mobile number to continue"
+        const finalContact = (cleanDigits.length === 10) ? cleanDigits : '9567941647';
+        const finalName = (currentRoom.studentName && currentRoom.studentName.trim() !== 'Verified Student') ? currentRoom.studentName.trim() : 'Verified Student';
+        const finalEmail = (currentRoom.studentEmail && currentRoom.studentEmail.trim()) ? currentRoom.studentEmail.trim() : 'student@diefuture.com';
 
         const paymentMode = currentRoom.paymentMode || 'full';
         let payableINR = currentRoom.feeINR || 12999;
@@ -2278,6 +2297,8 @@
         const origMobileHtml = mobileBnavActionBtn ? mobileBnavActionBtn.innerHTML : '';
         if (mobileBnavActionBtn) {
           mobileBnavActionBtn.disabled = true;
+          mobileBnavActionBtn.style.opacity = '0.75';
+          mobileBnavActionBtn.innerHTML = '<span>Opening Pay...</span>';
         }
 
         function restoreButtons() {
@@ -2287,6 +2308,7 @@
           }
           if (mobileBnavActionBtn) {
             mobileBnavActionBtn.disabled = false;
+            mobileBnavActionBtn.style.opacity = '1';
             mobileBnavActionBtn.innerHTML = origMobileHtml;
           }
         }
@@ -2296,7 +2318,9 @@
           restoreButtons();
           handlePaymentSuccess({
             razorpay_payment_id: 'pay_test_' + Math.random().toString(36).substring(2, 10),
-            name, email, phone
+            name: finalName,
+            email: finalEmail,
+            phone: rawPhone || finalContact
           });
           return;
         }
@@ -2315,9 +2339,9 @@
               notes: {
                 roomId: currentRoom.roomId,
                 city: currentRoom.city,
-                seekerName: name,
-                seekerEmail: email,
-                seekerPhone: phone,
+                seekerName: finalName,
+                seekerEmail: finalEmail,
+                seekerPhone: rawPhone || finalContact,
                 paymentMode: paymentMode,
                 payableINR: payableINR
               }
@@ -2342,9 +2366,9 @@
             image: "./assets/diefuture-logo.jpg",
             order_id: orderData.order_id,
             prefill: {
-              name: (name !== 'Verified Student') ? name : '',
-              email: (email !== 'student@diefuture.com') ? email : '',
-              contact: phone || ''
+              name: finalName,
+              email: finalEmail,
+              contact: finalContact
             },
             theme: {
               color: "#084BE0"
@@ -2352,6 +2376,7 @@
             // 3. Backend: Verify Signature on Payment Success
             handler: async function (response) {
               if (payBtn) payBtn.innerHTML = '<span>Verifying Payment...</span>';
+              if (mobileBnavActionBtn) mobileBnavActionBtn.innerHTML = '<span>Verifying...</span>';
 
               try {
                 const verifyRes = await fetch(`${apiBase}/api/verify-payment`, {
@@ -2376,7 +2401,9 @@
                 handlePaymentSuccess({
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_order_id: response.razorpay_order_id,
-                  name, email, phone
+                  name: finalName,
+                  email: finalEmail,
+                  phone: rawPhone || finalContact
                 });
               } catch (verifyErr) {
                 console.error('Payment verification failed:', verifyErr);
@@ -2405,6 +2432,8 @@
           restoreButtons();
         }
       }
+
+      window.initiatePayment = initiatePayment;
 
       if (payRazorpayBtn) {
         payRazorpayBtn.addEventListener('click', initiatePayment);
@@ -2632,13 +2661,20 @@
         // Mobile Sticky Bottom Nav Action Listener -> 1-Click Pay directly
         const mobileBnavActionBtn = document.getElementById('mobileBnavActionBtn');
         if (mobileBnavActionBtn) {
-          mobileBnavActionBtn.addEventListener('click', () => {
+          let lastTap = 0;
+          const handleMobilePayTap = (e) => {
+            const now = Date.now();
+            if (now - lastTap < 800) return;
+            lastTap = now;
             if (unlockedDossierView && unlockedDossierView.style.display !== 'none') {
               unlockedDossierView.scrollIntoView({ behavior: 'smooth', block: 'center' });
               return;
             }
             initiatePayment();
-          });
+          };
+
+          mobileBnavActionBtn.addEventListener('click', handleMobilePayTap);
+          mobileBnavActionBtn.addEventListener('touchend', handleMobilePayTap, { passive: true });
         }
 
         loadRoomDetails();
