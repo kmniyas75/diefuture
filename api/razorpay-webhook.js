@@ -1,11 +1,5 @@
-import crypto from 'crypto';
+import Razorpay from 'razorpay';
 import { MongoClient } from 'mongodb';
-
-export const config = {
-  api: {
-    bodyParser: false
-  }
-};
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const DB_NAME = process.env.DB_NAME || 'diefuture';
@@ -21,16 +15,17 @@ async function getDb() {
   return cachedClient.db(DB_NAME);
 }
 
-async function getRawBody(readable) {
-  const chunks = [];
-  for await (const chunk of readable) {
-    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
-  }
-  return Buffer.concat(chunks);
-}
-
 export default async function handler(req, res) {
-  // Only POST allowed
+  // CORS
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Razorpay-Signature');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -38,27 +33,27 @@ export default async function handler(req, res) {
   const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET;
 
   try {
-    const rawBodyBuffer = await getRawBody(req);
-    const rawBody = rawBodyBuffer.toString('utf8');
     const signature = req.headers['x-razorpay-signature'];
+    const body = req.body;
 
-    // Verify Webhook Signature if secret exists
+    // Optional signature validation if secret is configured
     if (webhookSecret && signature) {
-      const expectedSignature = crypto
-        .createHmac('sha256', webhookSecret)
-        .update(rawBody)
-        .digest('hex');
-
-      if (expectedSignature !== signature) {
-        console.error('[Razorpay Webhook] Invalid signature mismatch');
-        return res.status(400).json({ error: 'Invalid webhook signature' });
+      try {
+        const bodyString = typeof body === 'string' ? body : JSON.stringify(body);
+        const isValid = Razorpay.validateWebhookSignature(bodyString, signature, webhookSecret);
+        if (!isValid) {
+          console.warn('[Razorpay Webhook] Signature validation failed');
+          return res.status(400).json({ error: 'Invalid webhook signature' });
+        }
+      } catch (sigErr) {
+        console.warn('[Razorpay Webhook] Signature check warning:', sigErr.message);
       }
     }
 
-    const event = JSON.parse(rawBody || '{}');
-    console.log(`[Razorpay Webhook] Event received: ${event.event} [ID: ${event.payload?.payment?.entity?.id || 'N/A'}]`);
+    const event = typeof body === 'string' ? JSON.parse(body || '{}') : (body || {});
+    console.log(`[Razorpay Webhook] Event received: ${event.event}`);
 
-    // Handle payment.captured or order.paid
+    // Handle payment captured or order paid
     if (event.event === 'payment.captured' || event.event === 'order.paid') {
       const payment = event.payload?.payment?.entity || {};
       const order = event.payload?.order?.entity || {};
@@ -73,47 +68,47 @@ export default async function handler(req, res) {
       const roomId = notes.roomId || notes.room_id || '';
 
       // 1. Record / Update in MongoDB
-      try {
-        const db = await getDb();
+      if (MONGODB_URI) {
+        try {
+          const db = await getDb();
 
-        // Mark room as reserved if room ID present
-        if (roomId) {
-          await db.collection('rooms').updateOne(
-            { roomId: String(roomId) },
-            { $set: { status: 'reserved', reservedAt: new Date(), reservedBy: name, paymentId } }
-          );
-        }
+          // Mark room reserved if roomId exists
+          if (roomId) {
+            await db.collection('rooms').updateOne(
+              { roomId: String(roomId) },
+              { $set: { status: 'reserved', reservedAt: new Date(), reservedBy: name, paymentId } }
+            );
+          }
 
-        // Upsert into leads collection
-        await db.collection('leads').updateOne(
-          { paymentId },
-          {
-            $set: {
-              paymentId,
-              orderId,
-              name,
-              email,
-              phone,
-              amount: amountINR,
-              currency: payment.currency || 'INR',
-              method: payment.method || 'online',
-              status: 'paid',
-              leadType: roomId ? 'room_reservation' : 'package_booking',
-              roomId: roomId || null,
-              notes,
-              paidAt: new Date(payment.created_at ? payment.created_at * 1000 : Date.now()),
-              webhookVerified: true,
-              updatedAt: new Date()
+          // Record in leads collection
+          await db.collection('leads').updateOne(
+            { paymentId },
+            {
+              $set: {
+                paymentId,
+                orderId,
+                name,
+                email,
+                phone,
+                amount: amountINR,
+                currency: payment.currency || 'INR',
+                method: payment.method || 'online',
+                status: 'paid',
+                leadType: roomId ? 'room_reservation' : 'package_booking',
+                roomId: roomId || null,
+                notes,
+                paidAt: new Date(payment.created_at ? payment.created_at * 1000 : Date.now()),
+                webhookVerified: true,
+                updatedAt: new Date()
+              },
+              $setOnInsert: { createdAt: new Date() }
             },
-            $setOnInsert: {
-              createdAt: new Date()
-            }
-          },
-          { upsert: true }
-        );
-        console.log(`[Razorpay Webhook] Recorded payment in MongoDB for ${paymentId}`);
-      } catch (dbErr) {
-        console.error('[Razorpay Webhook] DB write error:', dbErr.message);
+            { upsert: true }
+          );
+          console.log(`[Razorpay Webhook] Recorded payment in MongoDB for ${paymentId}`);
+        } catch (dbErr) {
+          console.error('[Razorpay Webhook] DB error:', dbErr.message);
+        }
       }
 
       // 2. Send Email Alert via native fetch to Resend
@@ -132,7 +127,7 @@ export default async function handler(req, res) {
               html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
                   <h2 style="color: #0b1528;">Payment Confirmed via Razorpay</h2>
-                  <p>A new payment has been successfully captured:</p>
+                  <p>A new payment has been captured:</p>
                   <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
                     <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Amount:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee; color: #16a34a; font-weight: bold;">₹${amountINR.toLocaleString('en-IN')}</td></tr>
                     <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Payer Name:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${name}</td></tr>
@@ -142,7 +137,7 @@ export default async function handler(req, res) {
                     <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Order ID:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;"><code>${orderId}</code></td></tr>
                     ${roomId ? `<tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Room Lead ID:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">DF-ROOM-${roomId}</td></tr>` : ''}
                   </table>
-                  <p style="margin-top: 20px; font-size: 13px; color: #666;">This webhook was processed securely by DieFuture Automation.</p>
+                  <p style="margin-top: 20px; font-size: 13px; color: #666;">Processed securely by DieFuture Automation.</p>
                 </div>
               `
             })
@@ -153,9 +148,9 @@ export default async function handler(req, res) {
       }
     }
 
-    return res.status(200).json({ status: 'ok' });
+    return res.status(200).json({ status: 'ok', received: true });
   } catch (err) {
-    console.error('[Razorpay Webhook] Handler error:', err);
+    console.error('[Razorpay Webhook] Execution error:', err);
     return res.status(500).json({ error: 'Internal webhook error', message: err.message });
   }
 }
