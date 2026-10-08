@@ -2131,7 +2131,7 @@
         <div class="mobile-bnav-rent" id="mobileBnavRent">Warm Rent: €480 /mo</div>
       </div>
       <button type="button" class="mobile-bnav-btn" id="mobileBnavActionBtn"
-        onclick="window.initiatePayment && window.initiatePayment()">
+        onclick="window.scrollToPaymentSection && window.scrollToPaymentSection(event)">
         <span id="mobileBnavBtnText">Reserve Slot</span>
         <span class="mobile-bnav-btn-arrow">→</span>
       </button>
@@ -3446,19 +3446,59 @@
         });
       }
 
-      // Mobile Sticky Bottom Nav Action Listener -> 1-Click Pay directly
+      // Mobile Sticky Bottom Nav Action Listener -> Smooth scroll to Payment Method & Currency Section
+      function scrollToPaymentSection(e) {
+        if (e && e.preventDefault) e.preventDefault();
+
+        if (unlockedDossierView && unlockedDossierView.style.display !== 'none') {
+          unlockedDossierView.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
+        const target = document.getElementById('currencyMethodSelector') || document.getElementById('checkoutActionBox');
+        if (target) {
+          const nav = document.getElementById('mainNav');
+          const navHeight = nav ? nav.offsetHeight : 64;
+          const rect = target.getBoundingClientRect();
+
+          // If the currency selector is already positioned right below the top navbar
+          // (between navHeight and navHeight + 110), user is already viewing it, so proceed to payment!
+          const isAlreadyPositioned = (rect.top >= (navHeight - 10) && rect.top <= (navHeight + 110));
+
+          if (isAlreadyPositioned) {
+            initiatePayment();
+          } else {
+            // Smoothly scroll so the payment method / currency section sits right below the top navbar
+            const scrollTarget = window.pageYOffset + rect.top - (navHeight + 16);
+            window.scrollTo({
+              top: Math.max(0, scrollTarget),
+              behavior: 'smooth'
+            });
+
+            // Gentle visual highlight on the payment method selector
+            target.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+            target.style.transform = 'scale(1.02)';
+            target.style.boxShadow = '0 0 0 3px rgba(8, 75, 224, 0.35)';
+            target.style.borderRadius = '12px';
+            setTimeout(() => {
+              target.style.transform = '';
+              target.style.boxShadow = '';
+            }, 1200);
+          }
+        } else {
+          initiatePayment();
+        }
+      }
+      window.scrollToPaymentSection = scrollToPaymentSection;
+
       const mobileBnavActionBtn = document.getElementById('mobileBnavActionBtn');
       if (mobileBnavActionBtn) {
         let lastTap = 0;
         const handleMobilePayTap = (e) => {
           const now = Date.now();
-          if (now - lastTap < 800) return;
+          if (now - lastTap < 400) return;
           lastTap = now;
-          if (unlockedDossierView && unlockedDossierView.style.display !== 'none') {
-            unlockedDossierView.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return;
-          }
-          initiatePayment();
+          scrollToPaymentSection(e);
         };
 
         mobileBnavActionBtn.addEventListener('click', handleMobilePayTap);
