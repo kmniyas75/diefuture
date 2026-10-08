@@ -773,18 +773,22 @@ app.post('/api/rooms', async (req, res) => {
 });
 
 // 4. Update room
-app.patch('/api/rooms/:id', async (req, res) => {
+app.patch(['/api/rooms/:id', '/api/rooms'], async (req, res) => {
   try {
-    const { id } = req.params;
+    const targetId = req.params.id || req.query.id || req.body.id || req.body.roomId;
+    if (!targetId) return res.status(400).json({ error: 'Room id is required.' });
+
     const col = await getRoomsCollection();
 
-    let query = { roomId: id };
-    if (ObjectId.isValid(id) && id.length === 24) {
-      query = { $or: [{ roomId: id }, { _id: new ObjectId(id) }] };
+    let query = { roomId: String(targetId) };
+    if (ObjectId.isValid(targetId) && targetId.length === 24) {
+      query = { $or: [{ roomId: String(targetId) }, { _id: new ObjectId(targetId) }] };
     }
 
     const updates = { ...req.body, updatedAt: new Date() };
     delete updates._id;
+    delete updates.id;
+    delete updates.landlordContact;
 
     if (updates.images) {
       if (typeof updates.images === 'string') {
@@ -794,14 +798,13 @@ app.patch('/api/rooms/:id', async (req, res) => {
         updates.imageUrl = updates.images[0];
       }
     }
-    delete updates._id;
 
     const result = await col.updateOne(query, { $set: updates });
     if (result.matchedCount === 0) {
       return res.status(404).json({ error: 'Room not found' });
     }
 
-    res.json({ success: true, message: 'Room updated successfully' });
+    res.json({ success: true, message: 'Room updated successfully', modifiedCount: result.modifiedCount });
   } catch (error) {
     res.status(500).json({ error: 'Failed to update room', details: error.message });
   }

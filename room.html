@@ -1053,31 +1053,333 @@
       backface-visibility: hidden !important;
       will-change: transform !important;
       pointer-events: auto !important;
-      display: block;
+      display: block !important;
     }
 
     .mobile-bottom-nav.hidden-unlocked {
       display: none !important;
     }
 
-    @media (min-width: 1025px) {
-      .mobile-bottom-nav {
-        display: none !important;
-      }
-    }
-
-    @media (max-width: 1024px) {
-      body {
-        padding-bottom: 90px !important;
-      }
+    body {
+      padding-bottom: 95px !important;
     }
 
     .mobile-bnav-inner {
-      max-width: 520px;
+      max-width: 860px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
+      pointer-events: auto !important;
+    }
+
+    /* RESERVATION & CHECKOUT MODAL STYLES */
+    .df-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .df-modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .df-modal-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .df-modal-sheet {
+      position: relative;
+      background: #FFFFFF;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(226, 232, 240, 0.8);
+      transform: scale(0.95) translateY(10px);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+      z-index: 2;
+    }
+    .df-modal-overlay.open .df-modal-sheet {
+      transform: scale(1) translateY(0);
+    }
+    @media (max-width: 640px) {
+      .df-modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+      }
+      .df-modal-sheet {
+        max-width: 100vw;
+        border-radius: 20px 20px 0 0;
+        max-height: 92vh;
+        transform: translateY(100%);
+      }
+      .df-modal-overlay.open .df-modal-sheet {
+        transform: translateY(0);
+      }
+    }
+    .df-modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #F8FAFC;
+    }
+    .df-modal-title {
+      margin: 0;
+      font-size: 16.5px;
+      font-weight: 800;
+      color: #0F172A;
+      font-family: var(--f-sans);
+    }
+    .df-modal-sub {
+      margin: 2px 0 0 0;
+      font-size: 12px;
+      color: #64748B;
+    }
+    .df-modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid #CBD5E1;
+      background: #FFFFFF;
+      color: #64748B;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .df-modal-close:hover {
+      background: #F1F5F9;
+      color: #0F172A;
+    }
+    .df-modal-body {
+      padding: 18px 20px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      flex: 1 1 auto;
+      text-align: left;
+    }
+    .df-modal-section {
+      margin-bottom: 16px;
+    }
+    .df-section-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 3px;
+    }
+    .df-section-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #084BE0;
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .df-section-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #1E293B;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .df-section-desc {
+      font-size: 11.5px;
+      color: #64748B;
+      margin: 0 0 10px 28px;
+      line-height: 1.35;
+    }
+    .df-form-group {
+      margin-bottom: 12px;
+    }
+    .df-label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 4px;
+    }
+    .df-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 9px;
+      font-size: 13.5px;
+      color: #0F172A;
+      background: #FFFFFF;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .df-input:focus {
+      outline: none;
+      border-color: #084BE0;
+      box-shadow: 0 0 0 3px rgba(8, 75, 224, 0.12);
+    }
+    .df-phone-row {
+      display: flex;
+      gap: 8px;
+    }
+    .df-country-select {
+      flex: 0 0 auto;
+      width: 148px;
+      max-width: 44%;
+      padding: 10px 8px;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 9px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #0F172A;
+      background: #FFFFFF;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .df-country-select:focus {
+      outline: none;
+      border-color: #084BE0;
+      box-shadow: 0 0 0 3px rgba(8, 75, 224, 0.12);
+    }
+    .df-phone-input {
+      flex: 1 1 auto;
+      letter-spacing: 0.03em;
+      font-weight: 600;
+    }
+    .df-currency-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .df-cur-card {
+      border: 2px solid #E2E8F0;
+      background: #FFFFFF;
+      border-radius: 12px;
+      padding: 11px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .df-cur-card:hover {
+      border-color: #94A3B8;
+      background: #F8FAFC;
+    }
+    .df-cur-card.active {
+      border-color: #084BE0;
+      background: #EFF6FF;
+      box-shadow: 0 4px 14px rgba(8, 75, 224, 0.12);
+    }
+    .df-cur-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .df-cur-card-title {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #1E293B;
+    }
+    .df-cur-card.active .df-cur-card-title {
+      color: #1E3A8A;
+    }
+    .df-cur-radio {
+      font-size: 14px;
+      color: #94A3B8;
+      font-weight: bold;
+    }
+    .df-cur-card.active .df-cur-radio {
+      color: #084BE0;
+    }
+    .df-cur-price {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 4px 0 2px 0;
+    }
+    .df-cur-card.active .df-cur-price {
+      color: #084BE0;
+    }
+    .df-cur-features {
+      font-size: 10px;
+      color: #64748B;
+      line-height: 1.35;
+    }
+    .df-summary-box {
+      margin-top: 14px;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+    .df-modal-footer {
+      padding: 14px 20px;
+      border-top: 1px solid #E2E8F0;
+      background: #FFFFFF;
+    }
+    .df-modal-pay-btn {
+      width: 100%;
+      background: #084BE0;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-size: 14.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(8, 75, 224, 0.3);
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .df-modal-pay-btn:hover {
+      background: #0639A8;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(8, 75, 224, 0.4);
+    }
+    .df-modal-pay-btn:active {
+      transform: translateY(0);
+    }
+    .df-modal-pay-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
       gap: 12px;
       pointer-events: auto !important;
     }
@@ -1849,81 +2151,47 @@
               </ul>
 
               <!-- 1-Click Razorpay Reservation Block (Zero-Input Frictionless Checkout) -->
+              <!-- 1-Click Razorpay Reservation Block -->
               <div id="checkoutActionBox" style="margin-top: 18px;">
                 <!-- Personalized Student Allocation Card (Rendered dynamically if student assigned) -->
                 <div id="studentAllocatedBanner"
                   style="display:none; background:#EEF2FF; border:1px solid #C7D2FE; border-radius:10px; padding:12px 14px; margin-bottom:14px; text-align:left;">
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
                     <span
-                      style="font-size:11px; font-weight:800; font-family:var(--f-mono); text-transform:uppercase; color:#4338CA; letter-spacing:0.04em;">EXCLUSIVE
-                      ALLOCATION</span>
+                      style="font-size:11px; font-weight:800; font-family:var(--f-mono); text-transform:uppercase; color:#4338CA; letter-spacing:0.04em;">EXCLUSIVE ALLOCATION</span>
                     <span
-                      style="font-size:11px; background:#DCFCE7; color:#166534; font-weight:700; padding:2px 6px; border-radius:4px; border:1px solid #86EFAC;">✓
-                      Pre-Verified</span>
+                      style="font-size:11px; background:#DCFCE7; color:#166534; font-weight:700; padding:2px 6px; border-radius:4px; border:1px solid #86EFAC;">✓ Pre-Verified</span>
                   </div>
                   <div
-                    style="font-size:14px; font-weight:700; color:#1E1B4B; display:flex; align-items:center; gap:6px;">
-                    <span>Prepared for:</span>
-                    <span id="allocatedStudentName" style="color:#4338CA;">Rahul Sharma</span>
+                    style="font-size:14px; font-weight:700; color:#1E1B4B; display:flex; align-items:center; justify-content:space-between; gap:6px;">
+                    <div>
+                      <span style="font-weight:500; color:#475569;">Prepared for:</span>
+                      <span id="allocatedStudentName" style="color:#4338CA; font-weight:700;">Rahul Sharma</span>
+                    </div>
+                    <button type="button" onclick="openReservationModal()" style="background:#E0E7FF; border:1px solid #C7D2FE; color:#3730A3; font-size:11px; font-weight:700; border-radius:6px; padding:3px 8px; cursor:pointer;">✏️ Edit</button>
                   </div>
                   <div id="allocatedStudentContactRow" style="font-size:12px; color:#475569; margin-top:3px;">
-                    Phone: <span id="allocatedStudentPhone" style="font-weight:600; color:#1E293B;">+91 98765
-                      43210</span>
+                    Phone: <span id="allocatedStudentPhone" style="font-weight:600; color:#1E293B;">+91 98765 43210</span>
                   </div>
                 </div>
 
-                <!-- Currency & Payment Method Selector (1-Click Switch between INR and EUR) -->
-                <div id="currencyMethodSelector" style="margin-bottom: 14px; text-align: left;">
-                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                    <span style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Payment Method &amp; Currency</span>
-                    <span id="activeCurrencyBadge" style="font-size: 10.5px; font-weight: 700; color: #084BE0; background: #EFF6FF; padding: 2px 7px; border-radius: 4px; border: 1px solid #BFDBFE;">EUR Selected</span>
-                  </div>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <!-- EUR Card (Default for international/German rooms) -->
-                    <div id="currencyOptEUR" onclick="setCheckoutCurrency('EUR')"
-                      style="cursor: pointer; border: 2px solid #084BE0; background: #EFF6FF; border-radius: 10px; padding: 10px 11px; transition: all 0.2s ease; position: relative; user-select: none;">
-                      <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <span style="font-size: 12px; font-weight: 800; color: #1E3A8A;">🇪🇺 Pay in EUR</span>
-                        <span id="curRadioEUR" style="font-size: 13px; color: #084BE0; font-weight: bold;">●</span>
-                      </div>
-                      <div id="curEurDisplay" style="font-size: 15px; font-weight: 800; color: #1E3A8A; margin-top: 3px;">€1</div>
-                      <div style="font-size: 10px; color: #3B82F6; margin-top: 3px; line-height: 1.25;">
-                        German &amp; European Mastercards &amp; Visa
-                      </div>
-                    </div>
-
-                    <!-- INR Card (For Indian parents/students using UPI & Indian Cards) -->
-                    <div id="currencyOptINR" onclick="setCheckoutCurrency('INR')"
-                      style="cursor: pointer; border: 2px solid #E2E8F0; background: #FFFFFF; border-radius: 10px; padding: 10px 11px; transition: all 0.2s ease; position: relative; user-select: none;">
-                      <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <span style="font-size: 12px; font-weight: 800; color: #1E293B;">🇮🇳 Pay in INR</span>
-                        <span id="curRadioINR" style="font-size: 13px; color: #94A3B8; font-weight: bold;">○</span>
-                      </div>
-                      <div id="curInrDisplay" style="font-size: 15px; font-weight: 800; color: #084BE0; margin-top: 3px;">₹109</div>
-                      <div style="font-size: 10px; color: #64748B; margin-top: 3px; line-height: 1.25;">
-                        UPI (GPay/PhonePe), Indian Cards &amp; NetBanking
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Instant 1-Click Pay CTA Button -->
-                <button type="button" class="btn-reserve-cta" id="payRazorpayBtn" style="cursor:pointer; width:100%;">
+                <!-- Reserve CTA Button (Opens Reservation & Payment Modal) -->
+                <button type="button" class="btn-reserve-cta" id="payRazorpayBtn" onclick="openReservationModal()" style="cursor:pointer; width:100%;">
                   <div class="pay-btn-content">
                     <div class="pay-btn-title-row">
-                      <span id="payBtnLabel">Reserve Room · €120</span>
+                      <span id="payBtnLabel">Reserve Room · €1</span>
                       <span class="pay-btn-arrow">→</span>
                     </div>
                     <div class="pay-btn-subtitle" id="payBtnSub">
-                      ≈ ₹13,039 via UPI, GPay &amp; Cards
+                      Tap to edit details &amp; choose payment method
                     </div>
                   </div>
                 </button>
 
                 <div
                   style="font-size:11.5px; color:var(--ink-3); text-align:center; margin-top:12px; line-height:1.45;">
-                  🔒 <strong>Instant 1-Click Checkout:</strong> UPI, Cards, NetBanking via Razorpay.<br>
-                  No forms or inputs needed · Instant booking confirmation.
+                  🔒 <strong>Instant Confirmation:</strong> German &amp; European Cards (EUR) or UPI (INR).<br>
+                  Tap button or bottom bar to review details &amp; reserve.
                 </div>
               </div>
             </div>
@@ -2131,12 +2399,143 @@
         <div class="mobile-bnav-rent" id="mobileBnavRent">Warm Rent: €480 /mo</div>
       </div>
       <button type="button" class="mobile-bnav-btn" id="mobileBnavActionBtn"
-        onclick="window.scrollToPaymentSection && window.scrollToPaymentSection(event)">
+        onclick="window.openReservationModal && window.openReservationModal()">
         <span id="mobileBnavBtnText">Reserve Slot</span>
         <span class="mobile-bnav-btn-arrow">→</span>
       </button>
     </div>
   </aside>
+
+  <!-- RESERVATION & CHECKOUT MODAL -->
+  <div id="reservationModal" class="df-modal-overlay" style="display:none;" aria-hidden="true" role="dialog" aria-labelledby="modalRoomTitle">
+    <div class="df-modal-backdrop" onclick="closeReservationModal()"></div>
+    <div class="df-modal-sheet">
+      <!-- Modal Header -->
+      <div class="df-modal-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:22px; line-height:1;">🏠</span>
+          <div>
+            <h3 class="df-modal-title" id="modalRoomTitle">Reserve Room</h3>
+            <p class="df-modal-sub" id="modalRoomSub">Verified Allocation &amp; Official Lease Booking</p>
+          </div>
+        </div>
+        <button type="button" class="df-modal-close" onclick="closeReservationModal()" aria-label="Close modal">✕</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="df-modal-body">
+        <!-- 1. EDITABLE CANDIDATE DETAILS -->
+        <div class="df-modal-section">
+          <div class="df-section-title-row">
+            <span class="df-section-badge">1</span>
+            <span class="df-section-title">Candidate Details (Saved to Database)</span>
+          </div>
+          <p class="df-section-desc">You can edit your name or phone number below. Changes update your tenancy record in our database.</p>
+
+          <div class="df-form-group">
+            <label class="df-label" for="modalStudentName">Full Name *</label>
+            <input type="text" id="modalStudentName" class="df-input" placeholder="e.g. Rinshad Musthafa" autocomplete="name" required>
+          </div>
+
+          <div class="df-form-group">
+            <label class="df-label" for="modalStudentPhone">Phone Number (WhatsApp &amp; Viewing Alerts) *</label>
+            <div class="df-phone-row">
+              <select id="modalCountryCode" class="df-country-select" onchange="handleModalCountryChange()" aria-label="Country Code">
+                <option value="+49">🇩🇪 +49 (Germany)</option>
+                <option value="+91">🇮🇳 +91 (India)</option>
+                <option value="+43">🇦🇹 +43 (Austria)</option>
+                <option value="+41">🇨🇭 +41 (Switzerland)</option>
+                <option value="+44">🇬🇧 +44 (UK)</option>
+                <option value="+1">🇺🇸 +1 (USA / Canada)</option>
+                <option value="+971">🇦🇪 +971 (UAE)</option>
+                <option value="+966">🇸🇦 +966 (Saudi Arabia)</option>
+                <option value="+33">🇫🇷 +33 (France)</option>
+                <option value="+39">🇮🇹 +39 (Italy)</option>
+                <option value="+34">🇪🇸 +34 (Spain)</option>
+                <option value="+31">🇳🇱 +31 (Netherlands)</option>
+                <option value="+48">🇵🇱 +48 (Poland)</option>
+                <option value="+32">🇧🇪 +32 (Belgium)</option>
+                <option value="+46">🇸🇪 +46 (Sweden)</option>
+                <option value="+61">🇦🇺 +61 (Australia)</option>
+                <option value="+353">🇮🇪 +353 (Ireland)</option>
+                <option value="other">🌐 Other Code</option>
+              </select>
+              <input type="tel" id="modalStudentPhone" class="df-input df-phone-input" placeholder="176 87961367" autocomplete="tel-national" required>
+            </div>
+            <!-- Custom country code input if "other" is selected -->
+            <div id="modalCustomCodeRow" style="display:none; margin-top:6px; align-items:center; gap:8px;">
+              <input type="text" id="modalCustomCodeInput" class="df-input" placeholder="+358" style="max-width:110px; font-family:monospace; font-weight:700;">
+              <span style="font-size:11.5px; color:#64748B;">Enter country dial code with +</span>
+            </div>
+          </div>
+
+          <div class="df-form-group">
+            <label class="df-label" for="modalStudentEmail">Email Address (Confirmation &amp; Dossier) *</label>
+            <input type="email" id="modalStudentEmail" class="df-input" placeholder="e.g. student@gmail.com" autocomplete="email" required>
+          </div>
+        </div>
+
+        <!-- 2. PAYMENT METHOD & CURRENCY SELECTION -->
+        <div class="df-modal-section">
+          <div class="df-section-title-row">
+            <span class="df-section-badge">2</span>
+            <span class="df-section-title">Select Payment Method &amp; Currency</span>
+          </div>
+          <p class="df-section-desc">Choose native EUR for European bank cards, or INR for UPI &amp; Indian cards.</p>
+
+          <div class="df-currency-cards-grid">
+            <!-- EUR Card -->
+            <div id="modalOptEUR" class="df-cur-card" onclick="setModalCurrency('EUR')">
+              <div class="df-cur-card-top">
+                <span class="df-cur-card-title">🇪🇺 Pay in EUR</span>
+                <span id="modalRadioEUR" class="df-cur-radio">●</span>
+              </div>
+              <div id="modalEurPrice" class="df-cur-price">€1</div>
+              <div class="df-cur-features">
+                German &amp; European Mastercards &amp; Visa<br>
+                <span style="color:#059669; font-weight:600;">✓ 0% Bank Forex Markup</span>
+              </div>
+            </div>
+
+            <!-- INR Card -->
+            <div id="modalOptINR" class="df-cur-card" onclick="setModalCurrency('INR')">
+              <div class="df-cur-card-top">
+                <span class="df-cur-card-title">🇮🇳 Pay in INR</span>
+                <span id="modalRadioINR" class="df-cur-radio">○</span>
+              </div>
+              <div id="modalInrPrice" class="df-cur-price">₹108</div>
+              <div class="df-cur-features">
+                UPI (Google Pay, PhonePe, Paytm)<br>
+                Indian Cards &amp; Netbanking
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. SUMMARY & ASSURANCE -->
+        <div id="modalPriceSummaryBox" class="df-summary-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <span style="color:#475569; font-weight:600;">Service Fee Payable:</span>
+            <span id="modalSummaryTotal" style="font-weight:800; font-size:14px; color:#1E293B;">€1 (~₹108)</span>
+          </div>
+          <div style="font-size:11.5px; color:#15803D; display:flex; align-items:center; gap:5px; margin-top:2px;">
+            <span>🛡️</span> <span>100% Visit Satisfaction Refund Guarantee</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer / CTA -->
+      <div class="df-modal-footer">
+        <button type="button" id="modalConfirmPayBtn" class="df-modal-pay-btn" onclick="submitModalAndProceed()">
+          <span id="modalPayBtnText">Save Details &amp; Pay · €1</span>
+          <span style="font-size:16px;">→</span>
+        </button>
+        <div style="font-size:11px; color:#64748B; text-align:center; margin-top:8px;">
+          🔒 Direct 256-bit encrypted checkout via Razorpay · Instant confirmation
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- CLIENT-SIDE CONTROLLER & RAZORPAY INTEGRATION SCRIPT -->
   <script>
@@ -2841,12 +3240,6 @@
         // Update all dynamic fee mentions across the page
         document.querySelectorAll('.dynamic-lead-fee').forEach(el => el.textContent = formattedPayable);
 
-        // Populate currency selector cards
-        const curInrDisplay = document.getElementById('curInrDisplay');
-        const curEurDisplay = document.getElementById('curEurDisplay');
-        if (curInrDisplay) curInrDisplay.textContent = `₹${payableAmountINR.toLocaleString('en-IN')}`;
-        if (curEurDisplay) curEurDisplay.textContent = `€${payableAmountEUR}`;
-
         // Smart Auto-Select Currency based on student's phone number
         const rawP = (currentRoom.studentPhone || '').trim();
         if (rawP.startsWith('+91') || (rawP.replace(/\D/g, '').length === 10 && !rawP.startsWith('49'))) {
@@ -2854,26 +3247,193 @@
         } else {
           selectedCheckoutCurrency = 'EUR';
         }
-        updateCurrencySelectionUI();
+        updateModalCurrencyUI();
       }
 
-      // State for Currency Selection ('EUR' or 'INR')
+      // ==========================================================
+      // RESERVATION MODAL CONTROLLER, PHONE PARSER & DATABASE SYNC
+      // ==========================================================
       let selectedCheckoutCurrency = 'EUR';
 
-      function setCheckoutCurrency(curr) {
-        selectedCheckoutCurrency = (curr === 'INR') ? 'INR' : 'EUR';
-        updateCurrencySelectionUI();
-      }
-      window.setCheckoutCurrency = setCheckoutCurrency;
+      const KNOWN_COUNTRY_CODES = [
+        '+49', '+91', '+43', '+41', '+44', '+1', '+971', '+966',
+        '+33', '+39', '+34', '+31', '+48', '+32', '+46', '+61', '+353'
+      ];
 
-      function updateCurrencySelectionUI() {
-        const optEUR = document.getElementById('currencyOptEUR');
-        const optINR = document.getElementById('currencyOptINR');
-        const radEUR = document.getElementById('curRadioEUR');
-        const radINR = document.getElementById('curRadioINR');
-        const badge = document.getElementById('activeCurrencyBadge');
+      function parsePhoneToCountryAndDigits(raw) {
+        if (!raw) return { code: '+49', digits: '', custom: '' };
+        let clean = String(raw).trim().replace(/\s+/g, '').replace(/-/g, '');
+        if (clean.startsWith('00')) clean = '+' + clean.slice(2);
+
+        // Check if starts with a known country code
+        for (const code of KNOWN_COUNTRY_CODES) {
+          if (clean.startsWith(code)) {
+            return { code, digits: clean.slice(code.length), custom: '' };
+          }
+        }
+
+        // If starts with '+' and not in known list
+        if (clean.startsWith('+')) {
+          const match = clean.match(/^(\+\d{1,4})(\d+)$/);
+          if (match) {
+            return { code: 'other', custom: match[1], digits: match[2] };
+          }
+          return { code: 'other', custom: clean, digits: '' };
+        }
+
+        // Without '+': check if starts with '49'
+        const digitsOnly = clean.replace(/\D/g, '');
+        if (digitsOnly.startsWith('49') && digitsOnly.length >= 11) {
+          return { code: '+49', digits: digitsOnly.slice(2), custom: '' };
+        }
+        if (digitsOnly.startsWith('91') && digitsOnly.length === 12) {
+          return { code: '+91', digits: digitsOnly.slice(2), custom: '' };
+        }
+        // German domestic mobile format 015x, 016x, 017x (11 digits starting with 0)
+        if (digitsOnly.startsWith('0') && digitsOnly.length === 11) {
+          return { code: '+49', digits: digitsOnly.slice(1), custom: '' };
+        }
+        if (digitsOnly.length === 10) {
+          // Standard Indian 10-digit mobile
+          return { code: '+91', digits: digitsOnly, custom: '' };
+        }
+
+        return { code: '+49', digits: digitsOnly, custom: '' };
+      }
+
+      function handleModalCountryChange() {
+        const countrySelect = document.getElementById('modalCountryCode');
+        const customCodeRow = document.getElementById('modalCustomCodeRow');
+        const customCodeInput = document.getElementById('modalCustomCodeInput');
+        if (!countrySelect) return;
+
+        const val = countrySelect.value;
+        if (val === 'other') {
+          if (customCodeRow) customCodeRow.style.display = 'flex';
+          if (customCodeInput) customCodeInput.focus();
+        } else {
+          if (customCodeRow) customCodeRow.style.display = 'none';
+        }
+
+        // Smart auto-select currency matching the selected country
+        if (val === '+91') {
+          setModalCurrency('INR');
+        } else if (val === '+49' || val === '+43' || val === '+33' || val === '+34' || val === '+39' || val === '+31') {
+          setModalCurrency('EUR');
+        }
+      }
+      window.handleModalCountryChange = handleModalCountryChange;
+
+      function openReservationModal() {
+        if (!currentRoom) {
+          alert('Room details are loading. Please wait a moment.');
+          return;
+        }
+
+        const modal = document.getElementById('reservationModal');
+        if (!modal) return;
+
+        // Populate Candidate Details
+        const nameInput = document.getElementById('modalStudentName');
+        const phoneInput = document.getElementById('modalStudentPhone');
+        const countrySelect = document.getElementById('modalCountryCode');
+        const customCodeRow = document.getElementById('modalCustomCodeRow');
+        const customCodeInput = document.getElementById('modalCustomCodeInput');
+        const emailInput = document.getElementById('modalStudentEmail');
+
+        const curName = (currentRoom.studentName && currentRoom.studentName !== 'Verified Student') ? currentRoom.studentName : '';
+        if (nameInput) nameInput.value = curName;
+
+        const parsed = parsePhoneToCountryAndDigits(currentRoom.studentPhone || '');
+        if (countrySelect) countrySelect.value = parsed.code;
+        if (parsed.code === 'other') {
+          if (customCodeRow) customCodeRow.style.display = 'flex';
+          if (customCodeInput) customCodeInput.value = parsed.custom || '+';
+        } else {
+          if (customCodeRow) customCodeRow.style.display = 'none';
+        }
+        if (phoneInput) phoneInput.value = parsed.digits;
+
+        const curEmail = (currentRoom.studentEmail && currentRoom.studentEmail !== 'student@diefuture.com') ? currentRoom.studentEmail : '';
+        if (emailInput) emailInput.value = curEmail;
+
+        // Auto-select currency based on parsed country code
+        if (parsed.code === '+91') {
+          selectedCheckoutCurrency = 'INR';
+        } else {
+          selectedCheckoutCurrency = 'EUR';
+        }
+
+        // Set titles and pricing
+        const payableINR = currentRoom._resolvedPayableINR || (currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
+        const payableEUR = currentRoom._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
+        const paymentMode = currentRoom.paymentMode || 'full';
+
+        const modalRoomTitle = document.getElementById('modalRoomTitle');
+        const modalRoomSub = document.getElementById('modalRoomSub');
+        if (paymentMode === 'holding_initial') {
+          if (modalRoomTitle) modalRoomTitle.textContent = `Hold Slot · Room ${currentRoom.roomId}`;
+          if (modalRoomSub) modalRoomSub.textContent = '100% Refundable Viewing Deposit';
+        } else if (paymentMode === 'holding_paid') {
+          if (modalRoomTitle) modalRoomTitle.textContent = `Finalize Lease · Room ${currentRoom.roomId}`;
+          if (modalRoomSub) modalRoomSub.textContent = 'Remaining Lease Balance & Handover';
+        } else {
+          if (modalRoomTitle) modalRoomTitle.textContent = `Reserve Room ${currentRoom.roomId}`;
+          if (modalRoomSub) modalRoomSub.textContent = `${currentRoom.city} · Verified Allocation & Official Booking`;
+        }
+
+        const modalEurPrice = document.getElementById('modalEurPrice');
+        const modalInrPrice = document.getElementById('modalInrPrice');
+        const modalSummaryTotal = document.getElementById('modalSummaryTotal');
+
+        if (modalEurPrice) modalEurPrice.textContent = `€${payableEUR}`;
+        if (modalInrPrice) modalInrPrice.textContent = `₹${payableINR.toLocaleString('en-IN')}`;
+        if (modalSummaryTotal) modalSummaryTotal.textContent = `€${payableEUR} (~₹${payableINR.toLocaleString('en-IN')})`;
+
+        updateModalCurrencyUI();
+
+        modal.style.display = 'flex';
+        modal.setAttribute('aria-hidden', 'false');
+        requestAnimationFrame(() => modal.classList.add('open'));
+        document.body.style.overflow = 'hidden';
+      }
+      window.openReservationModal = openReservationModal;
+
+      function closeReservationModal() {
+        const modal = document.getElementById('reservationModal');
+        if (!modal) return;
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        setTimeout(() => {
+          if (!modal.classList.contains('open')) {
+            modal.style.display = 'none';
+          }
+        }, 250);
+      }
+      window.closeReservationModal = closeReservationModal;
+
+      // Close modal on Escape key press
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeReservationModal();
+      });
+
+      function setModalCurrency(curr) {
+        selectedCheckoutCurrency = (curr === 'INR') ? 'INR' : 'EUR';
+        updateModalCurrencyUI();
+      }
+      window.setModalCurrency = setModalCurrency;
+      window.setCheckoutCurrency = setModalCurrency;
+
+      function updateModalCurrencyUI() {
+        const optEUR = document.getElementById('modalOptEUR');
+        const optINR = document.getElementById('modalOptINR');
+        const radEUR = document.getElementById('modalRadioEUR');
+        const radINR = document.getElementById('modalRadioINR');
+        const modalPayBtnText = document.getElementById('modalPayBtnText');
         const payBtnLabel = document.getElementById('payBtnLabel');
         const payBtnSub = document.getElementById('payBtnSub');
+        const mobileBnavActionBtn = document.getElementById('mobileBnavActionBtn');
 
         const payableINR = currentRoom?._resolvedPayableINR || (currentRoom?.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
         const payableEUR = currentRoom?._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
@@ -2894,6 +3454,7 @@
           if (optINR) {
             optINR.style.borderColor = '#084BE0';
             optINR.style.background = '#EFF6FF';
+            optINR.classList.add('active');
           }
           if (radINR) {
             radINR.textContent = '●';
@@ -2902,21 +3463,18 @@
           if (optEUR) {
             optEUR.style.borderColor = '#E2E8F0';
             optEUR.style.background = '#FFFFFF';
+            optEUR.classList.remove('active');
           }
           if (radEUR) {
             radEUR.textContent = '○';
             radEUR.style.color = '#94A3B8';
           }
-          if (badge) {
-            badge.textContent = '🇮🇳 UPI & Indian Cards';
-            badge.style.color = '#084BE0';
-            badge.style.background = '#EFF6FF';
-            badge.style.borderColor = '#BFDBFE';
+          if (modalPayBtnText) {
+            modalPayBtnText.textContent = `Save Details & Pay · ₹${payableINR.toLocaleString('en-IN')}`;
           }
-
           if (paymentMode === 'holding_initial') {
             ctaTitle = `Hold Slot · ₹${payableINR.toLocaleString('en-IN')}`;
-            ctaSub = `100% Refundable Deposit via UPI (GPay/PhonePe), Indian Cards & NetBanking`;
+            ctaSub = `100% Refundable Deposit via UPI, Indian Cards & NetBanking`;
           } else if (paymentMode === 'holding_paid') {
             ctaTitle = `Finalize Lease · ₹${payableINR.toLocaleString('en-IN')}`;
             ctaSub = `Remaining Balance via UPI, Indian Cards & NetBanking`;
@@ -2924,11 +3482,15 @@
             ctaTitle = `Reserve Room · ₹${payableINR.toLocaleString('en-IN')}`;
             ctaSub = `Instant Checkout via UPI (GPay/PhonePe), Indian Cards & NetBanking`;
           }
+          if (mobileBnavActionBtn && !mobileBnavActionBtn.disabled) {
+            mobileBnavActionBtn.innerHTML = `<span>⚡ Pay ₹${payableINR.toLocaleString('en-IN')} Now</span>`;
+          }
         } else {
-          // EUR is active
+          // EUR active
           if (optEUR) {
             optEUR.style.borderColor = '#084BE0';
             optEUR.style.background = '#EFF6FF';
+            optEUR.classList.add('active');
           }
           if (radEUR) {
             radEUR.textContent = '●';
@@ -2937,28 +3499,131 @@
           if (optINR) {
             optINR.style.borderColor = '#E2E8F0';
             optINR.style.background = '#FFFFFF';
+            optINR.classList.remove('active');
           }
           if (radINR) {
             radINR.textContent = '○';
             radINR.style.color = '#94A3B8';
           }
-          if (badge) {
-            badge.textContent = '🇪🇺 International Cards';
-            badge.style.color = '#1E40AF';
-            badge.style.background = '#EFF6FF';
-            badge.style.borderColor = '#BFDBFE';
+          if (modalPayBtnText) {
+            modalPayBtnText.textContent = `Save Details & Pay · €${payableEUR}`;
+          }
+          if (mobileBnavActionBtn && !mobileBnavActionBtn.disabled) {
+            mobileBnavActionBtn.innerHTML = `<span>⚡ Pay €${payableEUR} Now</span>`;
           }
         }
 
         if (payBtnLabel) payBtnLabel.textContent = ctaTitle;
         if (payBtnSub) payBtnSub.textContent = ctaSub;
-
-        // Also update mobile sticky bottom bar
-        const mobileBnavActionBtn = document.getElementById('mobileBnavActionBtn');
-        if (mobileBnavActionBtn && !mobileBnavActionBtn.disabled) {
-          mobileBnavActionBtn.innerHTML = `<span>⚡ ${selectedCheckoutCurrency === 'EUR' ? 'Pay €' + payableEUR : 'Pay ₹' + payableINR.toLocaleString('en-IN')} Now</span>`;
-        }
       }
+      window.updateCurrencySelectionUI = updateModalCurrencyUI;
+
+      async function submitModalAndProceed() {
+        if (!currentRoom) return;
+
+        const nameInput = document.getElementById('modalStudentName');
+        const phoneInput = document.getElementById('modalStudentPhone');
+        const countrySelect = document.getElementById('modalCountryCode');
+        const customCodeInput = document.getElementById('modalCustomCodeInput');
+        const emailInput = document.getElementById('modalStudentEmail');
+        const confirmBtn = document.getElementById('modalConfirmPayBtn');
+        const origBtnText = confirmBtn ? confirmBtn.innerHTML : '';
+
+        const nameVal = (nameInput?.value || '').trim();
+        if (!nameVal) {
+          alert('Please enter your full name.');
+          nameInput?.focus();
+          return;
+        }
+
+        const phoneDigits = (phoneInput?.value || '').trim().replace(/\D/g, '');
+        if (phoneDigits.length < 6) {
+          alert('Please enter a valid phone number with digits.');
+          phoneInput?.focus();
+          return;
+        }
+
+        let countryCode = countrySelect?.value || '+49';
+        if (countryCode === 'other') {
+          countryCode = (customCodeInput?.value || '').trim();
+          if (!countryCode.startsWith('+')) {
+            countryCode = '+' + countryCode.replace(/\D/g, '');
+          }
+          if (countryCode.length < 2) {
+            alert('Please enter a valid country dial code (e.g. +358).');
+            customCodeInput?.focus();
+            return;
+          }
+        }
+
+        const fullPhone = `${countryCode}${phoneDigits}`;
+
+        let emailVal = (emailInput?.value || '').trim();
+        if (!emailVal || !emailVal.includes('@')) {
+          alert('Please enter a valid email address for receiving your booking dossier.');
+          emailInput?.focus();
+          return;
+        }
+
+        if (confirmBtn) {
+          confirmBtn.disabled = true;
+          confirmBtn.innerHTML = '<span>Saving to database...</span>';
+        }
+
+        // 1. Update in MongoDB Database via PATCH /api/rooms
+        try {
+          const apiBase = getApiBase();
+          const patchRes = await fetch(`${apiBase}/api/rooms`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              roomId: String(currentRoom.roomId),
+              studentName: nameVal,
+              studentPhone: fullPhone,
+              studentEmail: emailVal
+            })
+          });
+
+          if (!patchRes.ok) {
+            console.warn('PATCH /api/rooms returned status:', patchRes.status);
+          } else {
+            console.log('Successfully updated room candidate details in database.');
+          }
+        } catch (dbErr) {
+          console.warn('Network error saving details to DB, continuing with checkout:', dbErr);
+        }
+
+        // 2. Update local state & page UI
+        currentRoom.studentName = nameVal;
+        currentRoom.studentPhone = fullPhone;
+        currentRoom.studentEmail = emailVal;
+
+        const allocatedName = document.getElementById('allocatedStudentName');
+        const allocatedPhone = document.getElementById('allocatedStudentPhone');
+        const allocatedRow = document.getElementById('allocatedStudentContactRow');
+        const studentAllocatedBanner = document.getElementById('studentAllocatedBanner');
+        if (allocatedName) allocatedName.textContent = nameVal;
+        if (allocatedPhone) allocatedPhone.textContent = fullPhone;
+        if (allocatedRow) allocatedRow.style.display = 'block';
+        if (studentAllocatedBanner) studentAllocatedBanner.style.display = 'block';
+
+        // 3. Close modal & launch Razorpay Checkout
+        closeReservationModal();
+
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerHTML = origBtnText;
+        }
+
+        // Proceed to Razorpay Payment with saved details and active currency
+        initiatePayment({
+          studentName: nameVal,
+          studentPhone: fullPhone,
+          studentEmail: emailVal,
+          currency: selectedCheckoutCurrency
+        });
+      }
+      window.submitModalAndProceed = submitModalAndProceed;
 
       // Check if URL has ?unlocked=1
       if (urlParams.get('unlocked') === '1') {
@@ -2970,14 +3635,18 @@
       }
 
       // Direct 1-Click Razorpay Checkout Handler (Zero-Input Frictionless Payment)
-      async function initiatePayment() {
+      async function initiatePayment(overrideParams = {}) {
         if (!currentRoom) {
           alert('Room details are loading. Please wait a moment.');
           return;
         }
 
+        const finalName = (overrideParams.studentName || currentRoom.studentName || '').trim() || 'Verified Student';
+        const finalEmail = (overrideParams.studentEmail || currentRoom.studentEmail || '').trim() || 'student@diefuture.com';
+        const rawPhone = (overrideParams.studentPhone || currentRoom.studentPhone || '').trim();
+        const activeCurrency = overrideParams.currency || selectedCheckoutCurrency || 'EUR';
+
         // Format phone number properly for Razorpay Prefill (supports International E.164 & Indian numbers)
-        let rawPhone = (currentRoom.studentPhone || '').trim();
         let finalContact = '';
 
         if (rawPhone) {
@@ -3011,14 +3680,11 @@
         if (!finalContact) {
           finalContact = '+919567941647';
         }
-        const finalName = (currentRoom.studentName && currentRoom.studentName.trim() !== 'Verified Student') ? currentRoom.studentName.trim() : 'Verified Student';
-        const finalEmail = (currentRoom.studentEmail && currentRoom.studentEmail.trim()) ? currentRoom.studentEmail.trim() : 'student@diefuture.com';
 
         const paymentMode = currentRoom.paymentMode || 'full';
         const payableINR = currentRoom._resolvedPayableINR || (currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
         const payableEUR = currentRoom._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
 
-        const activeCurrency = selectedCheckoutCurrency || 'EUR';
         const isPayingEUR = (activeCurrency === 'EUR');
         const chargedAmount = isPayingEUR 
           ? Math.round(payableEUR * 100) 
@@ -3220,7 +3886,10 @@
       window.initiatePayment = initiatePayment;
 
       if (payRazorpayBtn) {
-        payRazorpayBtn.addEventListener('click', initiatePayment);
+        payRazorpayBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          openReservationModal();
+        });
       }
 
       // Handle successful payment
@@ -3446,59 +4115,18 @@
         });
       }
 
-      // Mobile Sticky Bottom Nav Action Listener -> Smooth scroll to Payment Method & Currency Section
-      function scrollToPaymentSection(e) {
-        if (e && e.preventDefault) e.preventDefault();
-
-        if (unlockedDossierView && unlockedDossierView.style.display !== 'none') {
-          unlockedDossierView.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          return;
-        }
-
-        const target = document.getElementById('currencyMethodSelector') || document.getElementById('checkoutActionBox');
-        if (target) {
-          const nav = document.getElementById('mainNav');
-          const navHeight = nav ? nav.offsetHeight : 64;
-          const rect = target.getBoundingClientRect();
-
-          // If the currency selector is already positioned right below the top navbar
-          // (between navHeight and navHeight + 110), user is already viewing it, so proceed to payment!
-          const isAlreadyPositioned = (rect.top >= (navHeight - 10) && rect.top <= (navHeight + 110));
-
-          if (isAlreadyPositioned) {
-            initiatePayment();
-          } else {
-            // Smoothly scroll so the payment method / currency section sits right below the top navbar
-            const scrollTarget = window.pageYOffset + rect.top - (navHeight + 16);
-            window.scrollTo({
-              top: Math.max(0, scrollTarget),
-              behavior: 'smooth'
-            });
-
-            // Gentle visual highlight on the payment method selector
-            target.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
-            target.style.transform = 'scale(1.02)';
-            target.style.boxShadow = '0 0 0 3px rgba(8, 75, 224, 0.35)';
-            target.style.borderRadius = '12px';
-            setTimeout(() => {
-              target.style.transform = '';
-              target.style.boxShadow = '';
-            }, 1200);
-          }
-        } else {
-          initiatePayment();
-        }
-      }
-      window.scrollToPaymentSection = scrollToPaymentSection;
-
+      // Mobile Sticky Bottom Nav Action Listener -> Opens Reservation & Payment Modal
       const mobileBnavActionBtn = document.getElementById('mobileBnavActionBtn');
       if (mobileBnavActionBtn) {
         let lastTap = 0;
         const handleMobilePayTap = (e) => {
-          const now = Date.now();
-          if (now - lastTap < 400) return;
-          lastTap = now;
-          scrollToPaymentSection(e);
+          if (e && e.type === 'click' && Date.now() - lastTap < 600) return;
+          lastTap = Date.now();
+          if (unlockedDossierView && unlockedDossierView.style.display !== 'none') {
+            unlockedDossierView.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+          }
+          openReservationModal();
         };
 
         mobileBnavActionBtn.addEventListener('click', handleMobilePayTap);
