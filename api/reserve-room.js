@@ -122,6 +122,7 @@ export default async function handler(req, res) {
       paymentId: paymentId || 'manual_or_simulated',
       amountPaidINR: amount || 0,
       amountPaidEUR: req.body.amountEUR !== undefined ? Number(req.body.amountEUR) : (req.body.amountPaidEUR !== undefined ? Number(req.body.amountPaidEUR) : undefined),
+      currency: req.body.currency || 'EUR',
       exchangeRate: req.body.exchangeRate !== undefined ? Number(req.body.exchangeRate) : undefined,
       notes: notes || (paymentMode === 'holding_initial' 
         ? 'Viewing slot holding fee paid. 100% refundable if seeker attends viewing and dislikes room.' 

@@ -68,16 +68,20 @@ export default async function handler(req, res) {
             const liveRate = await getLiveEurRate();
             const mode = room.paymentMode || 'full';
             let requiredINR = 0;
+            let requiredEUR = 0;
 
             if (room.feeCurrency !== 'INR' && room.feeEUR) {
               const feeEUR = Number(room.feeEUR);
               const holdingEUR = room.holdingFeeEUR !== undefined ? Number(room.holdingFeeEUR) : 0;
               const remainingEUR = room.remainingFeeEUR !== undefined ? Number(room.remainingFeeEUR) : Math.max(0, feeEUR - holdingEUR);
               if (mode === 'holding_initial') {
+                requiredEUR = holdingEUR;
                 requiredINR = Math.round(holdingEUR * liveRate);
               } else if (mode === 'holding_paid') {
+                requiredEUR = remainingEUR;
                 requiredINR = Math.round(remainingEUR * liveRate);
               } else {
+                requiredEUR = feeEUR;
                 requiredINR = Math.round(feeEUR * liveRate);
               }
             } else if (room.feeINR) {
@@ -86,16 +90,27 @@ export default async function handler(req, res) {
               const remainingINR = room.remainingFeeINR !== undefined ? Number(room.remainingFeeINR) : Math.max(0, feeINR - holdingINR);
               if (mode === 'holding_initial') {
                 requiredINR = holdingINR;
+                requiredEUR = Math.round(holdingINR / liveRate);
               } else if (mode === 'holding_paid') {
                 requiredINR = remainingINR;
+                requiredEUR = Math.round(remainingINR / liveRate);
               } else {
                 requiredINR = feeINR;
+                requiredEUR = Math.round(feeINR / liveRate);
               }
             }
 
-            if (requiredINR > 0) {
-              // Server-enforced amount override
-              amountInPaise = Math.round(requiredINR * 100);
+            const targetCurrency = String(currency || 'INR').toUpperCase();
+            if (targetCurrency === 'EUR') {
+              if (requiredEUR > 0) {
+                // Server-enforced amount override in Euro cents
+                amountInPaise = Math.round(requiredEUR * 100);
+              }
+            } else {
+              if (requiredINR > 0) {
+                // Server-enforced amount override in INR paise
+                amountInPaise = Math.round(requiredINR * 100);
+              }
             }
           }
         }
@@ -105,7 +120,7 @@ export default async function handler(req, res) {
     }
 
     if (!amountInPaise || isNaN(amountInPaise) || amountInPaise < 100) {
-      return res.status(400).json({ error: 'Invalid amount. Minimum amount is 100 paise (₹1).' });
+      return res.status(400).json({ error: 'Invalid amount. Minimum amount is 100 units (₹1 / €1).' });
     }
 
     const instance = new Razorpay({
@@ -113,11 +128,23 @@ export default async function handler(req, res) {
       key_secret
     });
 
+    const targetCurrency = String(currency || 'INR').toUpperCase();
+    const finalNotes = { ...(notes || {}) };
+    if (targetCurrency === 'INR') {
+      finalNotes.payableINR = Math.round(amountInPaise / 100);
+      finalNotes.feeCurrency = 'INR';
+    } else if (targetCurrency === 'EUR') {
+      finalNotes.payableEUR = `€${Math.round(amountInPaise / 100)}`;
+      finalNotes.feeCurrency = 'EUR';
+      delete finalNotes.payableINR;
+      delete finalNotes.exchangeRate;
+    }
+
     const options = {
       amount: Math.round(amountInPaise),
-      currency: String(currency).toUpperCase(),
+      currency: targetCurrency,
       receipt: receipt || `rcpt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
-      notes: notes || {}
+      notes: finalNotes
     };
 
     const order = await instance.orders.create(options);

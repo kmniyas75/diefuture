@@ -1872,6 +1872,41 @@
                   </div>
                 </div>
 
+                <!-- Currency & Payment Method Selector (1-Click Switch between INR and EUR) -->
+                <div id="currencyMethodSelector" style="margin-bottom: 14px; text-align: left;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">Payment Method &amp; Currency</span>
+                    <span id="activeCurrencyBadge" style="font-size: 10.5px; font-weight: 700; color: #084BE0; background: #EFF6FF; padding: 2px 7px; border-radius: 4px; border: 1px solid #BFDBFE;">EUR Selected</span>
+                  </div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <!-- EUR Card (Default for international/German rooms) -->
+                    <div id="currencyOptEUR" onclick="setCheckoutCurrency('EUR')"
+                      style="cursor: pointer; border: 2px solid #084BE0; background: #EFF6FF; border-radius: 10px; padding: 10px 11px; transition: all 0.2s ease; position: relative; user-select: none;">
+                      <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span style="font-size: 12px; font-weight: 800; color: #1E3A8A;">🇪🇺 Pay in EUR</span>
+                        <span id="curRadioEUR" style="font-size: 13px; color: #084BE0; font-weight: bold;">●</span>
+                      </div>
+                      <div id="curEurDisplay" style="font-size: 15px; font-weight: 800; color: #1E3A8A; margin-top: 3px;">€1</div>
+                      <div style="font-size: 10px; color: #3B82F6; margin-top: 3px; line-height: 1.25;">
+                        German &amp; European Mastercards &amp; Visa
+                      </div>
+                    </div>
+
+                    <!-- INR Card (For Indian parents/students using UPI & Indian Cards) -->
+                    <div id="currencyOptINR" onclick="setCheckoutCurrency('INR')"
+                      style="cursor: pointer; border: 2px solid #E2E8F0; background: #FFFFFF; border-radius: 10px; padding: 10px 11px; transition: all 0.2s ease; position: relative; user-select: none;">
+                      <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span style="font-size: 12px; font-weight: 800; color: #1E293B;">🇮🇳 Pay in INR</span>
+                        <span id="curRadioINR" style="font-size: 13px; color: #94A3B8; font-weight: bold;">○</span>
+                      </div>
+                      <div id="curInrDisplay" style="font-size: 15px; font-weight: 800; color: #084BE0; margin-top: 3px;">₹109</div>
+                      <div style="font-size: 10px; color: #64748B; margin-top: 3px; line-height: 1.25;">
+                        UPI (GPay/PhonePe), Indian Cards &amp; NetBanking
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Instant 1-Click Pay CTA Button -->
                 <button type="button" class="btn-reserve-cta" id="payRazorpayBtn" style="cursor:pointer; width:100%;">
                   <div class="pay-btn-content">
@@ -2526,8 +2561,8 @@
           totalFeeEUR = Number(currentRoom.feeEUR);
           holdingFeeEUR = currentRoom.holdingFeeEUR !== undefined ? Number(currentRoom.holdingFeeEUR) : 0;
           remainingFeeEUR = currentRoom.remainingFeeEUR !== undefined ? Number(currentRoom.remainingFeeEUR) : Math.max(0, totalFeeEUR - holdingFeeEUR);
-          totalFeeINR = currentRoom.feeINR ? Number(currentRoom.feeINR) : Math.round(totalFeeEUR * liveEurRate);
-          holdingFeeINR = currentRoom.holdingFeeINR ? Number(currentRoom.holdingFeeINR) : Math.round(holdingFeeEUR * liveEurRate);
+          totalFeeINR = Math.round(totalFeeEUR * liveEurRate);
+          holdingFeeINR = Math.round(holdingFeeEUR * liveEurRate);
           remainingFeeINR = Math.max(0, totalFeeINR - holdingFeeINR);
         } else {
           totalFeeINR = currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0;
@@ -2805,6 +2840,124 @@
 
         // Update all dynamic fee mentions across the page
         document.querySelectorAll('.dynamic-lead-fee').forEach(el => el.textContent = formattedPayable);
+
+        // Populate currency selector cards
+        const curInrDisplay = document.getElementById('curInrDisplay');
+        const curEurDisplay = document.getElementById('curEurDisplay');
+        if (curInrDisplay) curInrDisplay.textContent = `₹${payableAmountINR.toLocaleString('en-IN')}`;
+        if (curEurDisplay) curEurDisplay.textContent = `€${payableAmountEUR}`;
+
+        // Smart Auto-Select Currency based on student's phone number
+        const rawP = (currentRoom.studentPhone || '').trim();
+        if (rawP.startsWith('+91') || (rawP.replace(/\D/g, '').length === 10 && !rawP.startsWith('49'))) {
+          selectedCheckoutCurrency = 'INR';
+        } else {
+          selectedCheckoutCurrency = 'EUR';
+        }
+        updateCurrencySelectionUI();
+      }
+
+      // State for Currency Selection ('EUR' or 'INR')
+      let selectedCheckoutCurrency = 'EUR';
+
+      function setCheckoutCurrency(curr) {
+        selectedCheckoutCurrency = (curr === 'INR') ? 'INR' : 'EUR';
+        updateCurrencySelectionUI();
+      }
+      window.setCheckoutCurrency = setCheckoutCurrency;
+
+      function updateCurrencySelectionUI() {
+        const optEUR = document.getElementById('currencyOptEUR');
+        const optINR = document.getElementById('currencyOptINR');
+        const radEUR = document.getElementById('curRadioEUR');
+        const radINR = document.getElementById('curRadioINR');
+        const badge = document.getElementById('activeCurrencyBadge');
+        const payBtnLabel = document.getElementById('payBtnLabel');
+        const payBtnSub = document.getElementById('payBtnSub');
+
+        const payableINR = currentRoom?._resolvedPayableINR || (currentRoom?.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
+        const payableEUR = currentRoom?._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
+        const paymentMode = currentRoom?.paymentMode || 'full';
+
+        let ctaTitle = `Reserve Room · €${payableEUR}`;
+        let ctaSub = `Instant Checkout via German & European Mastercards / Visa`;
+
+        if (paymentMode === 'holding_initial') {
+          ctaTitle = `Hold Slot · €${payableEUR}`;
+          ctaSub = `Refundable Viewing Deposit via European & Global Cards`;
+        } else if (paymentMode === 'holding_paid') {
+          ctaTitle = `Finalize Lease · €${payableEUR}`;
+          ctaSub = `Remaining Balance via European & Global Cards`;
+        }
+
+        if (selectedCheckoutCurrency === 'INR') {
+          if (optINR) {
+            optINR.style.borderColor = '#084BE0';
+            optINR.style.background = '#EFF6FF';
+          }
+          if (radINR) {
+            radINR.textContent = '●';
+            radINR.style.color = '#084BE0';
+          }
+          if (optEUR) {
+            optEUR.style.borderColor = '#E2E8F0';
+            optEUR.style.background = '#FFFFFF';
+          }
+          if (radEUR) {
+            radEUR.textContent = '○';
+            radEUR.style.color = '#94A3B8';
+          }
+          if (badge) {
+            badge.textContent = '🇮🇳 UPI & Indian Cards';
+            badge.style.color = '#084BE0';
+            badge.style.background = '#EFF6FF';
+            badge.style.borderColor = '#BFDBFE';
+          }
+
+          if (paymentMode === 'holding_initial') {
+            ctaTitle = `Hold Slot · ₹${payableINR.toLocaleString('en-IN')}`;
+            ctaSub = `100% Refundable Deposit via UPI (GPay/PhonePe), Indian Cards & NetBanking`;
+          } else if (paymentMode === 'holding_paid') {
+            ctaTitle = `Finalize Lease · ₹${payableINR.toLocaleString('en-IN')}`;
+            ctaSub = `Remaining Balance via UPI, Indian Cards & NetBanking`;
+          } else {
+            ctaTitle = `Reserve Room · ₹${payableINR.toLocaleString('en-IN')}`;
+            ctaSub = `Instant Checkout via UPI (GPay/PhonePe), Indian Cards & NetBanking`;
+          }
+        } else {
+          // EUR is active
+          if (optEUR) {
+            optEUR.style.borderColor = '#084BE0';
+            optEUR.style.background = '#EFF6FF';
+          }
+          if (radEUR) {
+            radEUR.textContent = '●';
+            radEUR.style.color = '#084BE0';
+          }
+          if (optINR) {
+            optINR.style.borderColor = '#E2E8F0';
+            optINR.style.background = '#FFFFFF';
+          }
+          if (radINR) {
+            radINR.textContent = '○';
+            radINR.style.color = '#94A3B8';
+          }
+          if (badge) {
+            badge.textContent = '🇪🇺 International Cards';
+            badge.style.color = '#1E40AF';
+            badge.style.background = '#EFF6FF';
+            badge.style.borderColor = '#BFDBFE';
+          }
+        }
+
+        if (payBtnLabel) payBtnLabel.textContent = ctaTitle;
+        if (payBtnSub) payBtnSub.textContent = ctaSub;
+
+        // Also update mobile sticky bottom bar
+        const mobileBnavActionBtn = document.getElementById('mobileBnavActionBtn');
+        if (mobileBnavActionBtn && !mobileBnavActionBtn.disabled) {
+          mobileBnavActionBtn.innerHTML = `<span>⚡ ${selectedCheckoutCurrency === 'EUR' ? 'Pay €' + payableEUR : 'Pay ₹' + payableINR.toLocaleString('en-IN')} Now</span>`;
+        }
       }
 
       // Check if URL has ?unlocked=1
@@ -2823,31 +2976,66 @@
           return;
         }
 
-        // Clean phone number: Extract 10 digits
+        // Format phone number properly for Razorpay Prefill (supports International E.164 & Indian numbers)
         let rawPhone = (currentRoom.studentPhone || '').trim();
-        let cleanDigits = rawPhone.replace(/\D/g, '');
-        if (cleanDigits.length > 10 && cleanDigits.startsWith('91')) {
-          cleanDigits = cleanDigits.slice(2);
-        } else if (cleanDigits.length > 10) {
-          cleanDigits = cleanDigits.slice(-10);
+        let finalContact = '';
+
+        if (rawPhone) {
+          let normalized = rawPhone.replace(/\s+/g, '').replace(/-/g, '');
+          if (normalized.startsWith('00')) {
+            normalized = '+' + normalized.slice(2);
+          }
+
+          if (normalized.startsWith('+')) {
+            // Already in international format (+4917687961367 or +919876543210)
+            finalContact = normalized;
+          } else {
+            let digitsOnly = normalized.replace(/\D/g, '');
+            if (digitsOnly.startsWith('49') && digitsOnly.length >= 11) {
+              // German number without '+'
+              finalContact = `+${digitsOnly}`;
+            } else if (digitsOnly.startsWith('91') && digitsOnly.length === 12) {
+              // Indian number with 91 prefix without '+'
+              finalContact = `+${digitsOnly}`;
+            } else if (digitsOnly.length === 10) {
+              // Standard 10-digit Indian mobile
+              finalContact = `+91${digitsOnly}`;
+            } else if (digitsOnly.length >= 8) {
+              // Other international number
+              finalContact = `+${digitsOnly}`;
+            }
+          }
         }
 
-        // Razorpay REQUIRES a 10-digit number. If phone is missing or incomplete,
-        // fallback to DieFuture Concierge Desk (+91 95679 41647)
-        // so Razorpay NEVER pauses on "Enter mobile number to continue"
-        const finalContact = (cleanDigits.length === 10) ? cleanDigits : '9567941647';
+        // Fallback to DieFuture Concierge Desk if phone is missing or invalid
+        if (!finalContact) {
+          finalContact = '+919567941647';
+        }
         const finalName = (currentRoom.studentName && currentRoom.studentName.trim() !== 'Verified Student') ? currentRoom.studentName.trim() : 'Verified Student';
         const finalEmail = (currentRoom.studentEmail && currentRoom.studentEmail.trim()) ? currentRoom.studentEmail.trim() : 'student@diefuture.com';
 
         const paymentMode = currentRoom.paymentMode || 'full';
         const payableINR = currentRoom._resolvedPayableINR || (currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
         const payableEUR = currentRoom._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
-        let orderDesc = `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation (€${payableEUR} / ₹${payableINR.toLocaleString('en-IN')})`;
+
+        const activeCurrency = selectedCheckoutCurrency || 'EUR';
+        const isPayingEUR = (activeCurrency === 'EUR');
+        const chargedAmount = isPayingEUR 
+          ? Math.round(payableEUR * 100) 
+          : Math.round(payableINR * 100);
+
+        let orderDesc = isPayingEUR
+          ? `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation (€${payableEUR})`
+          : `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation (₹${payableINR.toLocaleString('en-IN')})`;
 
         if (paymentMode === 'holding_initial') {
-          orderDesc = `Room ${currentRoom.roomId} Viewing Slot Holding Deposit (€${payableEUR} / ₹${payableINR.toLocaleString('en-IN')})`;
+          orderDesc = isPayingEUR
+            ? `Room ${currentRoom.roomId} Viewing Slot Holding Deposit (€${payableEUR})`
+            : `Room ${currentRoom.roomId} Viewing Slot Holding Deposit (₹${payableINR.toLocaleString('en-IN')})`;
         } else if (paymentMode === 'holding_paid') {
-          orderDesc = `Room ${currentRoom.roomId} Remaining Lease Balance (€${payableEUR} / ₹${payableINR.toLocaleString('en-IN')})`;
+          orderDesc = isPayingEUR
+            ? `Room ${currentRoom.roomId} Remaining Lease Balance (€${payableEUR})`
+            : `Room ${currentRoom.roomId} Remaining Lease Balance (₹${payableINR.toLocaleString('en-IN')})`;
         }
 
         const payBtn = document.getElementById('payRazorpayBtn');
@@ -2886,7 +3074,8 @@
             email: finalEmail,
             phone: rawPhone || finalContact,
             amountPaidINR: payableINR,
-            amountPaidEUR: payableEUR
+            amountPaidEUR: payableEUR,
+            currency: activeCurrency
           });
           return;
         }
@@ -2894,13 +3083,13 @@
         try {
           const apiBase = getApiBase();
 
-          // 1. Backend: Create Razorpay Order (charged in INR paise, supports 100% UPI & cards)
+          // 1. Backend: Create Razorpay Order (supports both EUR for international cards and INR for UPI/cards)
           const orderRes = await fetch(`${apiBase}/api/create-order`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              amount: Math.round(payableINR * 100), // paise for Razorpay
-              currency: 'INR',
+              amount: chargedAmount,
+              currency: activeCurrency,
               receipt: `rcpt_room_${currentRoom.roomId}_${Date.now()}`,
               notes: {
                 roomId: currentRoom.roomId,
@@ -2911,6 +3100,7 @@
                 paymentMode: paymentMode,
                 feeEUR: `€${payableEUR}`,
                 payableINR: payableINR,
+                selectedCurrency: activeCurrency,
                 exchangeRate: `1 EUR = ₹${liveEurRate.toFixed(2)}`
               }
             })
@@ -2924,11 +3114,34 @@
           const orderData = await orderRes.json();
           const razorpayKey = orderData.key_id;
 
+          // Mathematically synchronize description to the exact amount authorized by server
+          const finalChargedUnits = Math.round(orderData.amount / 100);
+          if (orderData.currency === 'EUR') {
+            orderDesc = (paymentMode === 'holding_initial')
+              ? `Room ${currentRoom.roomId} Viewing Slot Holding Deposit (€${finalChargedUnits})`
+              : (paymentMode === 'holding_paid')
+              ? `Room ${currentRoom.roomId} Remaining Lease Balance (€${finalChargedUnits})`
+              : `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation (€${finalChargedUnits})`;
+          } else {
+            orderDesc = (paymentMode === 'holding_initial')
+              ? `Room ${currentRoom.roomId} Viewing Slot Holding Deposit (₹${finalChargedUnits.toLocaleString('en-IN')})`
+              : (paymentMode === 'holding_paid')
+              ? `Room ${currentRoom.roomId} Remaining Lease Balance (₹${finalChargedUnits.toLocaleString('en-IN')})`
+              : `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation (₹${finalChargedUnits.toLocaleString('en-IN')})`;
+          }
+
+          // For INR checkout, do not pass international phone into prefill to prevent Indian 10-digit mask truncation.
+          // For EUR checkout, international E.164 phone (+49...) is cleanly accepted!
+          let prefillContact = finalContact;
+          if (activeCurrency === 'INR' && !finalContact.startsWith('+91')) {
+            prefillContact = '';
+          }
+
           // 2. Frontend: Open Razorpay Standard Checkout Modal
           const options = {
             key: razorpayKey,
             amount: orderData.amount,
-            currency: orderData.currency || 'INR',
+            currency: orderData.currency || activeCurrency,
             name: "DieFuture Apartments",
             description: orderDesc,
             image: "./assets/diefuture-logo.jpg",
@@ -2936,7 +3149,7 @@
             prefill: {
               name: finalName,
               email: finalEmail,
-              contact: finalContact
+              contact: prefillContact
             },
             theme: {
               color: "#084BE0"
@@ -2973,7 +3186,8 @@
                   email: finalEmail,
                   phone: rawPhone || finalContact,
                   amountPaidINR: payableINR,
-                  amountPaidEUR: payableEUR
+                  amountPaidEUR: payableEUR,
+                  currency: activeCurrency
                 });
               } catch (verifyErr) {
                 console.error('Payment verification failed:', verifyErr);
@@ -3040,6 +3254,7 @@
               paymentId: payData.razorpay_payment_id,
               amount: payableINR,
               amountEUR: payableEUR,
+              currency: payData.currency || selectedCheckoutCurrency || 'EUR',
               exchangeRate: liveEurRate,
               paymentMode: paymentMode,
               totalFeeINR: currentRoom._resolvedTotalINR || (currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0),
