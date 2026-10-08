@@ -1093,10 +1093,12 @@
       pointer-events: none;
       transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     .df-modal-overlay.open {
       opacity: 1;
       pointer-events: auto;
     }
+
     .df-modal-backdrop {
       position: absolute;
       top: 0;
@@ -1107,6 +1109,7 @@
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
     }
+
     .df-modal-sheet {
       position: relative;
       background: #FFFFFF;
@@ -1122,24 +1125,29 @@
       overflow: hidden;
       z-index: 2;
     }
+
     .df-modal-overlay.open .df-modal-sheet {
       transform: scale(1) translateY(0);
     }
+
     @media (max-width: 640px) {
       .df-modal-overlay {
         padding: 0;
         align-items: flex-end;
       }
+
       .df-modal-sheet {
         max-width: 100vw;
         border-radius: 20px 20px 0 0;
         max-height: 92vh;
         transform: translateY(100%);
       }
+
       .df-modal-overlay.open .df-modal-sheet {
         transform: translateY(0);
       }
     }
+
     .df-modal-header {
       padding: 16px 20px;
       border-bottom: 1px solid #E2E8F0;
@@ -1148,6 +1156,7 @@
       justify-content: space-between;
       background: #F8FAFC;
     }
+
     .df-modal-title {
       margin: 0;
       font-size: 16.5px;
@@ -1155,11 +1164,13 @@
       color: #0F172A;
       font-family: var(--f-sans);
     }
+
     .df-modal-sub {
       margin: 2px 0 0 0;
       font-size: 12px;
       color: #64748B;
     }
+
     .df-modal-close {
       width: 32px;
       height: 32px;
@@ -1174,10 +1185,12 @@
       justify-content: center;
       transition: all 0.15s ease;
     }
+
     .df-modal-close:hover {
       background: #F1F5F9;
       color: #0F172A;
     }
+
     .df-modal-body {
       padding: 18px 20px;
       overflow-y: auto;
@@ -1185,15 +1198,18 @@
       flex: 1 1 auto;
       text-align: left;
     }
+
     .df-modal-section {
       margin-bottom: 16px;
     }
+
     .df-section-title-row {
       display: flex;
       align-items: center;
       gap: 8px;
       margin-bottom: 3px;
     }
+
     .df-section-badge {
       width: 20px;
       height: 20px;
@@ -1206,6 +1222,7 @@
       align-items: center;
       justify-content: center;
     }
+
     .df-section-title {
       font-size: 13px;
       font-weight: 800;
@@ -1213,12 +1230,14 @@
       text-transform: uppercase;
       letter-spacing: 0.03em;
     }
+
     .df-section-desc {
       font-size: 11.5px;
       color: #64748B;
       margin: 0 0 10px 28px;
       line-height: 1.35;
     }
+
     /* Shrinked Candidate Details Preview Card */
     .df-candidate-summary-card {
       background: #FFFFFF;
@@ -1234,30 +1253,36 @@
       margin-top: 4px;
       box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
     }
+
     .df-candidate-summary-card:hover {
       border-color: #084BE0;
       background: #F8FAFC;
     }
+
     .df-candidate-summary-card.active-open {
       border-color: #084BE0;
       background: #EFF6FF;
       box-shadow: 0 2px 8px rgba(8, 75, 224, 0.08);
     }
+
     .df-cand-summary-left {
       flex: 1 1 auto;
       min-width: 0;
     }
+
     .df-cand-summary-name-row {
       display: flex;
       align-items: center;
       gap: 7px;
       flex-wrap: wrap;
     }
+
     .df-cand-name {
       font-size: 14.5px;
       font-weight: 800;
       color: #0F172A;
     }
+
     .df-cand-verified-badge {
       font-size: 10px;
       background: #DCFCE7;
@@ -1269,6 +1294,7 @@
       text-transform: uppercase;
       letter-spacing: 0.02em;
     }
+
     .df-cand-summary-meta {
       display: flex;
       align-items: center;
@@ -1277,6 +1303,7 @@
       flex-wrap: wrap;
       font-size: 12px;
     }
+
     .df-cand-phone-pill {
       font-weight: 700;
       color: #1E293B;
@@ -1287,6 +1314,7 @@
       border: 1px solid #E2E8F0;
       font-size: 11.5px;
     }
+
     .df-cand-email-pill {
       color: #64748B;
       font-size: 11.5px;
@@ -1295,6 +1323,7 @@
       text-overflow: ellipsis;
       max-width: 200px;
     }
+
     .df-chevron-indicator {
       font-size: 11px;
       color: #475569;
@@ -1308,11 +1337,13 @@
       transition: transform 0.25s ease, background 0.2s ease;
       flex-shrink: 0;
     }
+
     .df-candidate-summary-card.active-open .df-chevron-indicator {
       transform: rotate(180deg);
       background: #DBEAFE;
       color: #084BE0;
     }
+
     .df-edit-link-btn {
       background: #EEF2FF;
       border: 1px solid #C7D2FE;
@@ -1327,10 +1358,12 @@
       gap: 4px;
       transition: all 0.15s ease;
     }
+
     .df-edit-link-btn:hover {
       background: #E0E7FF;
       color: #1E1B4B;
     }
+
     .df-btn-collapse {
       background: #084BE0;
       color: #FFFFFF;
@@ -1342,12 +1375,15 @@
       cursor: pointer;
       transition: background 0.15s;
     }
+
     .df-btn-collapse:hover {
       background: #063bb3;
     }
+
     .df-form-group {
       margin-bottom: 12px;
     }
+
     .df-label {
       display: block;
       font-size: 11.5px;
@@ -1355,6 +1391,7 @@
       color: #334155;
       margin-bottom: 4px;
     }
+
     .df-input {
       width: 100%;
       box-sizing: border-box;
@@ -1367,15 +1404,18 @@
       transition: all 0.2s;
       font-family: inherit;
     }
+
     .df-input:focus {
       outline: none;
       border-color: #084BE0;
       box-shadow: 0 0 0 3px rgba(8, 75, 224, 0.12);
     }
+
     .df-phone-row {
       display: flex;
       gap: 8px;
     }
+
     .df-country-select {
       flex: 0 0 auto;
       width: 148px;
@@ -1393,22 +1433,26 @@
       text-overflow: ellipsis;
       overflow: hidden;
     }
+
     .df-country-select:focus {
       outline: none;
       border-color: #084BE0;
       box-shadow: 0 0 0 3px rgba(8, 75, 224, 0.12);
     }
+
     .df-phone-input {
       flex: 1 1 auto;
       letter-spacing: 0.03em;
       font-weight: 600;
     }
+
     .df-currency-cards-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
       margin-top: 8px;
     }
+
     .df-cur-card {
       border: 2px solid #E2E8F0;
       background: #FFFFFF;
@@ -1418,50 +1462,61 @@
       transition: all 0.2s ease;
       user-select: none;
     }
+
     .df-cur-card:hover {
       border-color: #94A3B8;
       background: #F8FAFC;
     }
+
     .df-cur-card.active {
       border-color: #084BE0;
       background: #EFF6FF;
       box-shadow: 0 4px 14px rgba(8, 75, 224, 0.12);
     }
+
     .df-cur-card-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
+
     .df-cur-card-title {
       font-size: 12.5px;
       font-weight: 800;
       color: #1E293B;
     }
+
     .df-cur-card.active .df-cur-card-title {
       color: #1E3A8A;
     }
+
     .df-cur-radio {
       font-size: 14px;
       color: #94A3B8;
       font-weight: bold;
     }
+
     .df-cur-card.active .df-cur-radio {
       color: #084BE0;
     }
+
     .df-cur-price {
       font-size: 17px;
       font-weight: 800;
       color: #0F172A;
       margin: 4px 0 2px 0;
     }
+
     .df-cur-card.active .df-cur-price {
       color: #084BE0;
     }
+
     .df-cur-features {
       font-size: 10px;
       color: #64748B;
       line-height: 1.35;
     }
+
     .df-summary-box {
       margin-top: 14px;
       background: #F8FAFC;
@@ -1470,11 +1525,13 @@
       padding: 10px 12px;
       font-size: 12px;
     }
+
     .df-modal-footer {
       padding: 14px 20px;
       border-top: 1px solid #E2E8F0;
       background: #FFFFFF;
     }
+
     .df-modal-pay-btn {
       width: 100%;
       background: #084BE0;
@@ -1493,20 +1550,24 @@
       transition: all 0.2s ease;
       font-family: inherit;
     }
+
     .df-modal-pay-btn:hover {
       background: #0639A8;
       transform: translateY(-1px);
       box-shadow: 0 6px 18px rgba(8, 75, 224, 0.4);
     }
+
     .df-modal-pay-btn:active {
       transform: translateY(0);
     }
+
     .df-modal-pay-btn:disabled {
       opacity: 0.65;
       cursor: not-allowed;
       transform: none;
     }
-      gap: 12px;
+
+    .gap-12px {
       pointer-events: auto !important;
     }
 
@@ -2260,7 +2321,8 @@
                   <span class="fee-type" id="feeTypeDisplay">/ one-time service fee</span>
                 </div>
                 <!-- Live Rate & INR Equivalent Pill -->
-                <div id="feeInrEquivalentBadge" style="display:inline-flex; align-items:center; gap:6px; background:#EFF6FF; border:1px solid #BFDBFE; border-radius:20px; padding:4px 12px; margin-top:8px; font-size:12px; font-weight:600; color:#1E40AF;">
+                <div id="feeInrEquivalentBadge"
+                  style="display:inline-flex; align-items:center; gap:6px; background:#EFF6FF; border:1px solid #BFDBFE; border-radius:20px; padding:4px 12px; margin-top:8px; font-size:12px; font-weight:600; color:#1E40AF;">
                   <span>⚡</span>
                   <span id="feeInrEquivalentText">≈ ₹3,803 via Razorpay (1 EUR = ₹108.66 today)</span>
                 </div>
@@ -2284,16 +2346,19 @@
                   style="display:none; background:#EEF2FF; border:1px solid #C7D2FE; border-radius:10px; padding:12px 14px; text-align:left;">
                   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
                     <span
-                      style="font-size:11px; font-weight:800; font-family:var(--f-mono); text-transform:uppercase; color:#4338CA; letter-spacing:0.04em;">EXCLUSIVE ALLOCATION</span>
+                      style="font-size:11px; font-weight:800; font-family:var(--f-mono); text-transform:uppercase; color:#4338CA; letter-spacing:0.04em;">EXCLUSIVE
+                      ALLOCATION</span>
                     <span
-                      style="font-size:11px; background:#DCFCE7; color:#166534; font-weight:700; padding:2px 6px; border-radius:4px; border:1px solid #86EFAC;">✓ Pre-Verified</span>
+                      style="font-size:11px; background:#DCFCE7; color:#166534; font-weight:700; padding:2px 6px; border-radius:4px; border:1px solid #86EFAC;">✓
+                      Pre-Verified</span>
                   </div>
                   <div style="font-size:14px; font-weight:700; color:#1E1B4B; margin-top:3px;">
                     <span style="font-weight:500; color:#475569;">Prepared for:</span>
                     <span id="allocatedStudentName" style="color:#4338CA; font-weight:700;">Rahul Sharma</span>
                   </div>
                   <div id="allocatedStudentContactRow" style="font-size:12px; color:#475569; margin-top:3px;">
-                    Phone: <span id="allocatedStudentPhone" style="font-weight:600; color:#1E293B;">+91 98765 43210</span>
+                    Phone: <span id="allocatedStudentPhone" style="font-weight:600; color:#1E293B;">+91 98765
+                      43210</span>
                   </div>
                 </div>
               </div>
@@ -2510,7 +2575,8 @@
   </aside>
 
   <!-- RESERVATION & CHECKOUT MODAL -->
-  <div id="reservationModal" class="df-modal-overlay" style="display:none;" aria-hidden="true" role="dialog" aria-labelledby="modalRoomTitle">
+  <div id="reservationModal" class="df-modal-overlay" style="display:none;" aria-hidden="true" role="dialog"
+    aria-labelledby="modalRoomTitle">
     <div class="df-modal-backdrop" onclick="closeReservationModal()"></div>
     <div class="df-modal-sheet">
       <!-- Modal Header -->
@@ -2522,7 +2588,8 @@
             <p class="df-modal-sub" id="modalRoomSub">Verified Allocation &amp; Official Lease Booking</p>
           </div>
         </div>
-        <button type="button" class="df-modal-close" onclick="closeReservationModal()" aria-label="Close modal">✕</button>
+        <button type="button" class="df-modal-close" onclick="closeReservationModal()"
+          aria-label="Close modal">✕</button>
       </div>
 
       <!-- Modal Body -->
@@ -2534,13 +2601,15 @@
               <span class="df-section-badge">1</span>
               <span class="df-section-title">Candidate Details</span>
             </div>
-            <button type="button" class="df-edit-link-btn" id="candidateEditToggleLink" onclick="toggleCandidateEditForm()">
+            <button type="button" class="df-edit-link-btn" id="candidateEditToggleLink"
+              onclick="toggleCandidateEditForm()">
               <span id="candidateToggleText">✏️ Edit</span>
             </button>
           </div>
 
           <!-- Shrinked Summary Card (Always Visible / Default State) -->
-          <div class="df-candidate-summary-card" id="candidateSummaryCard" onclick="toggleCandidateEditForm()" title="Click to expand & edit details">
+          <div class="df-candidate-summary-card" id="candidateSummaryCard" onclick="toggleCandidateEditForm()"
+            title="Click to expand & edit details">
             <div class="df-cand-summary-left">
               <div class="df-cand-summary-name-row">
                 <span style="font-size:16px; line-height:1;">👤</span>
@@ -2556,20 +2625,23 @@
           </div>
 
           <!-- Expandable Edit Form (Always Hidden by Default) -->
-          <div id="candidateEditForm" style="display: none; margin-top: 10px; padding: 14px; background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 12px;">
+          <div id="candidateEditForm"
+            style="display: none; margin-top: 10px; padding: 14px; background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 12px;">
             <div style="font-size: 11.5px; color: #64748B; margin-bottom: 12px; line-height: 1.4;">
               Edit your name, country code, or phone number below. Changes update your tenancy record in our database.
             </div>
 
             <div class="df-form-group">
               <label class="df-label" for="modalStudentName">Full Name *</label>
-              <input type="text" id="modalStudentName" class="df-input" placeholder="e.g. Rinshad Musthafa" autocomplete="name" required oninput="updateCandidateSummaryPreview()">
+              <input type="text" id="modalStudentName" class="df-input" placeholder="e.g. Rinshad Musthafa"
+                autocomplete="name" required oninput="updateCandidateSummaryPreview()">
             </div>
 
             <div class="df-form-group">
               <label class="df-label" for="modalStudentPhone">Phone Number (WhatsApp &amp; Viewing Alerts) *</label>
               <div class="df-phone-row">
-                <select id="modalCountryCode" class="df-country-select" onchange="handleModalCountryChange(); updateCandidateSummaryPreview();" aria-label="Country Code">
+                <select id="modalCountryCode" class="df-country-select"
+                  onchange="handleModalCountryChange(); updateCandidateSummaryPreview();" aria-label="Country Code">
                   <option value="+49">🇩🇪 +49 (Germany)</option>
                   <option value="+91">🇮🇳 +91 (India)</option>
                   <option value="+43">🇦🇹 +43 (Austria)</option>
@@ -2589,22 +2661,27 @@
                   <option value="+353">🇮🇪 +353 (Ireland)</option>
                   <option value="other">🌐 Other Code</option>
                 </select>
-                <input type="tel" id="modalStudentPhone" class="df-input df-phone-input" placeholder="176 87961367" autocomplete="tel-national" required oninput="updateCandidateSummaryPreview()">
+                <input type="tel" id="modalStudentPhone" class="df-input df-phone-input" placeholder="176 87961367"
+                  autocomplete="tel-national" required oninput="updateCandidateSummaryPreview()">
               </div>
               <!-- Custom country code input if "other" is selected -->
               <div id="modalCustomCodeRow" style="display:none; margin-top:6px; align-items:center; gap:8px;">
-                <input type="text" id="modalCustomCodeInput" class="df-input" placeholder="+358" style="max-width:110px; font-family:monospace; font-weight:700;" oninput="updateCandidateSummaryPreview()">
+                <input type="text" id="modalCustomCodeInput" class="df-input" placeholder="+358"
+                  style="max-width:110px; font-family:monospace; font-weight:700;"
+                  oninput="updateCandidateSummaryPreview()">
                 <span style="font-size:11.5px; color:#64748B;">Enter country dial code with +</span>
               </div>
             </div>
 
             <div class="df-form-group" style="margin-bottom: 10px;">
               <label class="df-label" for="modalStudentEmail">Email Address (Confirmation &amp; Dossier) *</label>
-              <input type="email" id="modalStudentEmail" class="df-input" placeholder="e.g. student@gmail.com" autocomplete="email" required oninput="updateCandidateSummaryPreview()">
+              <input type="email" id="modalStudentEmail" class="df-input" placeholder="e.g. student@gmail.com"
+                autocomplete="email" required oninput="updateCandidateSummaryPreview()">
             </div>
 
             <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
-              <button type="button" class="df-btn-collapse" onclick="collapseCandidateEditForm()">✓ Done Editing</button>
+              <button type="button" class="df-btn-collapse" onclick="collapseCandidateEditForm()">✓ Done
+                Editing</button>
             </div>
           </div>
         </div>
@@ -2834,7 +2911,7 @@
               return;
             }
           }
-        } catch (err) {}
+        } catch (err) { }
         try {
           const res = await fetch('http://localhost:3001/api/rates');
           if (res.ok) {
@@ -2844,7 +2921,7 @@
               liveRateDate = data.date || '';
             }
           }
-        } catch (e) {}
+        } catch (e) { }
       }
 
       // Fetch dynamic room data
@@ -3890,8 +3967,8 @@
         const payableEUR = currentRoom._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
 
         const isPayingEUR = (activeCurrency === 'EUR');
-        const chargedAmount = isPayingEUR 
-          ? Math.round(payableEUR * 100) 
+        const chargedAmount = isPayingEUR
+          ? Math.round(payableEUR * 100)
           : Math.round(payableINR * 100);
 
         let orderDesc = isPayingEUR
@@ -3990,14 +4067,14 @@
             orderDesc = (paymentMode === 'holding_initial')
               ? `Room ${currentRoom.roomId} Viewing Slot Holding Deposit (€${finalChargedUnits})`
               : (paymentMode === 'holding_paid')
-              ? `Room ${currentRoom.roomId} Remaining Lease Balance (€${finalChargedUnits})`
-              : `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation (€${finalChargedUnits})`;
+                ? `Room ${currentRoom.roomId} Remaining Lease Balance (€${finalChargedUnits})`
+                : `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation (€${finalChargedUnits})`;
           } else {
             orderDesc = (paymentMode === 'holding_initial')
               ? `Room ${currentRoom.roomId} Viewing Slot Holding Deposit (₹${finalChargedUnits.toLocaleString('en-IN')})`
               : (paymentMode === 'holding_paid')
-              ? `Room ${currentRoom.roomId} Remaining Lease Balance (₹${finalChargedUnits.toLocaleString('en-IN')})`
-              : `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation (₹${finalChargedUnits.toLocaleString('en-IN')})`;
+                ? `Room ${currentRoom.roomId} Remaining Lease Balance (₹${finalChargedUnits.toLocaleString('en-IN')})`
+                : `Room ${currentRoom.roomId} (${currentRoom.city}) Lead Reservation (₹${finalChargedUnits.toLocaleString('en-IN')})`;
           }
 
           // For INR checkout, do not pass international phone into prefill to prevent Indian 10-digit mask truncation.
