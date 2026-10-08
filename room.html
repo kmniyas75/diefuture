@@ -1219,6 +1219,132 @@
       margin: 0 0 10px 28px;
       line-height: 1.35;
     }
+    /* Shrinked Candidate Details Preview Card */
+    .df-candidate-summary-card {
+      background: #FFFFFF;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 12px;
+      padding: 11px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 4px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+    .df-candidate-summary-card:hover {
+      border-color: #084BE0;
+      background: #F8FAFC;
+    }
+    .df-candidate-summary-card.active-open {
+      border-color: #084BE0;
+      background: #EFF6FF;
+      box-shadow: 0 2px 8px rgba(8, 75, 224, 0.08);
+    }
+    .df-cand-summary-left {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .df-cand-summary-name-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+    .df-cand-name {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #0F172A;
+    }
+    .df-cand-verified-badge {
+      font-size: 10px;
+      background: #DCFCE7;
+      color: #15803D;
+      border: 1px solid #86EFAC;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .df-cand-summary-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+      font-size: 12px;
+    }
+    .df-cand-phone-pill {
+      font-weight: 700;
+      color: #1E293B;
+      font-family: var(--f-mono);
+      background: #F1F5F9;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid #E2E8F0;
+      font-size: 11.5px;
+    }
+    .df-cand-email-pill {
+      color: #64748B;
+      font-size: 11.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
+    .df-chevron-indicator {
+      font-size: 11px;
+      color: #475569;
+      background: #F1F5F9;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease, background 0.2s ease;
+      flex-shrink: 0;
+    }
+    .df-candidate-summary-card.active-open .df-chevron-indicator {
+      transform: rotate(180deg);
+      background: #DBEAFE;
+      color: #084BE0;
+    }
+    .df-edit-link-btn {
+      background: #EEF2FF;
+      border: 1px solid #C7D2FE;
+      color: #3730A3;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+    .df-edit-link-btn:hover {
+      background: #E0E7FF;
+      color: #1E1B4B;
+    }
+    .df-btn-collapse {
+      background: #084BE0;
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 700;
+      border: none;
+      border-radius: 7px;
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .df-btn-collapse:hover {
+      background: #063bb3;
+    }
     .df-form-group {
       margin-bottom: 12px;
     }
@@ -2424,54 +2550,85 @@
 
       <!-- Modal Body -->
       <div class="df-modal-body">
-        <!-- 1. EDITABLE CANDIDATE DETAILS -->
-        <div class="df-modal-section">
-          <div class="df-section-title-row">
-            <span class="df-section-badge">1</span>
-            <span class="df-section-title">Candidate Details (Saved to Database)</span>
-          </div>
-          <p class="df-section-desc">You can edit your name or phone number below. Changes update your tenancy record in our database.</p>
-
-          <div class="df-form-group">
-            <label class="df-label" for="modalStudentName">Full Name *</label>
-            <input type="text" id="modalStudentName" class="df-input" placeholder="e.g. Rinshad Musthafa" autocomplete="name" required>
-          </div>
-
-          <div class="df-form-group">
-            <label class="df-label" for="modalStudentPhone">Phone Number (WhatsApp &amp; Viewing Alerts) *</label>
-            <div class="df-phone-row">
-              <select id="modalCountryCode" class="df-country-select" onchange="handleModalCountryChange()" aria-label="Country Code">
-                <option value="+49">🇩🇪 +49 (Germany)</option>
-                <option value="+91">🇮🇳 +91 (India)</option>
-                <option value="+43">🇦🇹 +43 (Austria)</option>
-                <option value="+41">🇨🇭 +41 (Switzerland)</option>
-                <option value="+44">🇬🇧 +44 (UK)</option>
-                <option value="+1">🇺🇸 +1 (USA / Canada)</option>
-                <option value="+971">🇦🇪 +971 (UAE)</option>
-                <option value="+966">🇸🇦 +966 (Saudi Arabia)</option>
-                <option value="+33">🇫🇷 +33 (France)</option>
-                <option value="+39">🇮🇹 +39 (Italy)</option>
-                <option value="+34">🇪🇸 +34 (Spain)</option>
-                <option value="+31">🇳🇱 +31 (Netherlands)</option>
-                <option value="+48">🇵🇱 +48 (Poland)</option>
-                <option value="+32">🇧🇪 +32 (Belgium)</option>
-                <option value="+46">🇸🇪 +46 (Sweden)</option>
-                <option value="+61">🇦🇺 +61 (Australia)</option>
-                <option value="+353">🇮🇪 +353 (Ireland)</option>
-                <option value="other">🌐 Other Code</option>
-              </select>
-              <input type="tel" id="modalStudentPhone" class="df-input df-phone-input" placeholder="176 87961367" autocomplete="tel-national" required>
+        <!-- 1. CANDIDATE DETAILS (SHRINKED BY DEFAULT) -->
+        <div class="df-modal-section" id="modalCandidateSection">
+          <div class="df-section-title-row" style="justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="df-section-badge">1</span>
+              <span class="df-section-title">Candidate Details</span>
             </div>
-            <!-- Custom country code input if "other" is selected -->
-            <div id="modalCustomCodeRow" style="display:none; margin-top:6px; align-items:center; gap:8px;">
-              <input type="text" id="modalCustomCodeInput" class="df-input" placeholder="+358" style="max-width:110px; font-family:monospace; font-weight:700;">
-              <span style="font-size:11.5px; color:#64748B;">Enter country dial code with +</span>
-            </div>
+            <button type="button" class="df-edit-link-btn" id="candidateEditToggleLink" onclick="toggleCandidateEditForm()">
+              <span id="candidateToggleText">✏️ Edit</span>
+            </button>
           </div>
 
-          <div class="df-form-group">
-            <label class="df-label" for="modalStudentEmail">Email Address (Confirmation &amp; Dossier) *</label>
-            <input type="email" id="modalStudentEmail" class="df-input" placeholder="e.g. student@gmail.com" autocomplete="email" required>
+          <!-- Shrinked Summary Card (Always Visible / Default State) -->
+          <div class="df-candidate-summary-card" id="candidateSummaryCard" onclick="toggleCandidateEditForm()" title="Click to expand & edit details">
+            <div class="df-cand-summary-left">
+              <div class="df-cand-summary-name-row">
+                <span style="font-size:16px; line-height:1;">👤</span>
+                <span class="df-cand-name" id="summaryCandidateName">Verified Seeker</span>
+                <span class="df-cand-verified-badge">✓ Pre-Verified</span>
+              </div>
+              <div class="df-cand-summary-meta">
+                <span class="df-cand-phone-pill" id="summaryCandidatePhone">+49 17687961367</span>
+                <span class="df-cand-email-pill" id="summaryCandidateEmail">student@diefuture.com</span>
+              </div>
+            </div>
+            <div class="df-chevron-indicator" id="candidateChevron" aria-label="Toggle edit details">▼</div>
+          </div>
+
+          <!-- Expandable Edit Form (Always Hidden by Default) -->
+          <div id="candidateEditForm" style="display: none; margin-top: 10px; padding: 14px; background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 12px;">
+            <div style="font-size: 11.5px; color: #64748B; margin-bottom: 12px; line-height: 1.4;">
+              Edit your name, country code, or phone number below. Changes update your tenancy record in our database.
+            </div>
+
+            <div class="df-form-group">
+              <label class="df-label" for="modalStudentName">Full Name *</label>
+              <input type="text" id="modalStudentName" class="df-input" placeholder="e.g. Rinshad Musthafa" autocomplete="name" required oninput="updateCandidateSummaryPreview()">
+            </div>
+
+            <div class="df-form-group">
+              <label class="df-label" for="modalStudentPhone">Phone Number (WhatsApp &amp; Viewing Alerts) *</label>
+              <div class="df-phone-row">
+                <select id="modalCountryCode" class="df-country-select" onchange="handleModalCountryChange(); updateCandidateSummaryPreview();" aria-label="Country Code">
+                  <option value="+49">🇩🇪 +49 (Germany)</option>
+                  <option value="+91">🇮🇳 +91 (India)</option>
+                  <option value="+43">🇦🇹 +43 (Austria)</option>
+                  <option value="+41">🇨🇭 +41 (Switzerland)</option>
+                  <option value="+44">🇬🇧 +44 (UK)</option>
+                  <option value="+1">🇺🇸 +1 (USA / Canada)</option>
+                  <option value="+971">🇦🇪 +971 (UAE)</option>
+                  <option value="+966">🇸🇦 +966 (Saudi Arabia)</option>
+                  <option value="+33">🇫🇷 +33 (France)</option>
+                  <option value="+39">🇮🇹 +39 (Italy)</option>
+                  <option value="+34">🇪🇸 +34 (Spain)</option>
+                  <option value="+31">🇳🇱 +31 (Netherlands)</option>
+                  <option value="+48">🇵🇱 +48 (Poland)</option>
+                  <option value="+32">🇧🇪 +32 (Belgium)</option>
+                  <option value="+46">🇸🇪 +46 (Sweden)</option>
+                  <option value="+61">🇦🇺 +61 (Australia)</option>
+                  <option value="+353">🇮🇪 +353 (Ireland)</option>
+                  <option value="other">🌐 Other Code</option>
+                </select>
+                <input type="tel" id="modalStudentPhone" class="df-input df-phone-input" placeholder="176 87961367" autocomplete="tel-national" required oninput="updateCandidateSummaryPreview()">
+              </div>
+              <!-- Custom country code input if "other" is selected -->
+              <div id="modalCustomCodeRow" style="display:none; margin-top:6px; align-items:center; gap:8px;">
+                <input type="text" id="modalCustomCodeInput" class="df-input" placeholder="+358" style="max-width:110px; font-family:monospace; font-weight:700;" oninput="updateCandidateSummaryPreview()">
+                <span style="font-size:11.5px; color:#64748B;">Enter country dial code with +</span>
+              </div>
+            </div>
+
+            <div class="df-form-group" style="margin-bottom: 10px;">
+              <label class="df-label" for="modalStudentEmail">Email Address (Confirmation &amp; Dossier) *</label>
+              <input type="email" id="modalStudentEmail" class="df-input" placeholder="e.g. student@gmail.com" autocomplete="email" required oninput="updateCandidateSummaryPreview()">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+              <button type="button" class="df-btn-collapse" onclick="collapseCandidateEditForm()">✓ Done Editing</button>
+            </div>
           </div>
         </div>
 
@@ -3324,6 +3481,71 @@
       }
       window.handleModalCountryChange = handleModalCountryChange;
 
+      function updateCandidateSummaryPreview() {
+        const nameInput = document.getElementById('modalStudentName');
+        const phoneInput = document.getElementById('modalStudentPhone');
+        const countrySelect = document.getElementById('modalCountryCode');
+        const customCodeInput = document.getElementById('modalCustomCodeInput');
+        const emailInput = document.getElementById('modalStudentEmail');
+
+        const sName = document.getElementById('summaryCandidateName');
+        const sPhone = document.getElementById('summaryCandidatePhone');
+        const sEmail = document.getElementById('summaryCandidateEmail');
+
+        const nameVal = nameInput?.value.trim() || currentRoom?.studentName?.trim() || 'Verified Seeker';
+        if (sName) sName.textContent = nameVal;
+
+        let code = countrySelect?.value || '+49';
+        if (code === 'other') {
+          code = customCodeInput?.value.trim() || '+';
+        }
+        const digits = phoneInput?.value.trim() || '';
+        if (sPhone) {
+          sPhone.textContent = digits ? `${code} ${digits}` : code;
+        }
+
+        const emailVal = emailInput?.value.trim() || currentRoom?.studentEmail?.trim() || '';
+        if (sEmail) {
+          sEmail.textContent = emailVal;
+          sEmail.style.display = emailVal ? 'inline' : 'none';
+        }
+      }
+      window.updateCandidateSummaryPreview = updateCandidateSummaryPreview;
+
+      function toggleCandidateEditForm() {
+        const form = document.getElementById('candidateEditForm');
+        if (!form) return;
+        if (form.style.display === 'none' || form.style.display === '') {
+          expandCandidateEditForm();
+        } else {
+          collapseCandidateEditForm();
+        }
+      }
+      window.toggleCandidateEditForm = toggleCandidateEditForm;
+
+      function expandCandidateEditForm() {
+        const form = document.getElementById('candidateEditForm');
+        const card = document.getElementById('candidateSummaryCard');
+        const toggleText = document.getElementById('candidateToggleText');
+        if (form) form.style.display = 'block';
+        if (card) card.classList.add('active-open');
+        if (toggleText) toggleText.textContent = '✕ Close';
+        const nameInput = document.getElementById('modalStudentName');
+        if (nameInput) nameInput.focus();
+      }
+      window.expandCandidateEditForm = expandCandidateEditForm;
+
+      function collapseCandidateEditForm() {
+        const form = document.getElementById('candidateEditForm');
+        const card = document.getElementById('candidateSummaryCard');
+        const toggleText = document.getElementById('candidateToggleText');
+        if (form) form.style.display = 'none';
+        if (card) card.classList.remove('active-open');
+        if (toggleText) toggleText.textContent = '✏️ Edit';
+        updateCandidateSummaryPreview();
+      }
+      window.collapseCandidateEditForm = collapseCandidateEditForm;
+
       function openReservationModal() {
         if (!currentRoom) {
           alert('Room details are loading. Please wait a moment.');
@@ -3356,6 +3578,10 @@
 
         const curEmail = (currentRoom.studentEmail && currentRoom.studentEmail !== 'student@diefuture.com') ? currentRoom.studentEmail : '';
         if (emailInput) emailInput.value = curEmail;
+
+        // ALWAYS keep Candidate Details shrinked by default when opening modal
+        collapseCandidateEditForm();
+        updateCandidateSummaryPreview();
 
         // Auto-select currency based on parsed country code
         if (parsed.code === '+91') {
@@ -3597,6 +3823,7 @@
         currentRoom.studentName = nameVal;
         currentRoom.studentPhone = fullPhone;
         currentRoom.studentEmail = emailVal;
+        updateCandidateSummaryPreview();
 
         const allocatedName = document.getElementById('allocatedStudentName');
         const allocatedPhone = document.getElementById('allocatedStudentPhone');
