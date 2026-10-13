@@ -614,6 +614,15 @@ app.delete('/api/leads/:id', handleDeleteLead);
 app.delete('/api/leads', handleDeleteLead);
 
 // ─────────────────────────────────────────────────────────────
+function isVideoUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  const clean = url.split('?')[0].split('#')[0].toLowerCase();
+  return /\.(mp4|webm|mov|m4v|ogg|3gp|avi)$/i.test(clean) ||
+         clean.includes('/video/') ||
+         clean.includes('/videos/') ||
+         clean.includes('whatsapp_video');
+}
+
 // ROOMS MANAGEMENT & STAYFORALL IMPORTER API
 // ─────────────────────────────────────────────────────────────
 
@@ -710,9 +719,22 @@ app.post('/api/rooms', async (req, res) => {
     if (imageUrl && !imageList.includes(imageUrl.trim())) {
       imageList.unshift(imageUrl.trim());
     }
+
+    let videoUrl = req.body.videoUrl ? String(req.body.videoUrl).trim() : '';
+    if (!videoUrl) {
+      const vidInList = imageList.find(isVideoUrl);
+      if (vidInList) videoUrl = vidInList;
+    }
+    if (videoUrl && !imageList.includes(videoUrl)) {
+      imageList.unshift(videoUrl);
+    }
+
     if (imageList.length === 0) {
       imageList = ['https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg'];
     }
+
+    // Determine primary still image (for table thumbnail, open graph, receipt)
+    const primaryImg = imageList.find(u => !isVideoUrl(u)) || imageList[0];
 
     const newRoom = {
       roomId,
@@ -731,8 +753,9 @@ app.post('/api/rooms', async (req, res) => {
       remainingFeeINR: req.body.remainingFeeINR !== undefined && req.body.remainingFeeINR !== '' ? Number(req.body.remainingFeeINR) : Math.max(0, (feeINR !== undefined ? Number(feeINR) : 0) - (req.body.holdingFeeINR !== undefined ? Number(req.body.holdingFeeINR) : 0)),
       roomSizeM2: Number(roomSizeM2) || 16,
       roomType: roomType || 'WG Room (Single Private)',
-      imageUrl: imageList[0],
+      imageUrl: primaryImg,
       images: imageList,
+      videoUrl: videoUrl || '',
       stayforallUrl: stayforallUrl || '',
       anmeldung: req.body.anmeldung !== undefined ? Boolean(req.body.anmeldung) : true,
       guarantees: req.body.guarantees || {
@@ -855,17 +878,50 @@ app.post('/api/rooms/fetch-stayforall', async (req, res) => {
           const d = sfaJson.data || sfaJson;
           if (d) {
             let imageList = [];
-            if (Array.isArray(d.images)) {
-              imageList = d.images.map(img => img.image_url || img.media_url || (typeof img === 'string' ? img : '')).filter(Boolean);
-            }
+            let videoList = [];
             if (Array.isArray(d.media)) {
-              const mediaImgs = d.media.map(m => m.media_url || m.url).filter(Boolean);
-              imageList = [...imageList, ...mediaImgs];
+              d.media.forEach(m => {
+                const u = m.media_url || m.url;
+                if (u && typeof u === 'string' && u.startsWith('http')) {
+                  if (m.media_type === 'video' || isVideoUrl(u)) {
+                    videoList.push(u);
+                  } else {
+                    imageList.push(u);
+                  }
+                }
+              });
+            }
+            if (Array.isArray(d.images)) {
+              d.images.forEach(img => {
+                const u = img.image_url || img.media_url || (typeof img === 'string' ? img : '');
+                if (u && typeof u === 'string' && u.startsWith('http')) {
+                  if (img.media_type === 'video' || isVideoUrl(u)) {
+                    videoList.push(u);
+                  } else {
+                    imageList.push(u);
+                  }
+                }
+              });
             }
             if (d.primaryImage || d.primary_image) {
-              imageList.unshift(d.primaryImage || d.primary_image);
+              const p = d.primaryImage || d.primary_image;
+              if (typeof p === 'string' && p.startsWith('http')) {
+                if (isVideoUrl(p)) videoList.unshift(p);
+                else imageList.unshift(p);
+              }
             }
-            imageList = [...new Set(imageList)].filter(u => typeof u === 'string' && u.startsWith('http'));
+            if (d.video || d.video_url || d.virtual_tour) {
+              const v = d.video || d.video_url || d.virtual_tour;
+              if (typeof v === 'string' && v.startsWith('http')) {
+                videoList.unshift(v);
+              }
+            }
+            videoList = [...new Set(videoList)];
+            imageList = [...new Set(imageList)];
+
+            const detectedVideo = videoList[0] || '';
+            const combinedList = detectedVideo ? [detectedVideo, ...imageList] : imageList;
+            const primaryImg = imageList[0] || (detectedVideo ? detectedVideo : 'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg');
 
             const rent = Number(d.monthly_rent || d.price || d.warm_rent || 775);
             const deposit = Number(d.deposit || rent * 2);
@@ -880,8 +936,10 @@ app.post('/api/rooms/fetch-stayforall', async (req, res) => {
               depositEUR: deposit,
               roomSizeM2: Number(d.size_sqm || 16),
               roomType: d.room_type ? (d.room_type.toLowerCase().includes('wg') || d.room_type.toLowerCase().includes('single') ? 'WG Room (Single Private)' : d.room_type) : 'WG Room (Single Private)',
-              imageUrl: imageList[0] || '',
-              images: imageList,
+              imageUrl: primaryImg,
+              images: combinedList,
+              videoUrl: detectedVideo,
+              videos: videoList,
               anmeldung: d.registration_support === true || (Array.isArray(d.amenities) && d.amenities.some(a => String(a).toLowerCase().includes('anmeldung'))),
               transit: d.transit || 'Walking distance to public transit & metro station',
               description: d.description || ''

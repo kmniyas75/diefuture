@@ -1363,21 +1363,44 @@
                 <small style="font-size:11px; color:#64748B; margin-top:3px; display:block;">Keeps the room page concise and avoids confusion for fast conversion.</small>
               </div>
 
+              <!-- Property Video Walk-Through URL -->
+              <div class="room-input-group" style="grid-column: span 3; background:#EFF6FF; border:1.5px solid #BFDBFE; border-radius:10px; padding:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+                  <label style="font-weight:700; color:#1E3A8A; margin:0; display:flex; align-items:center; gap:6px; font-size:13px;">
+                    <span>🎥 Property Video Walk-Through Tour (Optional)</span>
+                    <span style="font-size:10px; font-weight:700; background:#DBEAFE; color:#1D4ED8; padding:2px 6px; border-radius:4px; font-family:var(--f-mono);">MP4 / WebM / S3 / WhatsApp</span>
+                  </label>
+                  <span id="videoStatusIndicator" style="font-size:11.5px; font-weight:700; color:#15803D; background:#DCFCE7; border:1px solid #86EFAC; padding:2px 8px; border-radius:4px; display:none;">✓ Video Tour Active</span>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <input type="url" id="roomFieldVideo" placeholder="Paste video URL (e.g. MP4, WebM, WhatsApp Video, S3 link)" style="flex:1; font-size:12.5px; padding:8px 12px; border:1px solid #93C5FD; border-radius:6px; background:#FFFFFF; font-family:var(--f-mono);" />
+                  <button type="button" id="btnPreviewAdminVideo" class="btn-line" style="padding:7px 12px; font-size:12px; white-space:nowrap; background:#FFFFFF; display:none;">▶ Test Play</button>
+                  <button type="button" id="btnClearAdminVideo" class="btn-line" style="padding:7px 10px; font-size:12px; color:#DC2626; display:none;" title="Remove video">✕ Clear</button>
+                </div>
+                <!-- Embedded Video Player Preview -->
+                <div id="adminVideoPlayerWrap" style="display:none; margin-top:10px; border-radius:8px; overflow:hidden; background:#0F172A; max-width:380px; position:relative; border:1px solid #3B82F6;">
+                  <video id="adminVideoPreview" controls playsinline preload="metadata" style="width:100%; max-height:220px; display:block; object-fit:contain; background:#000;"></video>
+                </div>
+                <small style="font-size:11px; color:#475569; margin-top:5px; display:block;">
+                  Auto-extracted when importing from StayforAll, or paste any video link. Shows an interactive video walk-through with smooth poster preview!
+                </small>
+              </div>
+
               <!-- Property Photos Management -->
               <div class="room-input-group" style="grid-column: span 3; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:16px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                  <span style="font-size:13px; font-weight:700; color:#0F172A;">🖼️ Property Photos</span>
-                  <span style="font-size:11.5px; font-family:var(--f-mono); color:var(--electric); font-weight:600; background:#EFF6FF; padding:3px 8px; border-radius:4px;" id="imgCountIndicator">0 photos</span>
+                  <span style="font-size:13px; font-weight:700; color:#0F172A;">🖼️ Property Photos &amp; Media</span>
+                  <span style="font-size:11.5px; font-family:var(--f-mono); color:var(--electric); font-weight:600; background:#EFF6FF; padding:3px 8px; border-radius:4px;" id="imgCountIndicator">0 items</span>
                 </div>
                 
-                <!-- Quick Add Single Image URL -->
+                <!-- Quick Add Single Media URL -->
                 <div style="display:flex; gap:8px; margin-bottom:10px;">
-                  <input type="url" id="quickAddImgInput" placeholder="Paste single image URL here to add..." style="flex:1; font-size:12.5px; padding:8px 12px; border:1px solid #CBD5E1; border-radius:6px; background:#FFFFFF;" />
-                  <button type="button" id="btnAddImgBtn" class="btn-line" style="padding:7px 14px; font-size:12px; white-space:nowrap; background:#FFFFFF;">+ Add Photo</button>
+                  <input type="url" id="quickAddImgInput" placeholder="Paste photo or video URL here to add (.jpg, .png, .mp4, WhatsApp video)..." style="flex:1; font-size:12.5px; padding:8px 12px; border:1px solid #CBD5E1; border-radius:6px; background:#FFFFFF;" />
+                  <button type="button" id="btnAddImgBtn" class="btn-line" style="padding:7px 14px; font-size:12px; white-space:nowrap; background:#FFFFFF;">+ Add Media</button>
                 </div>
 
                 <!-- Textarea for Bulk Paste -->
-                <textarea id="roomFieldImages" rows="2" placeholder="Or enter multiple image URLs (one per line, or separated by commas)" style="font-family:var(--f-mono); font-size:11.5px; line-height:1.45; resize:vertical; width:100%; padding:8px 10px; border:1px solid #CBD5E1; border-radius:6px; background:#FFFFFF; margin-bottom:10px;"></textarea>
+                <textarea id="roomFieldImages" rows="2" placeholder="Or enter multiple photo/video URLs (one per line, or separated by commas)" style="font-family:var(--f-mono); font-size:11.5px; line-height:1.45; resize:vertical; width:100%; padding:8px 10px; border:1px solid #CBD5E1; border-radius:6px; background:#FFFFFF; margin-bottom:10px;"></textarea>
 
                 <!-- Thumbnails Preview Strip -->
                 <div id="adminImgPreviewStrip" style="display:flex; gap:8px; flex-wrap:wrap; min-height:48px; padding:8px; background:#FFFFFF; border-radius:8px; border:1px dashed #CBD5E1; align-items:center;">
@@ -1938,6 +1961,14 @@
     const btnGenUniqueId = document.getElementById('btnGenUniqueId');
     const slugPreview = document.getElementById('slugPreview');
 
+    // Video Tour Elements
+    const roomFieldVideo = document.getElementById('roomFieldVideo');
+    const videoStatusIndicator = document.getElementById('videoStatusIndicator');
+    const btnPreviewAdminVideo = document.getElementById('btnPreviewAdminVideo');
+    const btnClearAdminVideo = document.getElementById('btnClearAdminVideo');
+    const adminVideoPlayerWrap = document.getElementById('adminVideoPlayerWrap');
+    const adminVideoPreview = document.getElementById('adminVideoPreview');
+
     const roomsTbody = document.getElementById('roomsTbody');
     const emptyRoomsState = document.getElementById('emptyRoomsState');
     const refreshRoomsBtn = document.getElementById('refreshRoomsBtn');
@@ -1945,6 +1976,80 @@
     let allAdminRooms = [];
     let adminImages = [];
     let adminEurRate = 108.50;
+
+    function isVideoUrl(url) {
+      if (!url || typeof url !== 'string') return false;
+      const clean = url.split('?')[0].split('#')[0].toLowerCase();
+      return /\.(mp4|webm|mov|m4v|ogg|3gp|avi)$/i.test(clean) ||
+             clean.includes('/video/') ||
+             clean.includes('/videos/') ||
+             clean.includes('whatsapp_video');
+    }
+
+    function updateAdminVideoUI() {
+      const val = roomFieldVideo ? roomFieldVideo.value.trim() : '';
+      if (val && isVideoUrl(val)) {
+        if (videoStatusIndicator) videoStatusIndicator.style.display = 'inline-block';
+        if (btnPreviewAdminVideo) btnPreviewAdminVideo.style.display = 'inline-block';
+        if (btnClearAdminVideo) btnClearAdminVideo.style.display = 'inline-block';
+      } else {
+        if (videoStatusIndicator) videoStatusIndicator.style.display = 'none';
+        if (btnPreviewAdminVideo) btnPreviewAdminVideo.style.display = 'none';
+        if (btnClearAdminVideo) btnClearAdminVideo.style.display = 'none';
+        if (adminVideoPlayerWrap) adminVideoPlayerWrap.style.display = 'none';
+        if (adminVideoPreview) {
+          adminVideoPreview.pause();
+          adminVideoPreview.removeAttribute('src');
+        }
+      }
+    }
+
+    if (roomFieldVideo) {
+      roomFieldVideo.addEventListener('input', () => {
+        updateAdminVideoUI();
+      });
+      roomFieldVideo.addEventListener('change', () => {
+        const val = roomFieldVideo.value.trim();
+        if (val && isVideoUrl(val) && !adminImages.includes(val)) {
+          adminImages.unshift(val);
+          roomFieldImages.value = adminImages.join('\n');
+          renderAdminImgPreviews();
+        }
+      });
+    }
+
+    if (btnPreviewAdminVideo) {
+      btnPreviewAdminVideo.addEventListener('click', () => {
+        const val = roomFieldVideo ? roomFieldVideo.value.trim() : '';
+        if (!val) return;
+        if (!adminVideoPlayerWrap || !adminVideoPreview) return;
+        const isHidden = adminVideoPlayerWrap.style.display === 'none' || !adminVideoPlayerWrap.style.display;
+        if (isHidden) {
+          adminVideoPlayerWrap.style.display = 'block';
+          if (adminVideoPreview.src !== val) {
+            adminVideoPreview.src = val;
+          }
+          btnPreviewAdminVideo.textContent = '⏸ Pause Preview';
+          adminVideoPreview.play().catch(() => {});
+        } else {
+          if (!adminVideoPreview.paused) {
+            adminVideoPreview.pause();
+            btnPreviewAdminVideo.textContent = '▶ Test Play';
+          } else {
+            adminVideoPreview.play().catch(() => {});
+            btnPreviewAdminVideo.textContent = '⏸ Pause Preview';
+          }
+        }
+      });
+    }
+
+    if (btnClearAdminVideo) {
+      btnClearAdminVideo.addEventListener('click', () => {
+        if (roomFieldVideo) roomFieldVideo.value = '';
+        updateAdminVideoUI();
+        if (btnPreviewAdminVideo) btnPreviewAdminVideo.textContent = '▶ Test Play';
+      });
+    }
 
     // --- Live ECB Exchange Rate Fetcher ---
     async function fetchExchangeRate() {
@@ -2183,20 +2288,50 @@
     function renderAdminImgPreviews() {
       adminImgPreviewStrip.innerHTML = '';
       if (adminImages.length === 0) {
-        adminImgPreviewStrip.innerHTML = '<span style="font-size:12px; color:var(--ink-3); font-family:var(--f-mono);">No photos added yet. Enter or paste URLs above.</span>';
-        imgCountIndicator.textContent = '0 photos';
+        adminImgPreviewStrip.innerHTML = '<span style="font-size:12px; color:var(--ink-3); font-family:var(--f-mono);">No photos or videos added yet. Enter or paste URLs above.</span>';
+        imgCountIndicator.textContent = '0 items';
         return;
       }
-      imgCountIndicator.textContent = `${adminImages.length} photo${adminImages.length > 1 ? 's' : ''} loaded`;
+      
+      const videoCount = adminImages.filter(isVideoUrl).length;
+      const photoCount = adminImages.length - videoCount;
+      let countText = `${adminImages.length} item${adminImages.length > 1 ? 's' : ''}`;
+      if (videoCount > 0 && photoCount > 0) {
+        countText = `${photoCount} photo${photoCount > 1 ? 's' : ''} + ${videoCount} video`;
+      } else if (videoCount > 0) {
+        countText = `${videoCount} video${videoCount > 1 ? 's' : ''}`;
+      }
+      imgCountIndicator.textContent = countText;
 
       adminImages.forEach((url, idx) => {
+        const isVid = isVideoUrl(url);
         const wrap = document.createElement('div');
-        wrap.style.cssText = 'position:relative; width:68px; height:52px; border-radius:6px; overflow:hidden; background:#0F172A; border:1px solid var(--rule-2); flex-shrink:0;';
-        wrap.innerHTML = `
-          <img src="${escapeHtml(url)}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='./assets/diefuture-logo.jpg'" />
-          <button type="button" data-idx="${idx}" class="btn-del-img" style="position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; background:rgba(0,0,0,0.8); color:#fff; border:none; font-size:11px; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Remove photo">×</button>
-          <span style="position:absolute; bottom:2px; left:2px; background:rgba(0,0,0,0.65); color:#fff; font-size:9.5px; font-family:var(--f-mono); padding:1px 3px; border-radius:2px;">#${idx + 1}</span>
-        `;
+        wrap.style.cssText = 'position:relative; width:68px; height:52px; border-radius:6px; overflow:hidden; background:#0F172A; border:1px solid var(--rule-2); flex-shrink:0; cursor:pointer;';
+        
+        if (isVid) {
+          wrap.innerHTML = `
+            <video src="${escapeHtml(url)}#t=0.001" preload="metadata" muted playsinline style="width:100%; height:100%; object-fit:cover; pointer-events:none; background:#000;"></video>
+            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; background:rgba(0,0,0,0.3);">
+              <span style="width:20px; height:20px; border-radius:50%; background:rgba(238,43,105,0.92); display:flex; align-items:center; justify-content:center; color:#fff; font-size:9.5px; padding-left:1px; box-shadow:0 2px 4px rgba(0,0,0,0.4);">▶</span>
+            </div>
+            <button type="button" data-idx="${idx}" class="btn-del-img" style="position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; background:rgba(0,0,0,0.8); color:#fff; border:none; font-size:11px; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:3;" title="Remove video">×</button>
+            <span style="position:absolute; bottom:2px; left:2px; background:rgba(15,23,42,0.9); color:#67E8F9; font-size:8.5px; font-weight:700; font-family:var(--f-mono); padding:1px 3px; border-radius:2px; z-index:3;">🎥 VID</span>
+          `;
+          wrap.addEventListener('click', (e) => {
+            if (e.target.closest('.btn-del-img')) return;
+            if (roomFieldVideo) {
+              roomFieldVideo.value = url;
+              updateAdminVideoUI();
+              if (btnPreviewAdminVideo) btnPreviewAdminVideo.click();
+            }
+          });
+        } else {
+          wrap.innerHTML = `
+            <img src="${escapeHtml(url)}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='./assets/diefuture-logo.jpg'" />
+            <button type="button" data-idx="${idx}" class="btn-del-img" style="position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; background:rgba(0,0,0,0.8); color:#fff; border:none; font-size:11px; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:3;" title="Remove photo">×</button>
+            <span style="position:absolute; bottom:2px; left:2px; background:rgba(0,0,0,0.65); color:#fff; font-size:9.5px; font-family:var(--f-mono); padding:1px 3px; border-radius:2px; z-index:3;">#${idx + 1}</span>
+          `;
+        }
         adminImgPreviewStrip.appendChild(wrap);
       });
 
@@ -2204,8 +2339,13 @@
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const i = Number(btn.dataset.idx);
+          const removedUrl = adminImages[i];
           adminImages.splice(i, 1);
           roomFieldImages.value = adminImages.join('\n');
+          if (roomFieldVideo && roomFieldVideo.value.trim() === removedUrl) {
+            roomFieldVideo.value = '';
+            updateAdminVideoUI();
+          }
           renderAdminImgPreviews();
         });
       });
@@ -2289,9 +2429,16 @@
           if (r.roomType) roomFieldType.value = r.roomType;
           if (r.transit) roomFieldTransit.value = r.transit;
 
-          // Photos
+          // Photos & Video
           const imgs = (r.images && r.images.length > 0) ? r.images : (r.imageUrl ? [r.imageUrl] : []);
           setAdminImages(imgs);
+
+          // Video Tour
+          const vid = r.videoUrl || (r.images && r.images.find(isVideoUrl)) || '';
+          if (vid && roomFieldVideo) {
+            roomFieldVideo.value = vid;
+            updateAdminVideoUI();
+          }
         } else {
           const err = await res.json();
           showNotice(`Failed to fetch room: ${err.error || 'Server error'}`, 'error');
@@ -2327,6 +2474,8 @@
       roomUpsertForm.reset();
       delete roomUpsertForm.dataset.editing;
       setAdminImages([]);
+      if (roomFieldVideo) roomFieldVideo.value = '';
+      updateAdminVideoUI();
       roomFieldFee.value = '';
       if (roomFieldFeeCurrency) roomFieldFeeCurrency.value = 'EUR';
       currentAdminFeeCurrency = 'EUR';
@@ -2388,6 +2537,11 @@
         remainingFeeEUR = Math.round((remainingFeeINR / adminEurRate) * 10) / 10;
       }
 
+      const rawVideo = roomFieldVideo ? roomFieldVideo.value.trim() : '';
+      const videoFromImages = adminImages.find(isVideoUrl) || '';
+      const videoUrl = rawVideo || videoFromImages || '';
+      const stillImage = adminImages.find(u => !isVideoUrl(u)) || (!isVideoUrl(adminImages[0]) ? adminImages[0] : '') || '';
+
       const payload = {
         roomId: roomFieldId.value.trim(),
         title: roomFieldTitle.value.trim(),
@@ -2410,8 +2564,9 @@
         roomSizeM2: Number(roomFieldSize.value) || 16,
         transit: roomFieldTransit.value.trim(),
         description: roomFieldDescription ? roomFieldDescription.value.trim() : '',
+        videoUrl,
         images: adminImages,
-        imageUrl: adminImages[0] || '',
+        imageUrl: stillImage || adminImages[0] || '',
         stayforallUrl: stayforallUrlInput.value.trim(),
         status: roomFieldStatus.value,
         anmeldung: roomFieldGuaranteeAnmeldung ? roomFieldGuaranteeAnmeldung.checked : true,
@@ -2495,20 +2650,30 @@
 
       allAdminRooms.forEach(room => {
         const tr = document.createElement('tr');
-        const img = (room.images && room.images[0]) || room.imageUrl || 'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg';
+        const hasVideo = Boolean(room.videoUrl || (room.images && room.images.some(isVideoUrl)));
+        const stillImg = (room.images && room.images.find(u => !isVideoUrl(u))) || (!isVideoUrl(room.imageUrl) ? room.imageUrl : null);
+        const firstMedia = (room.images && room.images[0]) || room.imageUrl || 'https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg';
         const photoCount = (room.images && room.images.length > 0) ? room.images.length : (room.imageUrl ? 1 : 0);
         const isAvail = (room.status || 'available') === 'available';
+
+        const thumbMarkup = stillImg
+          ? `<img src="${stillImg}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='./assets/diefuture-logo.jpg'" />`
+          : (isVideoUrl(firstMedia)
+              ? `<video src="${firstMedia}#t=0.001" preload="metadata" muted playsinline style="width:100%; height:100%; object-fit:cover; pointer-events:none; background:#000;"></video>
+                 <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; background:rgba(0,0,0,0.3);"><span style="color:#fff; font-size:10px;">▶</span></div>`
+              : `<img src="${firstMedia}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='./assets/diefuture-logo.jpg'" />`);
 
         tr.innerHTML = `
           <td>
             <div style="display:flex; align-items:center; gap:10px;">
               <div style="position:relative; width:54px; height:42px; border-radius:6px; overflow:hidden; background:#0F172A; flex-shrink:0;">
-                <img src="${img}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='./assets/diefuture-logo.jpg'" />
-                ${photoCount > 1 ? `<span style="position:absolute; bottom:2px; right:2px; background:rgba(0,0,0,0.8); color:#fff; font-size:9.5px; font-weight:700; padding:1px 4px; border-radius:3px; font-family:var(--f-mono);">📷 ${photoCount}</span>` : ''}
+                ${thumbMarkup}
+                ${hasVideo ? `<span style="position:absolute; top:2px; left:2px; background:rgba(238,43,105,0.92); color:#fff; font-size:8px; font-weight:700; padding:1px 3px; border-radius:2px; font-family:var(--f-mono);">▶ VID</span>` : ''}
+                ${photoCount > 1 ? `<span style="position:absolute; bottom:2px; right:2px; background:rgba(0,0,0,0.8); color:#fff; font-size:9.5px; font-weight:700; padding:1px 4px; border-radius:3px; font-family:var(--f-mono);">${photoCount}</span>` : ''}
               </div>
               <div>
                 <strong style="font-family:var(--f-mono); font-size:12px; color:var(--royal);">DF-ROOM-${room.roomId}</strong>
-                <div style="font-size:11px; color:var(--ink-3);">${photoCount} photo${photoCount > 1 ? 's' : ''}</div>
+                <div style="font-size:11px; color:var(--ink-3);">${photoCount} item${photoCount > 1 ? 's' : ''}${hasVideo ? ' · <span style="color:#0284C7; font-weight:600;">🎥 Video</span>' : ''}</div>
               </div>
             </div>
           </td>
@@ -2638,6 +2803,12 @@
           stayforallUrlInput.value = room.stayforallUrl || '';
           roomFieldStatus.value = room.status || 'available';
 
+          const existingVid = room.videoUrl || (room.images && room.images.find(isVideoUrl)) || '';
+          if (roomFieldVideo) {
+            roomFieldVideo.value = existingVid;
+            updateAdminVideoUI();
+          }
+
           const g = room.guarantees || {};
           if (roomFieldShowGuarantees) roomFieldShowGuarantees.checked = (g.showGuarantees !== false);
           if (roomFieldGuaranteeConcierge) roomFieldGuaranteeConcierge.checked = (g.concierge !== false);
@@ -2749,6 +2920,13 @@
           // Clone images
           const imgs = (Array.isArray(room.images) && room.images.length > 0) ? room.images : (room.imageUrl ? [room.imageUrl] : []);
           setAdminImages(imgs);
+
+          // Clone video
+          const existingVid = room.videoUrl || (room.images && room.images.find(isVideoUrl)) || '';
+          if (roomFieldVideo) {
+            roomFieldVideo.value = existingVid;
+            updateAdminVideoUI();
+          }
 
           btnSubmitRoom.textContent = `Save & Publish Room DF-ROOM-${nextRoomId} →`;
           showNotice(`Duplicated Room ${room.roomId} as DF-ROOM-${nextRoomId}! Enter Candidate ${nextSuffix}'s name & phone and click 'Save & Publish' to get their unique link.`, 'success');

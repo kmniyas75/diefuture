@@ -204,6 +204,37 @@
       transition: transform 0.4s ease;
     }
 
+    .gallery-main-video {
+      width: 100%;
+      height: 480px;
+      max-height: 480px;
+      object-fit: contain;
+      display: none;
+      margin: 0 auto;
+      background: #000000;
+    }
+
+    .gallery-video-pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #EE2B69, #BE185D);
+      color: #FFFFFF;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 6px rgba(238, 43, 105, 0.25);
+    }
+
+    .gallery-video-pill-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(238, 43, 105, 0.4);
+    }
+
     .gallery-badge-overlay {
       position: absolute;
       bottom: 16px;
@@ -324,6 +355,47 @@
       height: 100%;
       object-fit: cover;
       display: block;
+    }
+
+    .gallery-thumb-video-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #000000;
+      overflow: hidden;
+    }
+
+    .gallery-thumb-video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .gallery-thumb-play-icon {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-size: 13px;
+      background: rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+    }
+
+    .gallery-thumb-badge {
+      position: absolute;
+      bottom: 2px;
+      left: 2px;
+      background: rgba(15, 23, 42, 0.9);
+      color: #67E8F9;
+      font-size: 8px;
+      font-weight: 700;
+      font-family: var(--f-mono);
+      padding: 1px 3px;
+      border-radius: 2px;
+      pointer-events: none;
     }
 
     /* Specs & Highlights */
@@ -832,7 +904,8 @@
         max-width: 100%;
       }
 
-      .gallery-main-image {
+      .gallery-main-image,
+      .gallery-main-video {
         max-height: 280px;
         width: 100%;
       }
@@ -2201,6 +2274,7 @@
               <img
                 src="https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg"
                 alt="Furnished Room Inspection Photos" class="gallery-main-image" id="mainRoomImg" />
+              <video id="mainRoomVideo" class="gallery-main-video" controls playsinline preload="metadata" style="display:none;"></video>
 
               <!-- Gallery Navigation Arrows -->
               <button type="button" class="gallery-nav-btn gallery-nav-prev" id="galleryPrevBtn"
@@ -2213,7 +2287,7 @@
                 <span>📷</span> <span id="galleryCounterText">1 / 1 Photos</span>
               </div>
 
-              <div class="gallery-badge-overlay">
+              <div class="gallery-badge-overlay" id="galleryBadgeOverlay">
                 <span>Verified Property Photos</span>
               </div>
             </div>
@@ -2226,7 +2300,10 @@
             <div class="gallery-caption">
               <div><strong id="captionCategory">Property Category:</strong> <span id="captionCategoryVal">Private
                   Furnished Room in Shared WG</span></div>
-              <div><span class="room-badge-verified">Pre-Inspected & Anmeldung Ready</span></div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <button type="button" id="galleryVideoTourBtn" class="gallery-video-pill-btn" style="display:none;">▶ Watch Video Tour</button>
+                <span class="room-badge-verified">Pre-Inspected &amp; Anmeldung Ready</span>
+              </div>
             </div>
           </div>
 
@@ -2763,10 +2840,22 @@
       const roomMainTitle = document.getElementById('roomMainTitle');
       const roomAddressText = document.getElementById('roomAddressText');
       const mainRoomImg = document.getElementById('mainRoomImg');
+      const mainRoomVideo = document.getElementById('mainRoomVideo');
       const galleryPrevBtn = document.getElementById('galleryPrevBtn');
       const galleryNextBtn = document.getElementById('galleryNextBtn');
       const galleryCounterText = document.getElementById('galleryCounterText');
       const galleryThumbs = document.getElementById('galleryThumbs');
+      const galleryBadgeOverlay = document.getElementById('galleryBadgeOverlay');
+      const galleryVideoTourBtn = document.getElementById('galleryVideoTourBtn');
+
+      function isVideoUrl(url) {
+        if (!url || typeof url !== 'string') return false;
+        const clean = url.split('?')[0].split('#')[0].toLowerCase();
+        return /\.(mp4|webm|mov|m4v|ogg|3gp|avi)$/i.test(clean) ||
+               clean.includes('/video/') ||
+               clean.includes('/videos/') ||
+               clean.includes('whatsapp_video');
+      }
 
       const specRentVal = document.getElementById('specRentVal');
       const specDepositVal = document.getElementById('specDepositVal');
@@ -2815,12 +2904,42 @@
       function renderGallery() {
         if (!roomPhotos || roomPhotos.length === 0) return;
 
-        mainRoomImg.src = roomPhotos[currentPhotoIndex];
-        if (galleryCounterText) {
-          galleryCounterText.textContent = `${currentPhotoIndex + 1} / ${roomPhotos.length} Photo${roomPhotos.length > 1 ? 's' : ''}`;
+        const currentUrl = roomPhotos[currentPhotoIndex];
+        const isVid = isVideoUrl(currentUrl);
+
+        if (isVid) {
+          if (mainRoomImg) mainRoomImg.style.display = 'none';
+          if (mainRoomVideo) {
+            mainRoomVideo.style.display = 'block';
+            if (mainRoomVideo.src !== currentUrl) {
+              mainRoomVideo.src = currentUrl;
+              mainRoomVideo.load();
+            }
+          }
+          if (galleryCounterText) {
+            galleryCounterText.innerHTML = `<span>🎥</span> ${currentPhotoIndex + 1} / ${roomPhotos.length} Video Tour`;
+          }
+          if (galleryBadgeOverlay) {
+            galleryBadgeOverlay.innerHTML = `<span>🎥 Verified Video Walk-Through Tour</span>`;
+          }
+        } else {
+          if (mainRoomVideo) {
+            mainRoomVideo.pause();
+            mainRoomVideo.style.display = 'none';
+          }
+          if (mainRoomImg) {
+            mainRoomImg.style.display = 'block';
+            mainRoomImg.src = currentUrl;
+          }
+          if (galleryCounterText) {
+            galleryCounterText.innerHTML = `<span>📷</span> ${currentPhotoIndex + 1} / ${roomPhotos.length} Photo${roomPhotos.length > 1 ? 's' : ''}`;
+          }
+          if (galleryBadgeOverlay) {
+            galleryBadgeOverlay.innerHTML = `<span>Verified Property Photos</span>`;
+          }
         }
 
-        // Hide navigation arrows if only 1 photo
+        // Hide navigation arrows if only 1 media item
         if (galleryPrevBtn && galleryNextBtn) {
           if (roomPhotos.length <= 1) {
             galleryPrevBtn.style.display = 'none';
@@ -2839,9 +2958,20 @@
           } else {
             galleryThumbs.style.display = 'flex';
             roomPhotos.forEach((url, idx) => {
+              const isThumbVid = isVideoUrl(url);
               const thumb = document.createElement('div');
               thumb.className = `gallery-thumb-item ${idx === currentPhotoIndex ? 'active' : ''}`;
-              thumb.innerHTML = `<img src="${escapeHtml(url)}" alt="Photo ${idx + 1}" onerror="this.src='./assets/diefuture-logo.jpg'" />`;
+              if (isThumbVid) {
+                thumb.innerHTML = `
+                  <div class="gallery-thumb-video-wrap">
+                    <video src="${escapeHtml(url)}#t=0.001" preload="metadata" muted playsinline></video>
+                    <div class="gallery-thumb-play-icon">▶</div>
+                    <span class="gallery-thumb-badge">VIDEO</span>
+                  </div>
+                `;
+              } else {
+                thumb.innerHTML = `<img src="${escapeHtml(url)}" alt="Photo ${idx + 1}" onerror="this.src='./assets/diefuture-logo.jpg'" />`;
+              }
               thumb.addEventListener('click', () => {
                 currentPhotoIndex = idx;
                 renderGallery();
@@ -2850,6 +2980,19 @@
             });
           }
         }
+      }
+
+      if (galleryVideoTourBtn) {
+        galleryVideoTourBtn.addEventListener('click', () => {
+          const vIdx = roomPhotos.findIndex(isVideoUrl);
+          if (vIdx !== -1) {
+            currentPhotoIndex = vIdx;
+            renderGallery();
+            if (mainRoomVideo) {
+              mainRoomVideo.play().catch(() => {});
+            }
+          }
+        });
       }
 
       if (galleryPrevBtn) {
@@ -2981,14 +3124,30 @@
         if (roomMainTitle) roomMainTitle.textContent = currentRoom.title;
         if (roomAddressText) roomAddressText.textContent = currentRoom.address || `${currentRoom.city}, Germany`;
 
-        // Configure Photos Array
+        // Configure Photos & Video Media Array
+        let mediaList = [];
         if (Array.isArray(currentRoom.images) && currentRoom.images.length > 0) {
-          roomPhotos = currentRoom.images.filter(Boolean);
+          mediaList = currentRoom.images.filter(Boolean);
         } else if (currentRoom.imageUrl) {
-          roomPhotos = [currentRoom.imageUrl];
-        } else {
-          roomPhotos = ['https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg'];
+          mediaList = [currentRoom.imageUrl];
         }
+        if (currentRoom.videoUrl && !mediaList.includes(currentRoom.videoUrl)) {
+          mediaList.push(currentRoom.videoUrl);
+        }
+        if (mediaList.length === 0) {
+          mediaList = ['https://stayforall-public.s3.eu-central-1.amazonaws.com/uploads/properties/1791184475238525657-5e592e0d6c6da5c239a85b15922a96f2e94fdb32e22758cf327f2c56e019334c.jpg'];
+        }
+        roomPhotos = mediaList;
+
+        const hasVideo = mediaList.some(isVideoUrl) || Boolean(currentRoom.videoUrl);
+        if (galleryVideoTourBtn) {
+          if (hasVideo) {
+            galleryVideoTourBtn.style.display = 'inline-flex';
+          } else {
+            galleryVideoTourBtn.style.display = 'none';
+          }
+        }
+
         currentPhotoIndex = 0;
         renderGallery();
 
