@@ -63,7 +63,9 @@ export default async function handler(req, res) {
       try {
         const db = await getDb();
         if (db) {
-          const room = await db.collection('rooms').findOne({ roomId: String(targetRoomId) });
+          const cleanedTarget = String(targetRoomId).replace(/^DF-ROOM-/i, '');
+          const fullTarget = String(targetRoomId).startsWith('DF-ROOM-') ? String(targetRoomId) : `DF-ROOM-${targetRoomId}`;
+          const room = await db.collection('rooms').findOne({ $or: [{ roomId: String(targetRoomId) }, { roomId: cleanedTarget }, { roomId: fullTarget }] });
           if (room) {
             const liveRate = await getLiveEurRate();
             const mode = room.paymentMode || 'full';

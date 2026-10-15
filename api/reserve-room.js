@@ -64,11 +64,19 @@ export default async function handler(req, res) {
           if (!finalName && matchedRoom.studentName) finalName = matchedRoom.studentName;
           if (!finalEmail && matchedRoom.studentEmail) finalEmail = matchedRoom.studentEmail;
           if (!finalPhone && matchedRoom.studentPhone) finalPhone = matchedRoom.studentPhone;
-          // Mark room as reserved in database
-          await db.collection(ROOMS_COLLECTION).updateOne(
-            { roomId: String(roomId) },
-            { $set: { status: 'reserved', reservedAt: new Date(), reservedBy: finalEmail || 'student' } }
-          );
+          // Mark room as reserved or filled in database
+          const incomingMode = req.body.paymentMode || 'full';
+          if (incomingMode === 'holding_paid') {
+            await db.collection(ROOMS_COLLECTION).updateOne(
+              { roomId: String(roomId) },
+              { $set: { status: 'filled', remainingPaid: true, balanceSettled: true, settledAt: new Date(), remainingPaymentId: paymentId || 'verified' } }
+            );
+          } else {
+            await db.collection(ROOMS_COLLECTION).updateOne(
+              { roomId: String(roomId) },
+              { $set: { status: 'reserved', reservedAt: new Date(), reservedBy: finalEmail || 'student', paymentId: paymentId || 'verified' } }
+            );
+          }
         }
       } catch (e) {
         console.warn('Room status update notice:', e.message);

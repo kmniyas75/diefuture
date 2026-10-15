@@ -44,9 +44,11 @@ export default async function handler(req, res) {
     // 1. GET Request
     if (req.method === 'GET') {
       if (id) {
-        let query = { roomId: String(id) };
+        const cleanedId = String(id).replace(/^DF-ROOM-/i, '');
+        const fullId = String(id).startsWith('DF-ROOM-') ? String(id) : `DF-ROOM-${id}`;
+        let query = { $or: [{ roomId: String(id) }, { roomId: cleanedId }, { roomId: fullId }] };
         if (ObjectId.isValid(id) && id.length === 24) {
-          query = { $or: [{ roomId: String(id) }, { _id: new ObjectId(id) }] };
+          query.$or.push({ _id: new ObjectId(id) });
         }
         const room = await col.find(query).sort({ updatedAt: -1, createdAt: -1 }).limit(1).next();
         if (!room) {
@@ -181,9 +183,11 @@ export default async function handler(req, res) {
       const targetId = id || req.body.id || req.body.roomId;
       if (!targetId) return res.status(400).json({ error: 'Room id is required.' });
 
-      let query = { roomId: String(targetId) };
+      const cleanedTarget = String(targetId).replace(/^DF-ROOM-/i, '');
+      const fullTarget = String(targetId).startsWith('DF-ROOM-') ? String(targetId) : `DF-ROOM-${targetId}`;
+      let query = { $or: [{ roomId: String(targetId) }, { roomId: cleanedTarget }, { roomId: fullTarget }] };
       if (ObjectId.isValid(targetId) && targetId.length === 24) {
-        query = { $or: [{ roomId: String(targetId) }, { _id: new ObjectId(targetId) }] };
+        query.$or.push({ _id: new ObjectId(targetId) });
       }
 
       const updateData = { ...req.body, updatedAt: new Date() };

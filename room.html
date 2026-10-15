@@ -2438,6 +2438,15 @@
                       43210</span>
                   </div>
                 </div>
+
+                <!-- Reserve CTA Button (Opens Reservation & Payment Modal) -->
+                <button type="button" class="btn-reserve-cta" id="payRazorpayBtn" onclick="openReservationModal()" style="cursor:pointer; width:100%; margin-top:14px; background:#0055FF; color:#ffffff; border:none; border-radius:8px; padding:14px 18px; font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(0,85,255,0.25); transition:all 0.15s ease;">
+                  <span id="payBtnLabel">Reserve Room · €1</span>
+                  <span class="pay-btn-arrow" style="font-size:18px;">→</span>
+                </button>
+                <div id="payBtnSub" style="font-size:11.5px; color:var(--ink-3); text-align:center; margin-top:8px; line-height:1.4;">
+                  Instant Checkout via German &amp; European Mastercards / Visa
+                </div>
               </div>
             </div>
 
@@ -2495,6 +2504,16 @@
             <!-- Post-Payment Unlocked State View -->
             <div class="unlocked-dossier-box" id="unlockedDossierView">
 
+              <!-- Return to Remaining Balance Payment (When viewing holding receipt in holding_paid mode) -->
+              <div id="holdingSlipReturnBar" style="display:none; background:#EFF6FF; border:1px solid #BFDBFE; border-radius:8px; padding:10px 14px; margin-bottom:14px; justify-content:space-between; align-items:center;">
+                <div style="font-size:12.5px; color:#1E40AF; font-weight:600;">
+                  🛡️ Viewing Holding Pass (Temporary Hold)
+                </div>
+                <button type="button" id="btnReturnToRemainingPay" style="background:#0055FF; color:#ffffff; font-size:12px; font-weight:700; padding:6px 14px; border-radius:6px; border:none; cursor:pointer;">
+                  ← Pay Remaining Balance
+                </button>
+              </div>
+
               <div class="unlocked-banner">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                   stroke-linecap="round" stroke-linejoin="round">
@@ -2536,6 +2555,17 @@
                   <div class="dossier-v" style="font-size:13px; color:#059669;">✓ Wohnungsgeberbestätigung Form Ready
                     for Signature</div>
                 </div>
+              </div>
+
+              <!-- Action Card to Pay Remaining Balance if holding was collected but balance not yet paid -->
+              <div id="unlockedPayRemainingCard" style="display:none; background:#ECFDF5; border:1.5px solid #10B981; border-radius:10px; padding:16px; margin:16px 0; text-align:center;">
+                <div style="font-weight:800; color:#065F46; font-size:14.5px;">Viewing Approved by Landlord! 🎉</div>
+                <div style="font-size:12.5px; color:#047857; margin:6px 0 14px 0; line-height:1.45;" id="unlockedPayRemainingMsg">
+                  Your holding deposit has been credited ✓. Pay the remaining balance below to finalize your official lease contract.
+                </div>
+                <button type="button" id="btnUnlockSwitchToPay" style="background:#059669; color:#ffffff; font-weight:800; font-size:14px; padding:11px 22px; border-radius:8px; border:none; cursor:pointer; box-shadow:0 3px 8px rgba(5,150,105,0.3);">
+                  💳 Pay Remaining Balance Now →
+                </button>
               </div>
 
               <!-- Direct DieFuture Relocation Concierge Desk -->
@@ -3204,22 +3234,40 @@
           }
         }
 
-        const isReserved = currentRoom.status === 'reserved';
+        const paymentMode = currentRoom.paymentMode || 'full';
         const isFilled = currentRoom.status === 'filled';
+        const isReserved = currentRoom.status === 'reserved';
+        const isRemainingSettled = Boolean(currentRoom.remainingPaid || currentRoom.balanceSettled);
         const localReservation = localStorage.getItem('df_reservation_' + currentRoom.roomId);
+
+        // Parse any saved reservation data from localStorage
+        let savedReservationData = null;
+        if (localReservation) {
+          try {
+            savedReservationData = JSON.parse(localReservation);
+          } catch (e) { }
+        }
+
+        // Determine if remaining balance was already settled
+        const hasPaidRemaining = isRemainingSettled || (savedReservationData && (savedReservationData.isRemainingPaid === true || savedReservationData.remainingPaid === true || savedReservationData.balanceSettled === true));
 
         // Update Availability Badge
         if (reserveAvailabilityBadge) {
-          if (isReserved) {
-            reserveAvailabilityBadge.textContent = '🟡 Slot Reserved';
-            reserveAvailabilityBadge.style.color = '#B45309';
-            reserveAvailabilityBadge.style.background = '#FEF3C7';
-            reserveAvailabilityBadge.style.border = '1px solid #FDE68A';
-          } else if (isFilled) {
+          if (isFilled || (paymentMode === 'holding_paid' && hasPaidRemaining)) {
             reserveAvailabilityBadge.textContent = '🔴 Leased / Closed';
             reserveAvailabilityBadge.style.color = '#DC2626';
             reserveAvailabilityBadge.style.background = '#FEE2E2';
             reserveAvailabilityBadge.style.border = '1px solid #FECACA';
+          } else if (paymentMode === 'holding_paid') {
+            reserveAvailabilityBadge.textContent = '🟡 Hold Paid · Pay Balance';
+            reserveAvailabilityBadge.style.color = '#047857';
+            reserveAvailabilityBadge.style.background = '#ECFDF5';
+            reserveAvailabilityBadge.style.border = '1px solid #A7F3D0';
+          } else if (isReserved) {
+            reserveAvailabilityBadge.textContent = '🟡 Slot Reserved';
+            reserveAvailabilityBadge.style.color = '#B45309';
+            reserveAvailabilityBadge.style.background = '#FEF3C7';
+            reserveAvailabilityBadge.style.border = '1px solid #FDE68A';
           } else {
             reserveAvailabilityBadge.textContent = '1 Available';
             reserveAvailabilityBadge.style.color = '#EF4444';
@@ -3228,17 +3276,41 @@
           }
         }
 
-        // 1. If this device completed reservation before, show unlocked confirmation slip
-        if (localReservation) {
-          try {
-            const savedData = JSON.parse(localReservation);
-            unlockDossier(savedData);
-            return;
-          } catch (e) { }
+        // Backfill candidate details from saved reservation if missing on currentRoom
+        if (savedReservationData) {
+          if (!currentRoom.studentName && savedReservationData.seekerName) {
+            currentRoom.studentName = savedReservationData.seekerName;
+          }
+          if (!currentRoom.studentPhone && savedReservationData.phone) {
+            currentRoom.studentPhone = savedReservationData.phone;
+          }
+          if (!currentRoom.studentEmail && savedReservationData.email) {
+            currentRoom.studentEmail = savedReservationData.email;
+          }
         }
 
-        // 2. If room is reserved or filled in database, lock payment and display status card
-        if (isReserved || isFilled) {
+        // 1. If this device completed reservation before:
+        // In holding_paid mode, ONLY auto-unlock to final dossier if remaining balance was settled!
+        // If candidate only paid the initial holding deposit, they must see the remaining payment checkout view!
+        if (savedReservationData) {
+          if (paymentMode === 'holding_paid') {
+            if (hasPaidRemaining || isFilled) {
+              unlockDossier(savedReservationData);
+              return;
+            }
+            // Candidate paid holding fee earlier, but remaining fee is still due:
+            // Do NOT auto-unlock dossier. Proceed to prePaymentView to collect remaining balance!
+          } else {
+            // In holding_initial or full mode, local reservation unlocks the slip
+            unlockDossier(savedReservationData);
+            return;
+          }
+        }
+
+        // 2. If room is locked (filled, or reserved in standard full/holding_initial mode)
+        // NOTE: In holding_paid mode, the room status is 'reserved' for this student, but checkout is OPEN for remaining balance!
+        const isLockedForCheckout = isFilled || (paymentMode === 'holding_paid' && hasPaidRemaining) || (isReserved && paymentMode !== 'holding_paid');
+        if (isLockedForCheckout) {
           if (prePaymentView) prePaymentView.style.display = 'none';
           if (unlockedDossierView) unlockedDossierView.style.display = 'none';
           const roomReservedNoticeView = document.getElementById('roomReservedNoticeView');
@@ -3247,7 +3319,7 @@
             const h = document.getElementById('reservedCardHeading');
             const s = document.getElementById('reservedCardSub');
             const m = document.getElementById('reservedCardMsg');
-            if (isFilled) {
+            if (isFilled || hasPaidRemaining) {
               if (h) h.textContent = 'Room Leased / Closed';
               if (s) s.textContent = 'Allocation fulfilled';
               if (m) m.textContent = `Room DF-ROOM-${currentRoom.roomId} has been successfully rented. Browse other active verified listings below.`;
@@ -3294,7 +3366,9 @@
                 reference: currentRoom.bookingRef || `DF-ROOM-${currentRoom.roomId}-CONFIRMED`,
                 paymentId: currentRoom.paymentId || currentRoom.reservedPaymentId || 'Verified via Razorpay',
                 seekerName: currentRoom.studentName || currentRoom.reservedBy || 'Verified Seeker',
-                amountPaid: currentRoom.feeINR || 1
+                amountPaid: currentRoom.feeINR || 1,
+                isHoldingOnly: (paymentMode === 'holding_initial'),
+                isRemainingPaid: isFilled || isRemainingSettled
               };
               try {
                 localStorage.setItem('df_reservation_' + currentRoom.roomId, JSON.stringify(bookingData));
@@ -3315,12 +3389,12 @@
           return;
         }
 
-        // Room is available: ensure prePaymentView is visible
+        // Room is available or in holding_paid mode: ensure prePaymentView is visible
         if (prePaymentView) prePaymentView.style.display = 'block';
+        if (unlockedDossierView) unlockedDossierView.style.display = 'none';
         const roomReservedNoticeView = document.getElementById('roomReservedNoticeView');
         if (roomReservedNoticeView) roomReservedNoticeView.style.display = 'none';
 
-        const paymentMode = currentRoom.paymentMode || 'full';
         const isEUR = currentRoom.feeCurrency !== 'INR';
 
         let totalFeeEUR, holdingFeeEUR, remainingFeeEUR;
@@ -3328,15 +3402,41 @@
 
         if (isEUR && (currentRoom.feeEUR !== undefined && currentRoom.feeEUR !== '')) {
           totalFeeEUR = Number(currentRoom.feeEUR);
-          holdingFeeEUR = currentRoom.holdingFeeEUR !== undefined ? Number(currentRoom.holdingFeeEUR) : 0;
-          remainingFeeEUR = currentRoom.remainingFeeEUR !== undefined ? Number(currentRoom.remainingFeeEUR) : Math.max(0, totalFeeEUR - holdingFeeEUR);
+          const rawHolding = (currentRoom.holdingFeeEUR !== undefined && currentRoom.holdingFeeEUR !== '') ? Number(currentRoom.holdingFeeEUR) : null;
+          const rawRemaining = (currentRoom.remainingFeeEUR !== undefined && currentRoom.remainingFeeEUR !== '') ? Number(currentRoom.remainingFeeEUR) : null;
+          if (rawHolding !== null && rawRemaining !== null) {
+            holdingFeeEUR = rawHolding;
+            remainingFeeEUR = rawRemaining;
+          } else if (rawHolding !== null) {
+            holdingFeeEUR = rawHolding;
+            remainingFeeEUR = Math.max(0, totalFeeEUR - rawHolding);
+          } else if (rawRemaining !== null) {
+            remainingFeeEUR = rawRemaining;
+            holdingFeeEUR = Math.max(0, totalFeeEUR - rawRemaining);
+          } else {
+            holdingFeeEUR = Math.round(totalFeeEUR * 0.35);
+            remainingFeeEUR = Math.max(0, totalFeeEUR - holdingFeeEUR);
+          }
           totalFeeINR = Math.round(totalFeeEUR * liveEurRate);
           holdingFeeINR = Math.round(holdingFeeEUR * liveEurRate);
           remainingFeeINR = Math.max(0, totalFeeINR - holdingFeeINR);
         } else {
           totalFeeINR = currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0;
-          holdingFeeINR = currentRoom.holdingFeeINR !== undefined ? Number(currentRoom.holdingFeeINR) : 0;
-          remainingFeeINR = currentRoom.remainingFeeINR !== undefined ? Number(currentRoom.remainingFeeINR) : Math.max(0, totalFeeINR - holdingFeeINR);
+          const rawHoldingINR = (currentRoom.holdingFeeINR !== undefined && currentRoom.holdingFeeINR !== '') ? Number(currentRoom.holdingFeeINR) : null;
+          const rawRemainingINR = (currentRoom.remainingFeeINR !== undefined && currentRoom.remainingFeeINR !== '') ? Number(currentRoom.remainingFeeINR) : null;
+          if (rawHoldingINR !== null && rawRemainingINR !== null) {
+            holdingFeeINR = rawHoldingINR;
+            remainingFeeINR = rawRemainingINR;
+          } else if (rawHoldingINR !== null) {
+            holdingFeeINR = rawHoldingINR;
+            remainingFeeINR = Math.max(0, totalFeeINR - rawHoldingINR);
+          } else if (rawRemainingINR !== null) {
+            remainingFeeINR = rawRemainingINR;
+            holdingFeeINR = Math.max(0, totalFeeINR - rawRemainingINR);
+          } else {
+            holdingFeeINR = Math.round(totalFeeINR * 0.35);
+            remainingFeeINR = Math.max(0, totalFeeINR - holdingFeeINR);
+          }
           totalFeeEUR = Math.round(totalFeeINR / liveEurRate);
           holdingFeeEUR = Math.round(holdingFeeINR / liveEurRate);
           remainingFeeEUR = Math.max(0, totalFeeEUR - holdingFeeEUR);
@@ -3424,17 +3524,42 @@
         } else if (paymentMode === 'holding_paid') {
           if (paymentModeTopBanner) {
             paymentModeTopBanner.style.display = 'block';
+            const holdingSlipBtn = (savedReservationData || currentRoom.paymentId) ? `
+              <div style="margin-top:8px;">
+                <button type="button" id="btnToggleHoldingReceipt" style="background:#FFFFFF; border:1px solid #A7F3D0; color:#065F46; font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;">
+                  📄 View Holding Fee Pass Slip
+                </button>
+              </div>
+            ` : '';
+
             paymentModeTopBanner.innerHTML = `
               <div style="background:#ECFDF5; border:1px solid #A7F3D0; border-radius:8px; padding:11px 14px; display:flex; align-items:flex-start; gap:10px;">
                 <span style="font-size:20px; line-height:1;">🎉</span>
-                <div>
+                <div style="flex:1;">
                   <div style="font-weight:700; color:#065F46; font-size:13.5px;">Viewing Completed &amp; Room Approved!</div>
                   <div style="font-size:12px; color:#047857; line-height:1.4; margin-top:2px;">
                     Your holding deposit of <strong>€${holdingFeeEUR} (~₹${holdingFeeINR.toLocaleString('en-IN')})</strong> was collected &amp; credited ✓. Pay the remaining balance below to finalize your lease handover.
                   </div>
+                  ${holdingSlipBtn}
                 </div>
               </div>
             `;
+
+            setTimeout(() => {
+              const btnSlip = document.getElementById('btnToggleHoldingReceipt');
+              if (btnSlip) {
+                btnSlip.onclick = () => {
+                  unlockDossier(savedReservationData || {
+                    reference: currentRoom.bookingRef || `DF-ROOM-${currentRoom.roomId}-CONFIRMED`,
+                    paymentId: currentRoom.paymentId || 'Verified via Razorpay',
+                    seekerName: currentRoom.studentName || 'Verified Seeker',
+                    amountPaid: holdingFeeINR,
+                    amountPaidEUR: holdingFeeEUR,
+                    isHoldingOnly: true
+                  });
+                };
+              }
+            }, 50);
           }
           if (reserveBadgeVerified) {
             reserveBadgeVerified.textContent = '✓ Holding Collected · Approved';
@@ -4338,15 +4463,30 @@
         const paymentMode = currentRoom.paymentMode || 'full';
         const payableINR = payData.amountPaidINR || currentRoom._resolvedPayableINR || (currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
         const payableEUR = payData.amountPaidEUR || currentRoom._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
+        const isRemainingPayment = (paymentMode === 'holding_paid');
 
         const savedReservation = {
           reference: refCode,
           paymentId: payData.razorpay_payment_id,
           seekerName: payData.name,
+          phone: payData.phone || currentRoom?.studentPhone || '',
+          email: payData.email || currentRoom?.studentEmail || '',
           amountPaid: payableINR,
           amountPaidEUR: payableEUR,
-          exchangeRate: liveEurRate
+          exchangeRate: liveEurRate,
+          paymentMode: paymentMode,
+          isRemainingPaid: isRemainingPayment || (paymentMode === 'full'),
+          remainingPaid: isRemainingPayment || (paymentMode === 'full'),
+          balanceSettled: isRemainingPayment,
+          isHoldingOnly: (paymentMode === 'holding_initial'),
+          settledAt: new Date().toISOString()
         };
+
+        if (isRemainingPayment) {
+          currentRoom.remainingPaid = true;
+          currentRoom.balanceSettled = true;
+          currentRoom.status = 'filled';
+        }
 
         // Send to backend MongoDB /api/reserve-room
         try {
@@ -4397,6 +4537,9 @@
           phone: data.phone || currentRoom?.studentPhone || ''
         };
 
+        const paymentMode = currentRoom?.paymentMode || 'full';
+        const isRemainingSettled = Boolean(data?.isRemainingPaid || data?.remainingPaid || data?.balanceSettled || currentRoom?.remainingPaid || currentRoom?.balanceSettled || currentRoom?.status === 'filled');
+
         try {
           if (currentRoom?.roomId) {
             localStorage.setItem('df_reservation_' + currentRoom.roomId, JSON.stringify(lastUnlockedReservation));
@@ -4417,34 +4560,85 @@
 
         if (unlockedRefCode) unlockedRefCode.textContent = data.reference;
         if (unlockedPaymentId) unlockedPaymentId.textContent = data.paymentId;
-        if (unlockedSeekerName) unlockedSeekerName.textContent = data.seekerName || 'Reserved Seeker';
-        if (unlockedRoomTitle) unlockedRoomTitle.textContent = currentRoom.title;
+        if (unlockedSeekerName) unlockedSeekerName.textContent = data.seekerName || currentRoom?.studentName || 'Reserved Seeker';
+        if (unlockedRoomTitle) unlockedRoomTitle.textContent = currentRoom?.title || '';
 
-        const paymentMode = currentRoom.paymentMode || 'full';
-        const payableINR = data.amountPaid || currentRoom._resolvedPayableINR || (currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
-        const payableEUR = data.amountPaidEUR || currentRoom._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
+        const holdingEUR = currentRoom?._resolvedHoldingEUR || (currentRoom?.holdingFeeEUR !== undefined ? Number(currentRoom.holdingFeeEUR) : 40);
+        const remainingEUR = currentRoom?._resolvedRemainingEUR || (currentRoom?.remainingFeeEUR !== undefined ? Number(currentRoom.remainingFeeEUR) : 80);
+        const remainingINR = currentRoom?._resolvedRemainingINR || Math.round(remainingEUR * liveEurRate);
+        const totalEUR = currentRoom?._resolvedTotalEUR || (currentRoom?.feeEUR !== undefined ? Number(currentRoom.feeEUR) : (holdingEUR + remainingEUR));
+        const totalINR = currentRoom?._resolvedTotalINR || Math.round(totalEUR * liveEurRate);
+
+        const payableINR = data.amountPaid || (isRemainingSettled ? totalINR : currentRoom?._resolvedPayableINR) || 0;
+        const payableEUR = data.amountPaidEUR || (isRemainingSettled ? totalEUR : currentRoom?._resolvedPayableEUR) || (Math.round((payableINR / liveEurRate) * 10) / 10);
 
         const bannerTextEl = document.querySelector('.unlocked-banner span');
+        const unlockedPayRemainingCard = document.getElementById('unlockedPayRemainingCard');
+        const unlockedPayRemainingMsg = document.getElementById('unlockedPayRemainingMsg');
+        const holdingSlipReturnBar = document.getElementById('holdingSlipReturnBar');
+
+        function returnToCheckout() {
+          unlockedDossierView.style.display = 'none';
+          if (prePaymentView) prePaymentView.style.display = 'block';
+          checkoutCard.classList.remove('unlocked');
+          if (mobileBottomNav) {
+            mobileBottomNav.classList.remove('hidden-unlocked');
+            mobileBottomNav.style.display = '';
+          }
+          checkoutCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
         if (bannerTextEl) {
-          if (paymentMode === 'holding_initial') {
+          if (paymentMode === 'holding_initial' || data.isHoldingOnly) {
             bannerTextEl.textContent = `Viewing Slot Reserved & Holding Fee Paid: €${payableEUR} (~₹${payableINR.toLocaleString('en-IN')})!`;
+            if (unlockedPayRemainingCard) unlockedPayRemainingCard.style.display = 'none';
+            if (holdingSlipReturnBar) holdingSlipReturnBar.style.display = 'none';
           } else if (paymentMode === 'holding_paid') {
-            bannerTextEl.textContent = `Lease Handover Confirmed & Total Service Fee Settled (€${payableEUR} / ₹${payableINR.toLocaleString('en-IN')})!`;
+            if (isRemainingSettled) {
+              bannerTextEl.textContent = `Lease Handover Confirmed & Total Service Fee Settled (€${totalEUR} / ₹${totalINR.toLocaleString('en-IN')})!`;
+              if (unlockedPayRemainingCard) unlockedPayRemainingCard.style.display = 'none';
+              if (holdingSlipReturnBar) holdingSlipReturnBar.style.display = 'none';
+            } else {
+              bannerTextEl.textContent = `Viewing Approved & Holding Deposit Credited: €${holdingEUR} · Remaining Balance (€${remainingEUR}) Due to Finalize!`;
+              if (unlockedPayRemainingCard) {
+                unlockedPayRemainingCard.style.display = 'block';
+                if (unlockedPayRemainingMsg) {
+                  unlockedPayRemainingMsg.innerHTML = `Your holding deposit of <strong>€${holdingEUR}</strong> was collected &amp; credited ✓. Pay the remaining balance of <strong>€${remainingEUR} (~₹${remainingINR.toLocaleString('en-IN')})</strong> to finalize lease handover and contract review.`;
+                }
+              }
+              if (holdingSlipReturnBar) {
+                holdingSlipReturnBar.style.display = 'flex';
+              }
+            }
           } else {
             bannerTextEl.textContent = `Room Lead Reserved & Confirmed: €${payableEUR} (~₹${payableINR.toLocaleString('en-IN')})!`;
+            if (unlockedPayRemainingCard) unlockedPayRemainingCard.style.display = 'none';
+            if (holdingSlipReturnBar) holdingSlipReturnBar.style.display = 'none';
           }
         }
 
+        const btnSwitchPay = document.getElementById('btnUnlockSwitchToPay');
+        if (btnSwitchPay) btnSwitchPay.onclick = returnToCheckout;
+
+        const btnReturnPay = document.getElementById('btnReturnToRemainingPay');
+        if (btnReturnPay) btnReturnPay.onclick = returnToCheckout;
+
         // WhatsApp direct link to DieFuture support desk (+91 95679 41647)
         let dfMsg = '';
-        if (paymentMode === 'holding_initial') {
+        if (paymentMode === 'holding_initial' || data.isHoldingOnly) {
           dfMsg = encodeURIComponent(
             `Hello DieFuture Team,\n\nI just paid the €${payableEUR} (~₹${payableINR.toLocaleString('en-IN')}) refundable holding deposit for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease schedule my viewing slot & verify details!`
           );
         } else if (paymentMode === 'holding_paid') {
-          dfMsg = encodeURIComponent(
-            `Hello DieFuture Team,\n\nI just paid the remaining balance of €${payableEUR} (~₹${payableINR.toLocaleString('en-IN')}) for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease proceed with landlord lease handover and contract audit!`
-          );
+          if (isRemainingSettled) {
+            dfMsg = encodeURIComponent(
+              `Hello DieFuture Team,\n\nI just paid the remaining balance of €${remainingEUR} (~₹${remainingINR.toLocaleString('en-IN')}) for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease proceed with landlord lease handover and contract audit!`
+            );
+          } else {
+            dfMsg = encodeURIComponent(
+              `Hello DieFuture Team,\n\nI have completed the viewing for Room ${currentRoom.roomId} (${currentRoom.city}) and my holding deposit of €${holdingEUR} is credited.\n- Booking Reference: ${data.reference}\n- Name: ${data.seekerName || ''}\n\nI am ready to finalize lease handover and pay remaining balance of €${remainingEUR}!`
+            );
+          }
         } else {
           dfMsg = encodeURIComponent(
             `Hello DieFuture Team,\n\nI just paid the €${payableEUR} (~₹${payableINR.toLocaleString('en-IN')}) lead handover fee for Room ${currentRoom.roomId} (${currentRoom.city}):\n- Booking Reference: ${data.reference}\n- Payment ID: ${data.paymentId}\n- Name: ${data.seekerName || ''}\n\nPlease coordinate with the landlord and assist me with the viewing & contract review!`
@@ -4487,14 +4681,21 @@
         if (pPhone) pPhone.textContent = phone;
         if (pPayId) pPayId.textContent = payId;
 
-        const paymentMode = currentRoom.paymentMode || 'full';
-        const payableINR = (lastUnlockedReservation && lastUnlockedReservation.amountPaid) || currentRoom._resolvedPayableINR || (currentRoom.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
-        const payableEUR = (lastUnlockedReservation && lastUnlockedReservation.amountPaidEUR) || currentRoom._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
+        const paymentMode = currentRoom?.paymentMode || 'full';
+        const isRemainingSettled = Boolean(lastUnlockedReservation?.isRemainingPaid || lastUnlockedReservation?.remainingPaid || lastUnlockedReservation?.balanceSettled || currentRoom?.remainingPaid || currentRoom?.balanceSettled || currentRoom?.status === 'filled');
+        const payableINR = (lastUnlockedReservation && lastUnlockedReservation.amountPaid) || currentRoom?._resolvedPayableINR || (currentRoom?.feeINR !== undefined ? Number(currentRoom.feeINR) : 0);
+        const payableEUR = (lastUnlockedReservation && lastUnlockedReservation.amountPaidEUR) || currentRoom?._resolvedPayableEUR || (Math.round((payableINR / liveEurRate) * 10) / 10);
 
-        if (paymentMode === 'holding_initial') {
+        if (paymentMode === 'holding_initial' || lastUnlockedReservation?.isHoldingOnly) {
           if (pFee) pFee.textContent = `€${payableEUR} (₹${payableINR.toLocaleString('en-IN')} Refundable Viewing Deposit Paid — Balance due upon lease approval)`;
         } else if (paymentMode === 'holding_paid') {
-          if (pFee) pFee.textContent = `€${payableEUR} (₹${payableINR.toLocaleString('en-IN')} Remaining Balance Paid — Total Fee Settled)`;
+          if (isRemainingSettled) {
+            if (pFee) pFee.textContent = `€${payableEUR} (₹${payableINR.toLocaleString('en-IN')} Remaining Balance Paid — Total Service Fee Settled in Full)`;
+          } else {
+            const hEUR = currentRoom?._resolvedHoldingEUR || 40;
+            const rEUR = currentRoom?._resolvedRemainingEUR || 80;
+            if (pFee) pFee.textContent = `€${hEUR} (Holding Deposit Credited — €${rEUR} Remaining Balance Due upon Contract Handover)`;
+          }
         } else {
           if (pFee) pFee.textContent = `€${payableEUR} (₹${payableINR.toLocaleString('en-IN')} Paid in Full via Razorpay)`;
         }

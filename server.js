@@ -135,7 +135,9 @@ app.post('/api/create-order', async (req, res) => {
     if (targetRoomId) {
       try {
         const roomsCol = await getRoomsCollection();
-        const room = await roomsCol.findOne({ roomId: String(targetRoomId) });
+        const cleanedTarget = String(targetRoomId).replace(/^DF-ROOM-/i, '');
+        const fullTarget = String(targetRoomId).startsWith('DF-ROOM-') ? String(targetRoomId) : `DF-ROOM-${targetRoomId}`;
+        const room = await roomsCol.findOne({ $or: [{ roomId: String(targetRoomId) }, { roomId: cleanedTarget }, { roomId: fullTarget }] });
         if (room) {
           const liveRate = serverRatesCache?.rate || 108.50;
           const mode = room.paymentMode || 'full';
@@ -465,8 +467,19 @@ app.post('/api/reserve-room', async (req, res) => {
         if (!finalName && matchedRoom.studentName) finalName = matchedRoom.studentName;
         if (!finalEmail && matchedRoom.studentEmail) finalEmail = matchedRoom.studentEmail;
         if (!finalPhone && matchedRoom.studentPhone) finalPhone = matchedRoom.studentPhone;
-        // Mark room as reserved in database
-        await roomsCol.updateOne({ roomId: String(roomId) }, { $set: { status: 'reserved', reservedAt: new Date(), reservedBy: finalEmail || 'student' } });
+        // Mark room as reserved or filled in database
+        const incomingMode = req.body.paymentMode || 'full';
+        if (incomingMode === 'holding_paid') {
+          await roomsCol.updateOne(
+            { roomId: String(roomId) },
+            { $set: { status: 'filled', remainingPaid: true, balanceSettled: true, settledAt: new Date(), remainingPaymentId: paymentId || 'verified' } }
+          );
+        } else {
+          await roomsCol.updateOne(
+            { roomId: String(roomId) },
+            { $set: { status: 'reserved', reservedAt: new Date(), reservedBy: finalEmail || 'student', paymentId: paymentId || 'verified' } }
+          );
+        }
       }
     } catch (roomErr) {
       console.warn('[MongoDB] Could not update room status to reserved:', roomErr.message);
@@ -655,9 +668,11 @@ app.get('/api/rooms/:id', async (req, res) => {
     const { id } = req.params;
     const col = await getRoomsCollection();
 
-    let query = { roomId: String(id) };
+    const cleanedId = String(id).replace(/^DF-ROOM-/i, '');
+    const fullId = String(id).startsWith('DF-ROOM-') ? String(id) : `DF-ROOM-${id}`;
+    let query = { $or: [{ roomId: String(id) }, { roomId: cleanedId }, { roomId: fullId }] };
     if (ObjectId.isValid(id) && id.length === 24) {
-      query = { $or: [{ roomId: String(id) }, { _id: new ObjectId(id) }] };
+      query.$or.push({ _id: new ObjectId(id) });
     }
 
     const room = await col.find(query).sort({ updatedAt: -1, createdAt: -1 }).limit(1).next();
@@ -803,9 +818,11 @@ app.patch(['/api/rooms/:id', '/api/rooms'], async (req, res) => {
 
     const col = await getRoomsCollection();
 
-    let query = { roomId: String(targetId) };
+    const cleanedTarget = String(targetId).replace(/^DF-ROOM-/i, '');
+    const fullTarget = String(targetId).startsWith('DF-ROOM-') ? String(targetId) : `DF-ROOM-${targetId}`;
+    let query = { $or: [{ roomId: String(targetId) }, { roomId: cleanedTarget }, { roomId: fullTarget }] };
     if (ObjectId.isValid(targetId) && targetId.length === 24) {
-      query = { $or: [{ roomId: String(targetId) }, { _id: new ObjectId(targetId) }] };
+      query.$or.push({ _id: new ObjectId(targetId) });
     }
 
     const updates = { ...req.body, updatedAt: new Date() };
@@ -839,9 +856,11 @@ app.delete('/api/rooms/:id', async (req, res) => {
     const { id } = req.params;
     const col = await getRoomsCollection();
 
-    let query = { roomId: id };
+    const cleanedId = String(id).replace(/^DF-ROOM-/i, '');
+    const fullId = String(id).startsWith('DF-ROOM-') ? String(id) : `DF-ROOM-${id}`;
+    let query = { $or: [{ roomId: String(id) }, { roomId: cleanedId }, { roomId: fullId }] };
     if (ObjectId.isValid(id) && id.length === 24) {
-      query = { $or: [{ roomId: id }, { _id: new ObjectId(id) }] };
+      query.$or.push({ _id: new ObjectId(id) });
     }
 
     const result = await col.deleteOne(query);
