@@ -471,36 +471,165 @@
       display: inline;
     }
 
-    /* Importer & Lead Generator Card */
-    .importer-card {
-      background: #FFFFFF;
-      border: 1px solid var(--rule);
-      border-radius: 16px;
-      padding: 28px 32px;
-      margin-bottom: 32px;
-      box-shadow: 0 4px 20px -6px rgba(20, 21, 26, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
-    }
-    .importer-header {
+    /* Rooms Management Top Bar */
+    .rooms-management-bar {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 20px;
+      align-items: center;
+      background: #FFFFFF;
+      border: 1px solid var(--rule);
+      border-radius: 14px;
+      padding: 20px 26px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px -6px rgba(20, 21, 26, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 16px;
     }
-    .importer-title {
+    .rooms-mgmt-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       font-family: var(--f-display);
-      font-size: 21px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--ink);
       letter-spacing: -.02em;
     }
-    .importer-sub {
+    .rooms-count-pill {
+      font-family: var(--f-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      background: #EFF6FF;
+      color: var(--royal);
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid #BFDBFE;
+    }
+    .rooms-mgmt-sub {
       font-size: 13.5px;
       color: var(--ink-2);
-      max-width: 720px;
+      max-width: 680px;
       line-height: 1.5;
       margin-top: 4px;
+      margin-bottom: 0;
+    }
+    .rooms-mgmt-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Admin Room Modal Styles */
+    .admin-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .admin-modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .admin-modal-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .admin-modal-sheet {
+      position: relative;
+      background: #FFFFFF;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 1020px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(226, 232, 240, 0.8);
+      transform: scale(0.96) translateY(12px);
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+      z-index: 2;
+    }
+    .admin-modal-overlay.open .admin-modal-sheet {
+      transform: scale(1) translateY(0);
+    }
+    .admin-modal-header {
+      padding: 18px 26px;
+      border-bottom: 1px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #FFFFFF;
+      flex-shrink: 0;
+      gap: 14px;
+    }
+    .admin-modal-title {
+      font-family: var(--f-display);
+      font-size: 18.5px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+    .admin-modal-sub {
+      font-size: 12.5px;
+      color: var(--ink-2);
+      margin-top: 2px;
+      margin-bottom: 0;
+    }
+    .admin-modal-close {
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #64748B;
+      font-size: 16px;
+      font-weight: 700;
+      transition: all 0.15s ease;
+    }
+    .admin-modal-close:hover {
+      background: #E2E8F0;
+      color: #0F172A;
+    }
+    .admin-modal-body {
+      overflow-y: auto;
+      flex: 1;
+      padding: 24px 28px;
+      background: #FAFBFD;
+    }
+    .admin-modal-footer {
+      padding: 14px 26px;
+      border-top: 1px solid #E2E8F0;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
     /* Quick Fetch Toolbar */
@@ -810,20 +939,54 @@
         font-size: 13px !important;
       }
 
-      /* Room Lead Generator Card */
-      .importer-card {
+      /* Rooms Management Bar Mobile */
+      .rooms-management-bar {
+        padding: 16px 14px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .rooms-mgmt-actions {
+        display: flex;
+        width: 100%;
+        gap: 8px;
+      }
+      .rooms-mgmt-actions button {
+        flex: 1;
+        justify-content: center;
+      }
+
+      /* Admin Modal Sheet Mobile */
+      .admin-modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+      }
+      .admin-modal-sheet {
+        max-width: 100vw;
+        border-radius: 18px 18px 0 0;
+        max-height: 94vh;
+        transform: translateY(100%);
+      }
+      .admin-modal-overlay.open .admin-modal-sheet {
+        transform: translateY(0);
+      }
+      .admin-modal-body {
         padding: 16px 12px;
-        border-radius: 12px;
-        margin-bottom: 16px;
       }
-      .importer-title {
-        font-size: 16px;
-        line-height: 1.25;
+      .admin-modal-header {
+        padding: 14px 16px;
       }
-      .importer-sub {
-        font-size: 12px;
-        line-height: 1.45;
-        margin-top: 4px;
+      .admin-modal-footer {
+        padding: 12px 16px;
+        flex-direction: column-reverse;
+        align-items: stretch;
+      }
+      .admin-modal-footer > div {
+        width: 100%;
+        justify-content: stretch;
+      }
+      .admin-modal-footer button {
+        flex: 1;
       }
       .url-fetch-bar {
         flex-direction: column;
@@ -1119,39 +1282,115 @@
     <!-- PANEL 2: VERIFIED ROOMS & STAYFORALL IMPORTER -->
     <div id="panelRooms" style="display:none;">
       
-      <!-- Room Lead Generator Card -->
-      <div class="importer-card">
-        <div class="importer-header">
-          <div>
-            <div class="importer-title">🏠 Verified Room Lead Catalog &amp; Generator</div>
-            <p class="importer-sub">
-              Create and manage private booking links for seekers. Paste a StayforAll listing URL to auto-extract details, or configure the room terms manually.
-            </p>
+      <!-- Top Rooms Management Bar -->
+      <div class="rooms-management-bar">
+        <div class="rooms-mgmt-info">
+          <div class="rooms-mgmt-title">
+            <span>🏠 Verified Room Leads</span>
+            <span id="roomsCountBadge" class="rooms-count-pill">0 Rooms</span>
           </div>
+          <p class="rooms-mgmt-sub">
+            Create and manage private booking links for seekers. 1-Click import from StayforAll or configure custom verified room leads.
+          </p>
+        </div>
+        <div class="rooms-mgmt-actions">
+          <button type="button" id="btnOpenCreateRoomModal" class="btn-electric" style="display:inline-flex; align-items:center; gap:7px; padding:10px 20px; font-size:13.5px; font-weight:700; box-shadow:0 4px 14px rgba(0,85,255,0.25); cursor:pointer;">
+            <span style="font-size:16px;">+</span> Create Room Lead
+          </button>
+          <button type="button" id="refreshRoomsBtnTop" class="btn-line" style="display:inline-flex; align-items:center; gap:6px; padding:10px 16px; font-size:13px; font-weight:600; cursor:pointer;">
+            <span>↻</span> Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Global Rooms Notice Banner -->
+      <div id="tableRoomsNotice" style="display:none; font-size:13px; font-weight:600; padding:12px 16px; border-radius:10px; margin-bottom:18px; box-shadow:0 2px 6px rgba(0,0,0,0.03);"></div>
+
+      <!-- Current Rooms Table -->
+      <div class="leads-table-wrap">
+        <div class="mobile-table-hint">← Swipe sideways to view room actions &amp; links →</div>
+        <div class="table-panel-header">
           <div>
+            <h3 style="font-size:16px; font-weight:700; color:var(--ink);">Active Verified Rooms in Database</h3>
+            <div style="font-size:12px; color:var(--ink-3);">Private lead payment links for seekers (unindexed &amp; hidden from public site). Copy link to share with seekers.</div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" id="btnOpenCreateRoomModalTable" class="btn-electric" style="padding:7px 14px; font-size:12px; font-weight:700; cursor:pointer;">+ New Room</button>
+            <button type="button" id="refreshRoomsBtn" class="btn-line" style="padding:7px 14px; font-size:12px; cursor:pointer;">↻ Refresh</button>
+          </div>
+        </div>
+
+        <table class="leads-table">
+          <thead>
+            <tr>
+              <th>ROOM ID &amp; PHOTOS</th>
+              <th>TITLE &amp; CITY</th>
+              <th>WARM RENT</th>
+              <th>DIEFUTURE FEE</th>
+              <th>STATUS</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody id="roomsTbody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+
+        <div class="empty-state" id="emptyRoomsState" style="display:none; padding:40px 20px; text-align:center;">
+          <div style="font-size:42px; margin-bottom:12px;">🏠</div>
+          <h3 style="font-size:18px; font-weight:700; color:var(--ink); margin-bottom:6px;">No Verified Rooms in Database</h3>
+          <p style="font-size:13.5px; color:var(--ink-2); max-width:440px; margin:0 auto 18px;">Create a custom room lead or use the 1-Click StayforAll Importer to publish your first private payment link.</p>
+          <button type="button" class="btn-electric" id="btnEmptyCreateRoom" style="padding:10px 22px; font-size:13.5px; font-weight:700; cursor:pointer;">
+            + Create Your First Room Lead
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROOM LEAD CREATE & EDIT MODAL -->
+    <div id="roomModalOverlay" class="admin-modal-overlay" style="display:none;" aria-hidden="true" role="dialog">
+      <div class="admin-modal-backdrop" id="roomModalBackdrop"></div>
+      <div class="admin-modal-sheet">
+        
+        <!-- Modal Header -->
+        <div class="admin-modal-header">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:38px; height:38px; border-radius:10px; background:#EFF6FF; border:1px solid #BFDBFE; display:flex; align-items:center; justify-content:center; font-size:20px; line-height:1;" id="roomModalIcon">🏠</div>
+            <div>
+              <div class="admin-modal-title" id="roomModalTitle">Verified Room Lead Catalog &amp; Generator</div>
+              <p class="admin-modal-sub" id="roomModalSub">
+                Create and manage private booking links for seekers. Paste a StayforAll listing URL or enter details manually.
+              </p>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
             <span style="font-family:var(--f-mono); font-size:11.5px; background:#ECFDF5; color:#065F46; padding:5px 12px; border-radius:999px; font-weight:600; border:1px solid #A7F3D0; display:inline-flex; align-items:center; gap:6px;">
               <span class="db-dot"></span> Auto-Scraping Active
             </span>
+            <button type="button" class="admin-modal-close" id="btnCloseRoomModal" aria-label="Close modal">✕</button>
           </div>
         </div>
 
-        <!-- Quick Importer Toolbar -->
-        <div class="url-fetch-bar">
-          <div style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#334155; white-space:nowrap;">
-            <span>⚡ Quick Import:</span>
-          </div>
-          <input type="text" id="stayforallUrlInput" class="url-fetch-input" placeholder="Paste StayforAll URL or Room ID (e.g. https://stayforall.com/rooms/1004 or 1004)" />
-          <button type="button" class="btn-electric" id="btnFetchStayforall" style="padding:10px 18px; font-weight:700; white-space:nowrap; font-size:13px;">
-            ⚡ Auto-Fetch Listing
-          </button>
-        </div>
-
-        <div id="fetchNotice" style="font-size:12.5px; margin-bottom:16px; display:none; padding:10px 14px; border-radius:8px;"></div>
-
-        <!-- Room Details & Edit Form -->
-        <form id="roomUpsertForm">
+        <!-- Form wrapping body + sticky footer -->
+        <form id="roomUpsertForm" style="display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden; margin:0;">
           
-          <!-- SECTION 1: IDENTIFICATION & ADDRESS -->
+          <div class="admin-modal-body">
+            
+            <!-- Quick Importer Toolbar -->
+            <div class="url-fetch-bar">
+              <div style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#334155; white-space:nowrap;">
+                <span>⚡ Quick Import:</span>
+              </div>
+              <input type="text" id="stayforallUrlInput" class="url-fetch-input" placeholder="Paste StayforAll URL or Room ID (e.g. https://stayforall.com/rooms/1004 or 1004)" />
+              <button type="button" class="btn-electric" id="btnFetchStayforall" style="padding:10px 18px; font-weight:700; white-space:nowrap; font-size:13px; cursor:pointer;">
+                ⚡ Auto-Fetch Listing
+              </button>
+            </div>
+
+            <div id="fetchNotice" style="font-size:12.5px; margin-bottom:16px; display:none; padding:10px 14px; border-radius:8px;"></div>
+
+            <!-- SECTION 1: IDENTIFICATION & ADDRESS -->
           <div class="form-section-card">
             <div class="form-section-header">
               <div>
@@ -1484,55 +1723,25 @@
             </div>
           </div>
 
-          <!-- FORM ACTIONS BAR -->
-          <div class="form-action-bar">
+          </div>
+
+          <!-- Sticky Modal Footer -->
+          <div class="admin-modal-footer">
             <div style="font-size:12.5px; color:#64748B;" id="formEditStatusNote">
               Fill details above or paste a StayforAll link to auto-populate.
             </div>
-            <div style="display:flex; gap:10px;">
-              <button type="button" class="btn-line" id="btnResetRoomForm" style="padding:9px 18px; font-size:13px;">Clear Form</button>
-              <button type="submit" class="btn-electric" id="btnSubmitRoom" style="padding:10px 22px; font-size:13.5px; font-weight:700;">
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button type="button" class="btn-line" id="btnResetRoomForm" style="padding:9px 16px; font-size:13px; cursor:pointer;">Clear Form</button>
+              <button type="button" class="btn-line" id="btnCancelRoomModal" style="padding:9px 16px; font-size:13px; cursor:pointer;">Cancel</button>
+              <button type="submit" class="btn-electric" id="btnSubmitRoom" style="padding:10px 22px; font-size:13.5px; font-weight:700; cursor:pointer;">
                 Save &amp; Publish Room Lead →
               </button>
             </div>
           </div>
+
         </form>
+
       </div>
-
-      <!-- Current Rooms Table -->
-      <div class="leads-table-wrap">
-        <div class="mobile-table-hint">← Swipe sideways to view room actions &amp; links →</div>
-        <div class="table-panel-header">
-          <div>
-            <h3 style="font-size:16px; font-weight:700; color:var(--ink);">Active Verified Rooms in Database</h3>
-            <div style="font-size:12px; color:var(--ink-3);">Private lead payment links for seekers (unindexed & hidden from public site). Copy link to share with seekers.</div>
-          </div>
-          <button type="button" id="refreshRoomsBtn" class="btn-line" style="padding:7px 14px; font-size:12px;">↻ Refresh Rooms</button>
-        </div>
-
-        <table class="leads-table">
-          <thead>
-            <tr>
-              <th>ROOM ID & PHOTOS</th>
-              <th>TITLE & CITY</th>
-              <th>WARM RENT</th>
-              <th>DIEFUTURE FEE</th>
-              <th>STATUS</th>
-              <th>ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody id="roomsTbody">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-
-        <div class="empty-state" id="emptyRoomsState" style="display:none;">
-          <div style="font-size:36px; margin-bottom:12px;">🏠</div>
-          <h3>No Verified Rooms in Database</h3>
-          <p>Use the 1-Click StayforAll Importer above to publish your first room lead.</p>
-        </div>
-      </div>
-
     </div>
 
   </main>
@@ -1910,9 +2119,111 @@
     const panelLeads = document.getElementById('panelLeads');
     const panelRooms = document.getElementById('panelRooms');
 
+    // Room Modal & Top Management Bar Elements
+    const roomModalOverlay = document.getElementById('roomModalOverlay');
+    const roomModalBackdrop = document.getElementById('roomModalBackdrop');
+    const btnCloseRoomModal = document.getElementById('btnCloseRoomModal');
+    const btnCancelRoomModal = document.getElementById('btnCancelRoomModal');
+    const btnOpenCreateRoomModal = document.getElementById('btnOpenCreateRoomModal');
+    const btnOpenCreateRoomModalTable = document.getElementById('btnOpenCreateRoomModalTable');
+    const btnEmptyCreateRoom = document.getElementById('btnEmptyCreateRoom');
+    const refreshRoomsBtnTop = document.getElementById('refreshRoomsBtnTop');
+    const roomModalTitle = document.getElementById('roomModalTitle');
+    const roomModalSub = document.getElementById('roomModalSub');
+    const roomModalIcon = document.getElementById('roomModalIcon');
+    const formEditStatusNote = document.getElementById('formEditStatusNote');
+    const roomsCountBadge = document.getElementById('roomsCountBadge');
+    const tableRoomsNotice = document.getElementById('tableRoomsNotice');
+
     const stayforallUrlInput = document.getElementById('stayforallUrlInput');
     const btnFetchStayforall = document.getElementById('btnFetchStayforall');
     const fetchNotice = document.getElementById('fetchNotice');
+
+    function openRoomModal(mode = 'create', roomId = null) {
+      if (!roomModalOverlay) return;
+
+      if (mode === 'create') {
+        roomUpsertForm.reset();
+        delete roomUpsertForm.dataset.editing;
+        setAdminImages([]);
+        if (roomFieldVideo) {
+          roomFieldVideo.value = '';
+          updateAdminVideoUI();
+        }
+        roomFieldFee.value = '';
+        if (roomFieldFeeCurrency) roomFieldFeeCurrency.value = 'EUR';
+        currentAdminFeeCurrency = 'EUR';
+        if (roomFieldPaymentMode) roomFieldPaymentMode.value = 'full';
+        if (roomFieldHoldingFee) roomFieldHoldingFee.value = '';
+        if (roomFieldRemainingFee) roomFieldRemainingFee.value = '';
+        updateHoldingModeUI();
+        autoAssignRoomId();
+        if (roomFieldStudentName) roomFieldStudentName.value = '';
+        if (roomFieldStudentEmail) roomFieldStudentEmail.value = '';
+        if (roomFieldStudentPhone) roomFieldStudentPhone.value = '';
+        if (roomFieldDescription) roomFieldDescription.value = '';
+        if (roomFieldShowGuarantees) roomFieldShowGuarantees.checked = true;
+        if (roomFieldGuaranteeConcierge) roomFieldGuaranteeConcierge.checked = true;
+        if (roomFieldGuaranteeViewing) roomFieldGuaranteeViewing.value = 'viewing';
+        if (roomFieldGuaranteeAnmeldung) roomFieldGuaranteeAnmeldung.checked = true;
+        if (roomFieldGuaranteeAudit) roomFieldGuaranteeAudit.checked = true;
+        if (roomFieldGuaranteeRefund) roomFieldGuaranteeRefund.value = 'none';
+        if (guaranteesControlsWrap) {
+          guaranteesControlsWrap.style.opacity = '1';
+          guaranteesControlsWrap.style.pointerEvents = 'auto';
+        }
+        if (roomModalIcon) roomModalIcon.textContent = '🏠';
+        if (roomModalTitle) roomModalTitle.textContent = 'Verified Room Lead Catalog & Generator';
+        if (roomModalSub) roomModalSub.textContent = 'Create and manage private booking links for seekers. Paste a StayforAll listing URL or enter details manually.';
+        if (btnSubmitRoom) btnSubmitRoom.textContent = 'Save & Publish Room Lead →';
+        if (formEditStatusNote) formEditStatusNote.textContent = 'Fill details above or paste a StayforAll link to auto-populate.';
+        if (fetchNotice) fetchNotice.style.display = 'none';
+      }
+
+      roomModalOverlay.style.display = 'flex';
+      roomModalOverlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(() => {
+        roomModalOverlay.classList.add('open');
+      });
+
+      setTimeout(() => {
+        if (mode === 'create' && stayforallUrlInput) {
+          stayforallUrlInput.focus();
+        } else if (mode === 'duplicate' && roomFieldStudentName) {
+          roomFieldStudentName.focus();
+        } else if (roomFieldTitle) {
+          roomFieldTitle.focus();
+        }
+      }, 120);
+    }
+
+    function closeRoomModal() {
+      if (!roomModalOverlay) return;
+      roomModalOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+      roomModalOverlay.setAttribute('aria-hidden', 'true');
+      setTimeout(() => {
+        if (!roomModalOverlay.classList.contains('open')) {
+          roomModalOverlay.style.display = 'none';
+        }
+      }, 220);
+    }
+
+    if (btnCloseRoomModal) btnCloseRoomModal.addEventListener('click', closeRoomModal);
+    if (btnCancelRoomModal) btnCancelRoomModal.addEventListener('click', closeRoomModal);
+    if (roomModalBackdrop) roomModalBackdrop.addEventListener('click', closeRoomModal);
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && roomModalOverlay && roomModalOverlay.classList.contains('open')) {
+        closeRoomModal();
+      }
+    });
+
+    if (btnOpenCreateRoomModal) btnOpenCreateRoomModal.addEventListener('click', () => openRoomModal('create'));
+    if (btnOpenCreateRoomModalTable) btnOpenCreateRoomModalTable.addEventListener('click', () => openRoomModal('create'));
+    if (btnEmptyCreateRoom) btnEmptyCreateRoom.addEventListener('click', () => openRoomModal('create'));
+    if (refreshRoomsBtnTop) refreshRoomsBtnTop.addEventListener('click', fetchAdminRooms);
 
     const roomUpsertForm = document.getElementById('roomUpsertForm');
     const roomFieldId = document.getElementById('roomFieldId');
@@ -2452,20 +2763,35 @@
     });
 
     function showNotice(msg, type) {
-      fetchNotice.textContent = msg;
-      fetchNotice.style.display = 'block';
+      if (fetchNotice) {
+        fetchNotice.textContent = msg;
+        fetchNotice.style.display = 'block';
+        applyNoticeStyle(fetchNotice, type);
+      }
+      if (tableRoomsNotice) {
+        tableRoomsNotice.textContent = msg;
+        tableRoomsNotice.style.display = 'block';
+        applyNoticeStyle(tableRoomsNotice, type);
+        clearTimeout(window._tableNoticeTimer);
+        window._tableNoticeTimer = setTimeout(() => {
+          tableRoomsNotice.style.display = 'none';
+        }, 6000);
+      }
+    }
+
+    function applyNoticeStyle(el, type) {
       if (type === 'success') {
-        fetchNotice.style.background = '#ECFDF5';
-        fetchNotice.style.color = '#065F46';
-        fetchNotice.style.border = '1px solid #A7F3D0';
+        el.style.background = '#ECFDF5';
+        el.style.color = '#065F46';
+        el.style.border = '1px solid #A7F3D0';
       } else if (type === 'error') {
-        fetchNotice.style.background = '#FEF2F2';
-        fetchNotice.style.color = '#991B1B';
-        fetchNotice.style.border = '1px solid #FECACA';
+        el.style.background = '#FEF2F2';
+        el.style.color = '#991B1B';
+        el.style.border = '1px solid #FECACA';
       } else {
-        fetchNotice.style.background = '#EFF6FF';
-        fetchNotice.style.color = '#1E40AF';
-        fetchNotice.style.border = '1px solid #BFDBFE';
+        el.style.background = '#EFF6FF';
+        el.style.color = '#1E40AF';
+        el.style.border = '1px solid #BFDBFE';
       }
     }
 
@@ -2498,7 +2824,12 @@
         guaranteesControlsWrap.style.opacity = '1';
         guaranteesControlsWrap.style.pointerEvents = 'auto';
       }
+      if (roomModalIcon) roomModalIcon.textContent = '🏠';
+      if (roomModalTitle) roomModalTitle.textContent = 'Verified Room Lead Catalog & Generator';
+      if (roomModalSub) roomModalSub.textContent = 'Create and manage private booking links for seekers. Paste a StayforAll listing URL or enter details manually.';
       btnSubmitRoom.textContent = 'Save & Publish Room Lead →';
+      if (formEditStatusNote) formEditStatusNote.textContent = 'Fill details above or paste a StayforAll link to auto-populate.';
+      showNotice('Form reset. Ready for new room entry.', 'info');
     });
 
     // Save / Publish Room
@@ -2591,6 +2922,7 @@
         if (res.ok) {
           delete roomUpsertForm.dataset.editing;
           showNotice(`✓ Room "${payload.title}" (${adminImages.length} photos) saved successfully to MongoDB!`, 'success');
+          closeRoomModal();
           fetchAdminRooms();
         } else {
           const err = await res.json();
@@ -2641,6 +2973,10 @@
 
     function renderAdminRoomsTable() {
       roomsTbody.innerHTML = '';
+
+      if (roomsCountBadge) {
+        roomsCountBadge.textContent = `${allAdminRooms.length} ${allAdminRooms.length === 1 ? 'Room' : 'Rooms'}`;
+      }
 
       if (allAdminRooms.length === 0) {
         emptyRoomsState.style.display = 'block';
@@ -2825,9 +3161,13 @@
           const imgs = (Array.isArray(room.images) && room.images.length > 0) ? room.images : (room.imageUrl ? [room.imageUrl] : []);
           setAdminImages(imgs);
 
+          if (roomModalIcon) roomModalIcon.textContent = '✏️';
+          if (roomModalTitle) roomModalTitle.textContent = `Edit Room DF-ROOM-${room.roomId}`;
+          if (roomModalSub) roomModalSub.textContent = `Updating pricing, guarantees & terms for "${room.title || 'Room ' + room.roomId}"`;
           btnSubmitRoom.textContent = `Update Room DF-ROOM-${room.roomId} →`;
-          showNotice(`Now editing room DF-ROOM-${room.roomId}. Adjust guarantees and settings above and click Update.`, 'info');
-          roomUpsertForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (formEditStatusNote) formEditStatusNote.textContent = `Editing existing room DF-ROOM-${room.roomId}. Adjust guarantees and settings above and click Update.`;
+          if (fetchNotice) fetchNotice.style.display = 'none';
+          openRoomModal('edit', room.roomId);
         });
       });
 
@@ -2928,11 +3268,13 @@
             updateAdminVideoUI();
           }
 
+          if (roomModalIcon) roomModalIcon.textContent = '👥';
+          if (roomModalTitle) roomModalTitle.textContent = `Duplicate for Candidate (DF-ROOM-${nextRoomId})`;
+          if (roomModalSub) roomModalSub.textContent = `Cloned from Room ${room.roomId}. Set Candidate ${nextSuffix}'s details below to publish their unique link.`;
           btnSubmitRoom.textContent = `Save & Publish Room DF-ROOM-${nextRoomId} →`;
-          showNotice(`Duplicated Room ${room.roomId} as DF-ROOM-${nextRoomId}! Enter Candidate ${nextSuffix}'s name & phone and click 'Save & Publish' to get their unique link.`, 'success');
-          
-          roomUpsertForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          if (roomFieldStudentName) roomFieldStudentName.focus();
+          if (formEditStatusNote) formEditStatusNote.textContent = `Ready to publish duplicate room DF-ROOM-${nextRoomId}.`;
+          if (fetchNotice) fetchNotice.style.display = 'none';
+          openRoomModal('duplicate', nextRoomId);
         });
       });
 
